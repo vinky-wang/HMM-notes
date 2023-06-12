@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 10 Appendix | Hidden Markov Model Notes</title>
+  <title>Chapter 9 Appendix | Hidden Markov Model Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 10 Appendix | Hidden Markov Model Notes" />
+  <meta property="og:title" content="Chapter 9 Appendix | Hidden Markov Model Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="vinky-wang/HMM-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 10 Appendix | Hidden Markov Model Notes" />
+  <meta name="twitter:title" content="Chapter 9 Appendix | Hidden Markov Model Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -62,92 +62,7 @@ set in the _output.yml file.</p>" />
 <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
 
-<style type="text/css">
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  background-color: #f8f8f8; }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ef2929; } /* Alert */
-code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #c4a000; } /* Attribute */
-code span.bn { color: #0000cf; } /* BaseN */
-code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4e9a06; } /* Char */
-code span.cn { color: #000000; } /* Constant */
-code span.co { color: #8f5902; font-style: italic; } /* Comment */
-code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
-code span.dt { color: #204a87; } /* DataType */
-code span.dv { color: #0000cf; } /* DecVal */
-code span.er { color: #a40000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #0000cf; } /* Float */
-code span.fu { color: #000000; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
-code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
-code span.ot { color: #8f5902; } /* Other */
-code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
-code span.sc { color: #000000; } /* SpecialChar */
-code span.ss { color: #4e9a06; } /* SpecialString */
-code span.st { color: #4e9a06; } /* String */
-code span.va { color: #000000; } /* Variable */
-code span.vs { color: #4e9a06; } /* VerbatimString */
-code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
-</style>
 
-<style type="text/css">
-/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}
-</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -165,122 +80,125 @@ div.csl-indent {
 <li><a href="./">HMM Notes</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a></li>
-<li class="chapter" data-level="2" data-path="prelim.html"><a href="prelim.html"><i class="fa fa-check"></i><b>2</b> Preliminaries</a>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a></li>
+<li class="chapter" data-level="1" data-path="prelim.html"><a href="prelim.html"><i class="fa fa-check"></i><b>1</b> Preliminaries</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="prelim.html"><a href="prelim.html#mix"><i class="fa fa-check"></i><b>2.1</b> Independent Mixture Models</a>
+<li class="chapter" data-level="1.1" data-path="prelim.html"><a href="prelim.html#mix"><i class="fa fa-check"></i><b>1.1</b> Independent Mixture Models</a>
 <ul>
-<li class="chapter" data-level="2.1.1" data-path="prelim.html"><a href="prelim.html#properties"><i class="fa fa-check"></i><b>2.1.1</b> Properties</a></li>
-<li class="chapter" data-level="2.1.2" data-path="prelim.html"><a href="prelim.html#parameter-estimation"><i class="fa fa-check"></i><b>2.1.2</b> Parameter Estimation</a></li>
+<li class="chapter" data-level="1.1.1" data-path="prelim.html"><a href="prelim.html#properties"><i class="fa fa-check"></i><b>1.1.1</b> Properties</a></li>
+<li class="chapter" data-level="1.1.2" data-path="prelim.html"><a href="prelim.html#parameter-estimation"><i class="fa fa-check"></i><b>1.1.2</b> Parameter Estimation</a></li>
 </ul></li>
-<li class="chapter" data-level="2.2" data-path="prelim.html"><a href="prelim.html#mc"><i class="fa fa-check"></i><b>2.2</b> Markov Chains</a>
+<li class="chapter" data-level="1.2" data-path="prelim.html"><a href="prelim.html#mc"><i class="fa fa-check"></i><b>1.2</b> Markov Chains</a>
 <ul>
-<li class="chapter" data-level="2.2.1" data-path="prelim.html"><a href="prelim.html#probabilities"><i class="fa fa-check"></i><b>2.2.1</b> Probabilities</a></li>
-<li class="chapter" data-level="2.2.2" data-path="prelim.html"><a href="prelim.html#stationary-distribution"><i class="fa fa-check"></i><b>2.2.2</b> Stationary Distribution</a></li>
-<li class="chapter" data-level="2.2.3" data-path="prelim.html"><a href="prelim.html#tp"><i class="fa fa-check"></i><b>2.2.3</b> Transition Probabilities Estimation</a></li>
+<li class="chapter" data-level="1.2.1" data-path="prelim.html"><a href="prelim.html#probabilities"><i class="fa fa-check"></i><b>1.2.1</b> Probabilities</a></li>
+<li class="chapter" data-level="1.2.2" data-path="prelim.html"><a href="prelim.html#stationary-distribution"><i class="fa fa-check"></i><b>1.2.2</b> Stationary Distribution</a></li>
+<li class="chapter" data-level="1.2.3" data-path="prelim.html"><a href="prelim.html#tp"><i class="fa fa-check"></i><b>1.2.3</b> Transition Probabilities Estimation</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="prelim.html"><a href="prelim.html#exercises"><i class="fa fa-check"></i><b>2.3</b> Exercises</a></li>
-<li class="chapter" data-level="2.4" data-path="prelim.html"><a href="prelim.html#solutions"><i class="fa fa-check"></i><b>2.4</b> Solutions</a></li>
+<li class="chapter" data-level="1.3" data-path="prelim.html"><a href="prelim.html#exercises"><i class="fa fa-check"></i><b>1.3</b> Exercises</a></li>
+<li class="chapter" data-level="1.4" data-path="prelim.html"><a href="prelim.html#solutions"><i class="fa fa-check"></i><b>1.4</b> Solutions</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="introhmm.html"><a href="introhmm.html"><i class="fa fa-check"></i><b>3</b> Introduction to Hidden Markov Models</a>
+<li class="chapter" data-level="2" data-path="introhmm.html"><a href="introhmm.html"><i class="fa fa-check"></i><b>2</b> Introduction to Hidden Markov Models</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="introhmm.html"><a href="introhmm.html#sdd"><i class="fa fa-check"></i><b>3.1</b> State-Dependent Distributions</a></li>
-<li class="chapter" data-level="3.2" data-path="introhmm.html"><a href="introhmm.html#marginal-distributions"><i class="fa fa-check"></i><b>3.2</b> Marginal Distributions</a>
+<li class="chapter" data-level="2.1" data-path="introhmm.html"><a href="introhmm.html#sdd"><i class="fa fa-check"></i><b>2.1</b> State-Dependent Distributions</a></li>
+<li class="chapter" data-level="2.2" data-path="introhmm.html"><a href="introhmm.html#marginal-distributions"><i class="fa fa-check"></i><b>2.2</b> Marginal Distributions</a>
 <ul>
-<li class="chapter" data-level="3.2.1" data-path="introhmm.html"><a href="introhmm.html#univariate-case"><i class="fa fa-check"></i><b>3.2.1</b> Univariate Case</a></li>
-<li class="chapter" data-level="3.2.2" data-path="introhmm.html"><a href="introhmm.html#bivariate"><i class="fa fa-check"></i><b>3.2.2</b> Bivariate Case</a></li>
+<li class="chapter" data-level="2.2.1" data-path="introhmm.html"><a href="introhmm.html#univariate-case"><i class="fa fa-check"></i><b>2.2.1</b> Univariate Case</a></li>
+<li class="chapter" data-level="2.2.2" data-path="introhmm.html"><a href="introhmm.html#bivariate"><i class="fa fa-check"></i><b>2.2.2</b> Bivariate Case</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="introhmm.html"><a href="introhmm.html#moments"><i class="fa fa-check"></i><b>3.3</b> Moments</a>
+<li class="chapter" data-level="2.3" data-path="introhmm.html"><a href="introhmm.html#moments"><i class="fa fa-check"></i><b>2.3</b> Moments</a>
 <ul>
-<li class="chapter" data-level="3.3.1" data-path="introhmm.html"><a href="introhmm.html#univariate-case-1"><i class="fa fa-check"></i><b>3.3.1</b> Univariate Case</a></li>
-<li class="chapter" data-level="3.3.2" data-path="introhmm.html"><a href="introhmm.html#bivariate-case"><i class="fa fa-check"></i><b>3.3.2</b> Bivariate Case</a></li>
+<li class="chapter" data-level="2.3.1" data-path="introhmm.html"><a href="introhmm.html#univariate-case-1"><i class="fa fa-check"></i><b>2.3.1</b> Univariate Case</a></li>
+<li class="chapter" data-level="2.3.2" data-path="introhmm.html"><a href="introhmm.html#bivariate-case"><i class="fa fa-check"></i><b>2.3.2</b> Bivariate Case</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="introhmm.html"><a href="introhmm.html#lik"><i class="fa fa-check"></i><b>3.4</b> Likelihood of Hidden Markov Models</a>
+<li class="chapter" data-level="2.4" data-path="introhmm.html"><a href="introhmm.html#lik"><i class="fa fa-check"></i><b>2.4</b> Likelihood of Hidden Markov Models</a>
 <ul>
-<li class="chapter" data-level="3.4.1" data-path="introhmm.html"><a href="introhmm.html#forsec"><i class="fa fa-check"></i><b>3.4.1</b> Forward Algorithm</a></li>
+<li class="chapter" data-level="2.4.1" data-path="introhmm.html"><a href="introhmm.html#forsec"><i class="fa fa-check"></i><b>2.4.1</b> Forward Algorithm</a></li>
 </ul></li>
-<li class="chapter" data-level="3.5" data-path="introhmm.html"><a href="introhmm.html#exercises-1"><i class="fa fa-check"></i><b>3.5</b> Exercises</a></li>
-<li class="chapter" data-level="3.6" data-path="introhmm.html"><a href="introhmm.html#solutions-1"><i class="fa fa-check"></i><b>3.6</b> Solutions</a></li>
+<li class="chapter" data-level="2.5" data-path="introhmm.html"><a href="introhmm.html#exercises-1"><i class="fa fa-check"></i><b>2.5</b> Exercises</a></li>
+<li class="chapter" data-level="2.6" data-path="introhmm.html"><a href="introhmm.html#solutions-1"><i class="fa fa-check"></i><b>2.6</b> Solutions</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="numerical.html"><a href="numerical.html"><i class="fa fa-check"></i><b>4</b> Numerical Maximization of the Likelihood</a>
+<li class="chapter" data-level="3" data-path="numerical.html"><a href="numerical.html"><i class="fa fa-check"></i><b>3</b> Numerical Maximization of the Likelihood</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="numerical.html"><a href="numerical.html#likscale"><i class="fa fa-check"></i><b>4.1</b> Scaling the Likelihood Computation</a></li>
-<li class="chapter" data-level="4.2" data-path="numerical.html"><a href="numerical.html#reparam"><i class="fa fa-check"></i><b>4.2</b> Reparameterization to Avoid Constraints</a>
+<li class="chapter" data-level="3.1" data-path="numerical.html"><a href="numerical.html#likscale"><i class="fa fa-check"></i><b>3.1</b> Scaling the Likelihood Computation</a></li>
+<li class="chapter" data-level="3.2" data-path="numerical.html"><a href="numerical.html#reparam"><i class="fa fa-check"></i><b>3.2</b> Reparameterization to Avoid Constraints</a>
 <ul>
-<li class="chapter" data-level="4.2.1" data-path="numerical.html"><a href="numerical.html#transition-probabilities"><i class="fa fa-check"></i><b>4.2.1</b> Transition Probabilities</a></li>
-<li class="chapter" data-level="4.2.2" data-path="numerical.html"><a href="numerical.html#parameters-of-state-dependent-distributions"><i class="fa fa-check"></i><b>4.2.2</b> Parameters of State-Dependent Distributions</a></li>
-<li class="chapter" data-level="4.2.3" data-path="numerical.html"><a href="numerical.html#initial-probabilities"><i class="fa fa-check"></i><b>4.2.3</b> Initial Probabilities</a></li>
+<li class="chapter" data-level="3.2.1" data-path="numerical.html"><a href="numerical.html#transition-probabilities"><i class="fa fa-check"></i><b>3.2.1</b> Transition Probabilities</a></li>
+<li class="chapter" data-level="3.2.2" data-path="numerical.html"><a href="numerical.html#parameters-of-state-dependent-distributions"><i class="fa fa-check"></i><b>3.2.2</b> Parameters of State-Dependent Distributions</a></li>
+<li class="chapter" data-level="3.2.3" data-path="numerical.html"><a href="numerical.html#initial-probabilities"><i class="fa fa-check"></i><b>3.2.3</b> Initial Probabilities</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="numerical.html"><a href="numerical.html#startval"><i class="fa fa-check"></i><b>4.3</b> Strategies for Choosing Starting Values</a></li>
-<li class="chapter" data-level="4.4" data-path="numerical.html"><a href="numerical.html#boot"><i class="fa fa-check"></i><b>4.4</b> Obtaining Standard Errors and Confidence Intervals</a></li>
-<li class="chapter" data-level="4.5" data-path="numerical.html"><a href="numerical.html#exercises-2"><i class="fa fa-check"></i><b>4.5</b> Exercises</a></li>
-<li class="chapter" data-level="4.6" data-path="numerical.html"><a href="numerical.html#solutions-2"><i class="fa fa-check"></i><b>4.6</b> Solutions</a></li>
+<li class="chapter" data-level="3.3" data-path="numerical.html"><a href="numerical.html#startval"><i class="fa fa-check"></i><b>3.3</b> Strategies for Choosing Starting Values</a></li>
+<li class="chapter" data-level="3.4" data-path="numerical.html"><a href="numerical.html#boot"><i class="fa fa-check"></i><b>3.4</b> Obtaining Standard Errors and Confidence Intervals</a></li>
+<li class="chapter" data-level="3.5" data-path="numerical.html"><a href="numerical.html#exercises-2"><i class="fa fa-check"></i><b>3.5</b> Exercises</a></li>
+<li class="chapter" data-level="3.6" data-path="numerical.html"><a href="numerical.html#solutions-2"><i class="fa fa-check"></i><b>3.6</b> Solutions</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="fbalg.html"><a href="fbalg.html"><i class="fa fa-check"></i><b>5</b> The Forward and Backward Algorithm</a>
+<li class="chapter" data-level="4" data-path="fbalg.html"><a href="fbalg.html"><i class="fa fa-check"></i><b>4</b> The Forward and Backward Algorithm</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="fbalg.html"><a href="fbalg.html#forward-and-backward-probabilities"><i class="fa fa-check"></i><b>5.1</b> Forward and Backward Probabilities</a></li>
-<li class="chapter" data-level="5.2" data-path="fbalg.html"><a href="fbalg.html#properties-of-hmms"><i class="fa fa-check"></i><b>5.2</b> Properties of HMMs</a>
+<li class="chapter" data-level="4.1" data-path="fbalg.html"><a href="fbalg.html#forward-and-backward-probabilities"><i class="fa fa-check"></i><b>4.1</b> Forward and Backward Probabilities</a></li>
+<li class="chapter" data-level="4.2" data-path="fbalg.html"><a href="fbalg.html#properties-of-hmms"><i class="fa fa-check"></i><b>4.2</b> Properties of HMMs</a>
 <ul>
-<li class="chapter" data-level="5.2.1" data-path="fbalg.html"><a href="fbalg.html#property"><i class="fa fa-check"></i><b>5.2.1</b> Property</a></li>
-<li class="chapter" data-level="5.2.2" data-path="fbalg.html"><a href="fbalg.html#property-1"><i class="fa fa-check"></i><b>5.2.2</b> Property</a></li>
-<li class="chapter" data-level="5.2.3" data-path="fbalg.html"><a href="fbalg.html#property-2"><i class="fa fa-check"></i><b>5.2.3</b> Property</a></li>
-<li class="chapter" data-level="5.2.4" data-path="fbalg.html"><a href="fbalg.html#property-3"><i class="fa fa-check"></i><b>5.2.4</b> Property</a></li>
-<li class="chapter" data-level="5.2.5" data-path="fbalg.html"><a href="fbalg.html#property-4"><i class="fa fa-check"></i><b>5.2.5</b> Property</a></li>
+<li class="chapter" data-level="4.2.1" data-path="fbalg.html"><a href="fbalg.html#property"><i class="fa fa-check"></i><b>4.2.1</b> Property</a></li>
+<li class="chapter" data-level="4.2.2" data-path="fbalg.html"><a href="fbalg.html#property-1"><i class="fa fa-check"></i><b>4.2.2</b> Property</a></li>
+<li class="chapter" data-level="4.2.3" data-path="fbalg.html"><a href="fbalg.html#property-2"><i class="fa fa-check"></i><b>4.2.3</b> Property</a></li>
+<li class="chapter" data-level="4.2.4" data-path="fbalg.html"><a href="fbalg.html#property-3"><i class="fa fa-check"></i><b>4.2.4</b> Property</a></li>
+<li class="chapter" data-level="4.2.5" data-path="fbalg.html"><a href="fbalg.html#property-4"><i class="fa fa-check"></i><b>4.2.5</b> Property</a></li>
 </ul></li>
-<li class="chapter" data-level="5.3" data-path="fbalg.html"><a href="fbalg.html#forward-probabilities-as-joint-probabilities"><i class="fa fa-check"></i><b>5.3</b> Forward Probabilities as Joint Probabilities</a></li>
-<li class="chapter" data-level="5.4" data-path="fbalg.html"><a href="fbalg.html#backward-probabilities-as-conditional-probabilities"><i class="fa fa-check"></i><b>5.4</b> Backward Probabilities as Conditional Probabilities</a></li>
+<li class="chapter" data-level="4.3" data-path="fbalg.html"><a href="fbalg.html#forward-probabilities-as-joint-probabilities"><i class="fa fa-check"></i><b>4.3</b> Forward Probabilities as Joint Probabilities</a></li>
+<li class="chapter" data-level="4.4" data-path="fbalg.html"><a href="fbalg.html#backward-probabilities-as-conditional-probabilities"><i class="fa fa-check"></i><b>4.4</b> Backward Probabilities as Conditional Probabilities</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="em.html"><a href="em.html"><i class="fa fa-check"></i><b>6</b> Expectation-Maximization Algorithm (Baum-Welch)</a>
+<li class="chapter" data-level="5" data-path="em.html"><a href="em.html"><i class="fa fa-check"></i><b>5</b> Expectation-Maximization Algorithm (Baum-Welch)</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="em.html"><a href="em.html#em-algorithm-general"><i class="fa fa-check"></i><b>6.1</b> EM Algorithm (General)</a></li>
-<li class="chapter" data-level="6.2" data-path="em.html"><a href="em.html#em-algorithm-for-hmms"><i class="fa fa-check"></i><b>6.2</b> EM Algorithm (for HMMs)</a>
+<li class="chapter" data-level="5.1" data-path="em.html"><a href="em.html#em-algorithm-general"><i class="fa fa-check"></i><b>5.1</b> EM Algorithm (General)</a></li>
+<li class="chapter" data-level="5.2" data-path="em.html"><a href="em.html#em-algorithm-for-hmms"><i class="fa fa-check"></i><b>5.2</b> EM Algorithm (for HMMs)</a>
 <ul>
-<li class="chapter" data-level="6.2.1" data-path="em.html"><a href="em.html#stationary-markov-chain"><i class="fa fa-check"></i><b>6.2.1</b> Stationary Markov Chain</a></li>
+<li class="chapter" data-level="5.2.1" data-path="em.html"><a href="em.html#stationary-markov-chain"><i class="fa fa-check"></i><b>5.2.1</b> Stationary Markov Chain</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="em.html"><a href="em.html#exercises-3"><i class="fa fa-check"></i><b>6.3</b> Exercises</a></li>
-<li class="chapter" data-level="6.4" data-path="em.html"><a href="em.html#solutions-3"><i class="fa fa-check"></i><b>6.4</b> Solutions</a></li>
+<li class="chapter" data-level="5.3" data-path="em.html"><a href="em.html#exercises-3"><i class="fa fa-check"></i><b>5.3</b> Exercises</a></li>
+<li class="chapter" data-level="5.4" data-path="em.html"><a href="em.html#solutions-3"><i class="fa fa-check"></i><b>5.4</b> Solutions</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="fdp.html"><a href="fdp.html"><i class="fa fa-check"></i><b>7</b> Forecasting, Decoding, and State Prediction</a>
+<li class="chapter" data-level="6" data-path="fdp.html"><a href="fdp.html"><i class="fa fa-check"></i><b>6</b> Forecasting, Decoding, and State Prediction</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="fdp.html"><a href="fdp.html#conditional-distribution"><i class="fa fa-check"></i><b>7.1</b> Conditional Distribution</a>
+<li class="chapter" data-level="6.1" data-path="fdp.html"><a href="fdp.html#conditional-distribution"><i class="fa fa-check"></i><b>6.1</b> Conditional Distribution</a>
 <ul>
-<li class="chapter" data-level="7.1.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities"><i class="fa fa-check"></i><b>7.1.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+<li class="chapter" data-level="6.1.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities"><i class="fa fa-check"></i><b>6.1.1</b> As Mixtures of State-Dependent Probabilities</a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="fdp.html"><a href="fdp.html#forecast-distributions"><i class="fa fa-check"></i><b>7.2</b> Forecast Distributions</a>
+<li class="chapter" data-level="6.2" data-path="fdp.html"><a href="fdp.html#forecast-distributions"><i class="fa fa-check"></i><b>6.2</b> Forecast Distributions</a>
 <ul>
-<li class="chapter" data-level="7.2.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities-1"><i class="fa fa-check"></i><b>7.2.1</b> As Mixtures of State-Dependent Probabilities</a></li>
-<li class="chapter" data-level="7.2.2" data-path="fdp.html"><a href="fdp.html#forecast-distribution-in-the-limit"><i class="fa fa-check"></i><b>7.2.2</b> Forecast Distribution in the Limit</a></li>
+<li class="chapter" data-level="6.2.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities-1"><i class="fa fa-check"></i><b>6.2.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+<li class="chapter" data-level="6.2.2" data-path="fdp.html"><a href="fdp.html#forecast-distribution-in-the-limit"><i class="fa fa-check"></i><b>6.2.2</b> Forecast Distribution in the Limit</a></li>
 </ul></li>
-<li class="chapter" data-level="7.3" data-path="fdp.html"><a href="fdp.html#decoding"><i class="fa fa-check"></i><b>7.3</b> Decoding</a>
+<li class="chapter" data-level="6.3" data-path="fdp.html"><a href="fdp.html#decoding"><i class="fa fa-check"></i><b>6.3</b> Decoding</a>
 <ul>
-<li class="chapter" data-level="7.3.1" data-path="fdp.html"><a href="fdp.html#local-decoding"><i class="fa fa-check"></i><b>7.3.1</b> Local Decoding</a></li>
-<li class="chapter" data-level="7.3.2" data-path="fdp.html"><a href="fdp.html#global-decoding"><i class="fa fa-check"></i><b>7.3.2</b> Global Decoding</a></li>
+<li class="chapter" data-level="6.3.1" data-path="fdp.html"><a href="fdp.html#local-decoding"><i class="fa fa-check"></i><b>6.3.1</b> Local Decoding</a></li>
+<li class="chapter" data-level="6.3.2" data-path="fdp.html"><a href="fdp.html#global-decoding"><i class="fa fa-check"></i><b>6.3.2</b> Global Decoding</a></li>
 </ul></li>
-<li class="chapter" data-level="7.4" data-path="fdp.html"><a href="fdp.html#state-prediction"><i class="fa fa-check"></i><b>7.4</b> State Prediction</a></li>
-<li class="chapter" data-level="7.5" data-path="fdp.html"><a href="fdp.html#exercises-4"><i class="fa fa-check"></i><b>7.5</b> Exercises</a></li>
-<li class="chapter" data-level="7.6" data-path="fdp.html"><a href="fdp.html#solutions-4"><i class="fa fa-check"></i><b>7.6</b> Solutions</a></li>
+<li class="chapter" data-level="6.4" data-path="fdp.html"><a href="fdp.html#state-prediction"><i class="fa fa-check"></i><b>6.4</b> State Prediction</a></li>
+<li class="chapter" data-level="6.5" data-path="fdp.html"><a href="fdp.html#exercises-4"><i class="fa fa-check"></i><b>6.5</b> Exercises</a></li>
+<li class="chapter" data-level="6.6" data-path="fdp.html"><a href="fdp.html#solutions-4"><i class="fa fa-check"></i><b>6.6</b> Solutions</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html"><i class="fa fa-check"></i><b>8</b> Bayesian Inference for HMMs</a>
+<li class="chapter" data-level="7" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html"><i class="fa fa-check"></i><b>7</b> Bayesian Inference for HMMs</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching"><i class="fa fa-check"></i><b>8.1</b> Reparameterization to Avoid Label Switching</a></li>
-<li class="chapter" data-level="8.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure"><i class="fa fa-check"></i><b>8.2</b> Gibbs Sampling Procedure</a>
+<li class="chapter" data-level="7.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching"><i class="fa fa-check"></i><b>7.1</b> Reparameterization to Avoid Label Switching</a></li>
+<li class="chapter" data-level="7.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure"><i class="fa fa-check"></i><b>7.2</b> Gibbs Sampling Procedure</a>
 <ul>
-<li class="chapter" data-level="8.2.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gen"><i class="fa fa-check"></i><b>8.2.1</b> Generating Sample Paths of the MC</a></li>
-<li class="chapter" data-level="8.2.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#decom"><i class="fa fa-check"></i><b>8.2.2</b> Decomposing the Observed Counts into Regime Contributions</a></li>
-<li class="chapter" data-level="8.2.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#updating-the-parameters"><i class="fa fa-check"></i><b>8.2.3</b> Updating the Parameters</a></li>
-<li class="chapter" data-level="8.2.4" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#repeat-the-above"><i class="fa fa-check"></i><b>8.2.4</b> Repeat the Above</a></li>
+<li class="chapter" data-level="7.2.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gen"><i class="fa fa-check"></i><b>7.2.1</b> Generating Sample Paths of the MC</a></li>
+<li class="chapter" data-level="7.2.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#decom"><i class="fa fa-check"></i><b>7.2.2</b> Decomposing the Observed Counts into Regime Contributions</a></li>
+<li class="chapter" data-level="7.2.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#updating-the-parameters"><i class="fa fa-check"></i><b>7.2.3</b> Updating the Parameters</a></li>
+<li class="chapter" data-level="7.2.4" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#repeat-the-above"><i class="fa fa-check"></i><b>7.2.4</b> Repeat the Above</a></li>
 </ul></li>
-<li class="chapter" data-level="8.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#exercises-5"><i class="fa fa-check"></i><b>8.3</b> Exercises</a></li>
+<li class="chapter" data-level="7.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#exercises-5"><i class="fa fa-check"></i><b>7.3</b> Exercises</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="eq.html"><a href="eq.html"><i class="fa fa-check"></i><b>9</b> Major Earthquake Analysis</a>
+<li class="chapter" data-level="8" data-path="eq.html"><a href="eq.html"><i class="fa fa-check"></i><b>8</b> Major Earthquake Analysis</a>
 <ul>
-<li class="chapter" data-level="9.0.1" data-path="eq.html"><a href="eq.html#fitting-a-poisson-mixture-distribution"><i class="fa fa-check"></i><b>9.0.1</b> Fitting a Poisson Mixture Distribution</a></li>
-<li class="chapter" data-level="9.0.2" data-path="eq.html"><a href="eq.html#fitting-a-poisson-hmm-by-numerical-maximization"><i class="fa fa-check"></i><b>9.0.2</b> Fitting a Poisson-HMM by Numerical Maximization</a></li>
-<li class="chapter" data-level="9.0.3" data-path="eq.html"><a href="eq.html#fitting-a-poisson-hmm-by-the-em-algorithm"><i class="fa fa-check"></i><b>9.0.3</b> Fitting a Poisson-HMM by the EM Algorithm</a></li>
-<li class="chapter" data-level="9.0.4" data-path="eq.html"><a href="eq.html#forecasting-decoding-and-state-prediction"><i class="fa fa-check"></i><b>9.0.4</b> Forecasting, Decoding, and State Prediction</a></li>
-<li class="chapter" data-level="9.1" data-path="eq.html"><a href="eq.html#bayesian-inference-in-stan"><i class="fa fa-check"></i><b>9.1</b> Bayesian Inference in STAN</a></li>
+<li class="chapter" data-level="8.0.1" data-path="eq.html"><a href="eq.html#fitting-a-poisson-mixture-distribution"><i class="fa fa-check"></i><b>8.0.1</b> Fitting a Poisson Mixture Distribution</a></li>
+<li class="chapter" data-level="8.0.2" data-path="eq.html"><a href="eq.html#fitting-a-poisson-hmm-by-numerical-maximization"><i class="fa fa-check"></i><b>8.0.2</b> Fitting a Poisson-HMM by Numerical Maximization</a></li>
+<li class="chapter" data-level="8.0.3" data-path="eq.html"><a href="eq.html#fitting-a-poisson-hmm-by-the-em-algorithm"><i class="fa fa-check"></i><b>8.0.3</b> Fitting a Poisson-HMM by the EM Algorithm</a></li>
+<li class="chapter" data-level="8.0.4" data-path="eq.html"><a href="eq.html#forecasting-decoding-and-state-prediction"><i class="fa fa-check"></i><b>8.0.4</b> Forecasting, Decoding, and State Prediction</a></li>
+<li class="chapter" data-level="8.1" data-path="eq.html"><a href="eq.html#bayesian-inference-in-stan"><i class="fa fa-check"></i><b>8.1</b> Bayesian Inference in STAN</a></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>10</b> Appendix</a></li>
+<li class="chapter" data-level="9" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>9</b> Appendix</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="appendix.html"><a href="appendix.html#references"><i class="fa fa-check"></i><b>9.1</b> References</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -301,13 +219,13 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="appendix" class="section level1 hasAnchor" number="10">
-<h1><span class="header-section-number">Chapter 10</span> Appendix<a href="appendix.html#appendix" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="appendix" class="section level1 hasAnchor" number="9">
+<h1><span class="header-section-number">Chapter 9</span> Appendix<a href="appendix.html#appendix" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>An intuitive and less laborious way to establish properties of the HMM is to invoke properties of directed graphical models.</p>
 <p>In a directed graphical model, the probability of a set of random variables <span class="math inline">\(\{V_1, V_2, \dots, V_n\}\)</span> can be factored into a product of conditional probabilities, one for each parent (node) <span class="math inline">\(\text{pa} (V_i)\)</span></p>
 <p><span class="math display" id="eq:directed">\[\begin{equation}
 \Pr(V_1, V_2, \dots, V_n) = \prod_{i=1}^n \Pr(V_i| \text{pa} (V_i))
-\tag{10.1}
+\tag{9.1}
 \end{equation}\]</span></p>
 <p>In the case of HMMs,</p>
 <ul>
@@ -318,21 +236,13 @@ div.csl-indent {
 <p>Then the joint distribution of <span class="math inline">\(\boldsymbol{X}^{(t)}\)</span> and <span class="math inline">\(\boldsymbol{C}^{(t)}\)</span> is given by</p>
 <p><span class="math display" id="eq:joint">\[\begin{equation}
 \Pr(\boldsymbol{X}^{(t)}, \boldsymbol{C}^{(t)}) = \Pr(C_1) \prod_{k=2}^t \Pr(C_k|C_{k-1}) \prod_{k=1}^t \Pr(X_k|C_k)
-\tag{10.2}
+\tag{9.2}
 \end{equation}\]</span></p>
+<div id="references" class="section level2 hasAnchor" number="9.1">
+<h2><span class="header-section-number">9.1</span> References<a href="appendix.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div class="csl-entry">
-Lalley, Steve. n.d. <span>“MARKOV CHAINS: BASIC THEORY.”</span> <em>Statistics 312: Stochastic Processes</em>. <a href="http://galton.uchicago.edu/~lalley/Courses/312/MarkovChains.pdf">http://galton.uchicago.edu/~lalley/Courses/312/MarkovChains.pdf</a>.
 </div>
 </div>
-</div>
-
-
-
-
-
-
             </section>
 
           </div>

@@ -146,3 +146,4 @@ decoding-1
 state-predictions
 bayesian-inference-in-stan
 appendix
+references

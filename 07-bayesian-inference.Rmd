@@ -36,6 +36,13 @@ $$\Pr(C_t|\boldsymbol{x}^{(t)}, \boldsymbol{\theta}) = \frac{\Pr(C_t, \boldsymbo
 
 Next, draw the remaining states of MC from descending time points $C_{T-1}, C_{T-2}, \dots, C_{1}$, by the following 
 
+\begin{align}
+\Pr(C_t|\boldsymbol{x}^{(T)}, \boldsymbol{C}_{t+1}^T, \boldsymbol{\theta}) 
+& \propto \Pr(C_t|\boldsymbol{x}^{(T)}, \boldsymbol{\theta}) \Pr(\boldsymbol{x}_{t+1}^{(T)}, \boldsymbol{C}_{t+1}^{(T)}|\boldsymbol{x}^{(t)}, C_t, \boldsymbol{\theta}) \\
+& \propto \Pr(C_t|\boldsymbol{x}^{(t)}, \boldsymbol{\theta}) \Pr(C_{t+1}|C_t, \boldsymbol{\theta}) \Pr(\boldsymbol{x}_{t+1}^{(T)}, \boldsymbol{C}_{t+2}^{(T)}|\boldsymbol{x}^{(t)}, C_t, C_{t+1}, \boldsymbol{\theta}) \\
+& \propto \alpha(C_t) \Pr(C_{t+1}|C_t, \boldsymbol{\theta})
+\end{align}
+
 
 ### Decomposing the Observed Counts into Regime Contributions {#decom}
 

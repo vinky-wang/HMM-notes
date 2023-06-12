@@ -14,7 +14,7 @@ description: |
 link-citations: yes
 github-repo: vinky-wang/HMM-Notes
 ---
-# About
+# About {-}
 
 This bookdown contains notes and solutions for select chapters and exercises of Hidden Markov Models for Time Series: An Introduction Using R, Second Edition by Iain L. MacDonald, Roland Langrock, and Walter Zucchini. 
 
