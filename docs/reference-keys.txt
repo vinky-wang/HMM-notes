@@ -63,9 +63,8 @@ fig:postl-3
 fig:postd-1
 fig:postd-2
 fig:postd-3
-usage
-render-book
-preview-book
+eq:directed
+eq:joint
 prelim
 mix
 properties
@@ -146,5 +145,3 @@ decoding-1
 state-predictions
 bayesian-inference-in-stan
 appendix
-eq:directed
-eq:joint

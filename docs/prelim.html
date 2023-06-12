@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 1 Preliminaries | Hidden Markov Model Notes</title>
+  <title>Hidden Markov Model Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 1 Preliminaries | Hidden Markov Model Notes" />
+  <meta property="og:title" content="Hidden Markov Model Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="vinky-wang/HMM-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 1 Preliminaries | Hidden Markov Model Notes" />
+  <meta name="twitter:title" content="Hidden Markov Model Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,7 +36,7 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
+
 <link rel="next" href="introhmm.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -143,12 +143,6 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">HMM Notes</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
-<ul>
-<li class="chapter" data-level="0.1" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i><b>0.1</b> Usage</a></li>
-<li class="chapter" data-level="0.2" data-path="index.html"><a href="index.html#render-book"><i class="fa fa-check"></i><b>0.2</b> Render book</a></li>
-<li class="chapter" data-level="0.3" data-path="index.html"><a href="index.html#preview-book"><i class="fa fa-check"></i><b>0.3</b> Preview book</a></li>
-</ul></li>
 <li class="chapter" data-level="1" data-path="prelim.html"><a href="prelim.html"><i class="fa fa-check"></i><b>1</b> Preliminaries</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="prelim.html"><a href="prelim.html#mix"><i class="fa fa-check"></i><b>1.1</b> Independent Mixture Models</a>
@@ -284,6 +278,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Hidden Markov Model Notes</h1>
+<p class="author"><em>Vinky Wang</em></p>
+<p class="date"><em>2023-06-12</em></p>
+</div>
 <div id="prelim" class="section level1 hasAnchor" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Preliminaries<a href="prelim.html#prelim" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>We cover</p>
@@ -681,52 +680,52 @@ Var(X)
 <p>and</p>
 <p><span class="math inline">\(\Pr(\text{sequence 2}) = \gamma_{11}^{f_{11}} \gamma_{12}^{f_{12}} \gamma_{21}^{f_{21}} \gamma_{22}^{f_{22}} = (0.9)^2 (0.1)^1 (0.2)^2 (0.8)^0 = 0.00324\)</span></p>
 <p><strong>Question 8</strong></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="prelim.html#cb3-1" aria-hidden="true" tabindex="-1"></a>statdist <span class="ot">=</span> <span class="cf">function</span>(Gamma){</span>
-<span id="cb3-2"><a href="prelim.html#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># number of components</span></span>
-<span id="cb3-3"><a href="prelim.html#cb3-3" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">=</span> <span class="fu">nrow</span>(Gamma)</span>
-<span id="cb3-4"><a href="prelim.html#cb3-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-5"><a href="prelim.html#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># identity matrix (mxm)</span></span>
-<span id="cb3-6"><a href="prelim.html#cb3-6" aria-hidden="true" tabindex="-1"></a>  I <span class="ot">=</span> <span class="fu">diag</span>(m)</span>
-<span id="cb3-7"><a href="prelim.html#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ones matrix (mxm)</span></span>
-<span id="cb3-8"><a href="prelim.html#cb3-8" aria-hidden="true" tabindex="-1"></a>  U <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">1</span>,m<span class="sc">*</span>m), <span class="at">nrow=</span>m,<span class="at">ncol=</span>m)</span>
-<span id="cb3-9"><a href="prelim.html#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># vector of ones (1xm)</span></span>
-<span id="cb3-10"><a href="prelim.html#cb3-10" aria-hidden="true" tabindex="-1"></a>  one_vec <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span>, m)</span>
-<span id="cb3-11"><a href="prelim.html#cb3-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-12"><a href="prelim.html#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># I - Gamma + U</span></span>
-<span id="cb3-13"><a href="prelim.html#cb3-13" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">=</span> I <span class="sc">-</span> Gamma <span class="sc">+</span> U</span>
-<span id="cb3-14"><a href="prelim.html#cb3-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-15"><a href="prelim.html#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># delta(Im - Gamma + U) = 1</span></span>
-<span id="cb3-16"><a href="prelim.html#cb3-16" aria-hidden="true" tabindex="-1"></a>  delta <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X), one_vec)</span>
-<span id="cb3-17"><a href="prelim.html#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(delta)</span>
-<span id="cb3-18"><a href="prelim.html#cb3-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="prelim.html#cb4-1" aria-hidden="true" tabindex="-1"></a>matrix_i <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.7</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="dv">0</span>, <span class="fl">0.6</span>, <span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">nrow=</span><span class="dv">3</span>, <span class="at">ncol=</span><span class="dv">3</span>))</span>
-<span id="cb4-2"><a href="prelim.html#cb4-2" aria-hidden="true" tabindex="-1"></a>matrix_ii <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.75</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>), <span class="at">nrow=</span><span class="dv">4</span>, <span class="at">ncol=</span><span class="dv">4</span>))</span>
-<span id="cb4-3"><a href="prelim.html#cb4-3" aria-hidden="true" tabindex="-1"></a>matrix_iii <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.75</span>, <span class="dv">0</span>, <span class="fl">0.25</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">nrow=</span><span class="dv">4</span>, <span class="at">ncol=</span><span class="dv">4</span>))</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="prelim.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">statdist</span>(matrix_i)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="prelim.html#cb1-1" aria-hidden="true" tabindex="-1"></a>statdist <span class="ot">=</span> <span class="cf">function</span>(Gamma){</span>
+<span id="cb1-2"><a href="prelim.html#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># number of components</span></span>
+<span id="cb1-3"><a href="prelim.html#cb1-3" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">=</span> <span class="fu">nrow</span>(Gamma)</span>
+<span id="cb1-4"><a href="prelim.html#cb1-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-5"><a href="prelim.html#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># identity matrix (mxm)</span></span>
+<span id="cb1-6"><a href="prelim.html#cb1-6" aria-hidden="true" tabindex="-1"></a>  I <span class="ot">=</span> <span class="fu">diag</span>(m)</span>
+<span id="cb1-7"><a href="prelim.html#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ones matrix (mxm)</span></span>
+<span id="cb1-8"><a href="prelim.html#cb1-8" aria-hidden="true" tabindex="-1"></a>  U <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">1</span>,m<span class="sc">*</span>m), <span class="at">nrow=</span>m,<span class="at">ncol=</span>m)</span>
+<span id="cb1-9"><a href="prelim.html#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># vector of ones (1xm)</span></span>
+<span id="cb1-10"><a href="prelim.html#cb1-10" aria-hidden="true" tabindex="-1"></a>  one_vec <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span>, m)</span>
+<span id="cb1-11"><a href="prelim.html#cb1-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-12"><a href="prelim.html#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># I - Gamma + U</span></span>
+<span id="cb1-13"><a href="prelim.html#cb1-13" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">=</span> I <span class="sc">-</span> Gamma <span class="sc">+</span> U</span>
+<span id="cb1-14"><a href="prelim.html#cb1-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-15"><a href="prelim.html#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># delta(Im - Gamma + U) = 1</span></span>
+<span id="cb1-16"><a href="prelim.html#cb1-16" aria-hidden="true" tabindex="-1"></a>  delta <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X), one_vec)</span>
+<span id="cb1-17"><a href="prelim.html#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(delta)</span>
+<span id="cb1-18"><a href="prelim.html#cb1-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="prelim.html#cb2-1" aria-hidden="true" tabindex="-1"></a>matrix_i <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.7</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="dv">0</span>, <span class="fl">0.6</span>, <span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">nrow=</span><span class="dv">3</span>, <span class="at">ncol=</span><span class="dv">3</span>))</span>
+<span id="cb2-2"><a href="prelim.html#cb2-2" aria-hidden="true" tabindex="-1"></a>matrix_ii <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.75</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>), <span class="at">nrow=</span><span class="dv">4</span>, <span class="at">ncol=</span><span class="dv">4</span>))</span>
+<span id="cb2-3"><a href="prelim.html#cb2-3" aria-hidden="true" tabindex="-1"></a>matrix_iii <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.75</span>, <span class="dv">0</span>, <span class="fl">0.25</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">nrow=</span><span class="dv">4</span>, <span class="at">ncol=</span><span class="dv">4</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="prelim.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">statdist</span>(matrix_i)</span></code></pre></div>
 <pre><code>## [1] 0.4761905 0.2380952 0.2857143</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="prelim.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">statdist</span>(matrix_ii)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="prelim.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">statdist</span>(matrix_ii)</span></code></pre></div>
 <pre><code>## [1] 2.434560e-17 1.720846e-17 4.000000e-01 6.000000e-01</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="prelim.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">statdist</span>(matrix_iii)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="prelim.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">statdist</span>(matrix_iii)</span></code></pre></div>
 <p>Matrix (iii) causes an error because there is no unique stationary distribution. Once the Markov chain is in state 1, it will stay in state 1 at all subsequent time points and once it is in state 4, it will stay in state 4 at all subsequent time points. It is also reducible because the transitions to the other states cannot be reached.</p>
 <p>Matrix (i) is irreducible because all states can be reached. Matrix (ii) is reducible because the transitions to states 3 and 4 cannot be reached.</p>
 <p><strong>Question 9</strong></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="prelim.html#cb10-1" aria-hidden="true" tabindex="-1"></a>rMC <span class="ot">=</span> <span class="cf">function</span>(n, m, gamma, <span class="at">delta=</span><span class="cn">NULL</span>){</span>
-<span id="cb10-2"><a href="prelim.html#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Solve for stationary distribution if none provided</span></span>
-<span id="cb10-3"><a href="prelim.html#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(delta)) delta <span class="ot">=</span> <span class="fu">statdist</span>(gamma)</span>
-<span id="cb10-4"><a href="prelim.html#cb10-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb10-5"><a href="prelim.html#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulate sequence of states</span></span>
-<span id="cb10-6"><a href="prelim.html#cb10-6" aria-hidden="true" tabindex="-1"></a>  state_seq <span class="ot">=</span> <span class="fu">c</span>()</span>
-<span id="cb10-7"><a href="prelim.html#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">548</span>)</span>
-<span id="cb10-8"><a href="prelim.html#cb10-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb10-9"><a href="prelim.html#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="do">## For t=1</span></span>
-<span id="cb10-10"><a href="prelim.html#cb10-10" aria-hidden="true" tabindex="-1"></a>  state_seq[<span class="dv">1</span>] <span class="ot">=</span> <span class="fu">sample</span>(m, <span class="dv">1</span>, <span class="at">prob=</span>delta) <span class="co"># the initial distribution</span></span>
-<span id="cb10-11"><a href="prelim.html#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="prelim.html#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="do">## For t &gt; 1</span></span>
-<span id="cb10-13"><a href="prelim.html#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n){</span>
-<span id="cb10-14"><a href="prelim.html#cb10-14" aria-hidden="true" tabindex="-1"></a>    state_seq <span class="ot">&lt;-</span> <span class="fu">c</span>(state_seq, <span class="fu">sample</span>(m, <span class="dv">1</span>, <span class="at">prob=</span>gamma[state_seq[i<span class="dv">-1</span>], ]))</span>
-<span id="cb10-15"><a href="prelim.html#cb10-15" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb10-16"><a href="prelim.html#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(state_seq)</span>
-<span id="cb10-17"><a href="prelim.html#cb10-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="prelim.html#cb8-1" aria-hidden="true" tabindex="-1"></a>rMC <span class="ot">=</span> <span class="cf">function</span>(n, m, gamma, <span class="at">delta=</span><span class="cn">NULL</span>){</span>
+<span id="cb8-2"><a href="prelim.html#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Solve for stationary distribution if none provided</span></span>
+<span id="cb8-3"><a href="prelim.html#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(delta)) delta <span class="ot">=</span> <span class="fu">statdist</span>(gamma)</span>
+<span id="cb8-4"><a href="prelim.html#cb8-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-5"><a href="prelim.html#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulate sequence of states</span></span>
+<span id="cb8-6"><a href="prelim.html#cb8-6" aria-hidden="true" tabindex="-1"></a>  state_seq <span class="ot">=</span> <span class="fu">c</span>()</span>
+<span id="cb8-7"><a href="prelim.html#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">548</span>)</span>
+<span id="cb8-8"><a href="prelim.html#cb8-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-9"><a href="prelim.html#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="do">## For t=1</span></span>
+<span id="cb8-10"><a href="prelim.html#cb8-10" aria-hidden="true" tabindex="-1"></a>  state_seq[<span class="dv">1</span>] <span class="ot">=</span> <span class="fu">sample</span>(m, <span class="dv">1</span>, <span class="at">prob=</span>delta) <span class="co"># the initial distribution</span></span>
+<span id="cb8-11"><a href="prelim.html#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="prelim.html#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="do">## For t &gt; 1</span></span>
+<span id="cb8-13"><a href="prelim.html#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n){</span>
+<span id="cb8-14"><a href="prelim.html#cb8-14" aria-hidden="true" tabindex="-1"></a>    state_seq <span class="ot">&lt;-</span> <span class="fu">c</span>(state_seq, <span class="fu">sample</span>(m, <span class="dv">1</span>, <span class="at">prob=</span>gamma[state_seq[i<span class="dv">-1</span>], ]))</span>
+<span id="cb8-15"><a href="prelim.html#cb8-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-16"><a href="prelim.html#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(state_seq)</span>
+<span id="cb8-17"><a href="prelim.html#cb8-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
 </div>
@@ -741,8 +740,8 @@ Var(X)
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="introhmm.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+
+<a href="introhmm.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

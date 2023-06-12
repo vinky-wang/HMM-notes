@@ -1272,8 +1272,8 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## 
 ## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 1).
 ## Chain 1: 
-## Chain 1: Gradient evaluation took 0.000124 seconds
-## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.24 seconds.
+## Chain 1: Gradient evaluation took 0.000144 seconds
+## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.44 seconds.
 ## Chain 1: Adjust your expectations accordingly!
 ## Chain 1: 
 ## Chain 1: 
@@ -1281,15 +1281,15 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 1: 
-## Chain 1:  Elapsed Time: 0.838347 seconds (Warm-up)
-## Chain 1:                0.427215 seconds (Sampling)
-## Chain 1:                1.26556 seconds (Total)
+## Chain 1:  Elapsed Time: 0.825686 seconds (Warm-up)
+## Chain 1:                0.423728 seconds (Sampling)
+## Chain 1:                1.24941 seconds (Total)
 ## Chain 1: 
 ## 
 ## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 2).
 ## Chain 2: 
-## Chain 2: Gradient evaluation took 5.2e-05 seconds
-## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.52 seconds.
+## Chain 2: Gradient evaluation took 5e-05 seconds
+## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.
 ## Chain 2: Adjust your expectations accordingly!
 ## Chain 2: 
 ## Chain 2: 
@@ -1297,15 +1297,15 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 2: 
-## Chain 2:  Elapsed Time: 0.826467 seconds (Warm-up)
-## Chain 2:                0.434739 seconds (Sampling)
-## Chain 2:                1.26121 seconds (Total)
+## Chain 2:  Elapsed Time: 0.82065 seconds (Warm-up)
+## Chain 2:                0.433992 seconds (Sampling)
+## Chain 2:                1.25464 seconds (Total)
 ## Chain 2: 
 ## 
 ## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 3).
 ## Chain 3: 
-## Chain 3: Gradient evaluation took 4.9e-05 seconds
-## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.49 seconds.
+## Chain 3: Gradient evaluation took 5.8e-05 seconds
+## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.58 seconds.
 ## Chain 3: Adjust your expectations accordingly!
 ## Chain 3: 
 ## Chain 3: 
@@ -1313,15 +1313,15 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 3: 
-## Chain 3:  Elapsed Time: 0.89617 seconds (Warm-up)
-## Chain 3:                0.437161 seconds (Sampling)
-## Chain 3:                1.33333 seconds (Total)
+## Chain 3:  Elapsed Time: 0.885861 seconds (Warm-up)
+## Chain 3:                0.43413 seconds (Sampling)
+## Chain 3:                1.31999 seconds (Total)
 ## Chain 3: 
 ## 
 ## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 4).
 ## Chain 4: 
-## Chain 4: Gradient evaluation took 5.9e-05 seconds
-## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.59 seconds.
+## Chain 4: Gradient evaluation took 5.2e-05 seconds
+## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.52 seconds.
 ## Chain 4: Adjust your expectations accordingly!
 ## Chain 4: 
 ## Chain 4: 
@@ -1329,9 +1329,9 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 4: 
-## Chain 4:  Elapsed Time: 0.821674 seconds (Warm-up)
-## Chain 4:                0.486653 seconds (Sampling)
-## Chain 4:                1.30833 seconds (Total)
+## Chain 4:  Elapsed Time: 0.821964 seconds (Warm-up)
+## Chain 4:                0.483482 seconds (Sampling)
+## Chain 4:                1.30545 seconds (Total)
 ## Chain 4:
 ```
 
@@ -1404,7 +1404,7 @@ print(pois.HMM.stanfit,digits_summary = 3)
 ## statdist[3]  4231 1.000
 ## lp__         1509 1.000
 ## 
-## Samples were drawn using NUTS(diag_e) at Mon Jun 12 00:29:40 2023.
+## Samples were drawn using NUTS(diag_e) at Mon Jun 12 00:35:33 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).

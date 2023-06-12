@@ -143,12 +143,6 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">HMM Notes</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
-<ul>
-<li class="chapter" data-level="0.1" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i><b>0.1</b> Usage</a></li>
-<li class="chapter" data-level="0.2" data-path="index.html"><a href="index.html#render-book"><i class="fa fa-check"></i><b>0.2</b> Render book</a></li>
-<li class="chapter" data-level="0.3" data-path="index.html"><a href="index.html#preview-book"><i class="fa fa-check"></i><b>0.3</b> Preview book</a></li>
-</ul></li>
 <li class="chapter" data-level="1" data-path="prelim.html"><a href="prelim.html"><i class="fa fa-check"></i><b>1</b> Preliminaries</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="prelim.html"><a href="prelim.html#mix"><i class="fa fa-check"></i><b>1.1</b> Independent Mixture Models</a>
@@ -329,7 +323,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 \tag{4.3}
 \end{equation}\]</span></p>
 <p><em>Proof</em></p>
-<p>By Equation <a href="#eq:joint">(<strong>??</strong>)</a>, for <span class="math inline">\(\Pr(\boldsymbol{X}^{(t+1)}, \boldsymbol{C}^{(t+1)})\)</span>, it follows that</p>
+<p>By Equation <a href="appendix.html#eq:joint">(9.2)</a>, for <span class="math inline">\(\Pr(\boldsymbol{X}^{(t+1)}, \boldsymbol{C}^{(t+1)})\)</span>, it follows that</p>
 <p><span class="math display">\[\Pr(\boldsymbol{X}^{(t+1)}, \boldsymbol{C}^{(t+1)}) = \Pr(\boldsymbol{X}^{(t)}, \boldsymbol{C}^{(t)}) \Pr(C_{t+1}|C_t) \Pr(X_{t+1}|C_{t+1})\]</span></p>
 <p>Then summing over <span class="math inline">\(\boldsymbol{C}^{(t+1)}\)</span>, it follows that</p>
 <p><span class="math display">\[\begin{align}
@@ -348,7 +342,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 \tag{4.4}
 \end{equation}\]</span></p>
 <p><em>Proof</em></p>
-<p>By <a href="#eq:joint">(<strong>??</strong>)</a>, <span class="math inline">\(\Pr(\boldsymbol{X}_1^T, \boldsymbol{C}_1^T) = \Pr(C_1) \prod_{k=2}^T \Pr(C_k|C_{k-1}) \prod_{k=1}^T \Pr(X_k|C_k)\)</span>, which can be rewritten as</p>
+<p>By <a href="appendix.html#eq:joint">(9.2)</a>, <span class="math inline">\(\Pr(\boldsymbol{X}_1^T, \boldsymbol{C}_1^T) = \Pr(C_1) \prod_{k=2}^T \Pr(C_k|C_{k-1}) \prod_{k=1}^T \Pr(X_k|C_k)\)</span>, which can be rewritten as</p>
 <p><span class="math display">\[\Pr(\boldsymbol{X}_1^T, \boldsymbol{C}_1^T) = \Pr(C_1) \prod_{k=2}^t  \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(C_k|C_{k-1}) \prod_{k=1}^t \Pr(X_k|C_k) \prod_{k=t+1}^T \Pr(X_k|C_k)\]</span></p>
 <p>Then summing over <span class="math inline">\(\boldsymbol{C}_{t+2}^T\)</span> and <span class="math inline">\(\boldsymbol{C}_1^{t-1}\)</span>, it follows that</p>
 <p><span class="math display">\[\begin{align}
@@ -370,7 +364,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 \tag{4.5}
 \end{equation}\]</span></p>
 <p><em>Proof</em></p>
-<p>From <a href="#eq:joint">(<strong>??</strong>)</a>, it follows that</p>
+<p>From <a href="appendix.html#eq:joint">(9.2)</a>, it follows that</p>
 <p><span class="math display">\[\begin{align}
 \Pr(\boldsymbol{X}_{t+1}^T|\boldsymbol{C}_{t+1})
 &amp;= \Pr(C_{t+1}) \Pr(X_{t+1}|C_{t+1}) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+2}^T \Pr(X_k|C_k)\\
