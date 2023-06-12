@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 8 Major Earthquake Analysis | Hidden Markov Model Notes</title>
+  <title>Chapter 9 Major Earthquake Analysis | Hidden Markov Model Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 8 Major Earthquake Analysis | Hidden Markov Model Notes" />
+  <meta property="og:title" content="Chapter 9 Major Earthquake Analysis | Hidden Markov Model Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="vinky-wang/HMM-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 8 Major Earthquake Analysis | Hidden Markov Model Notes" />
+  <meta name="twitter:title" content="Chapter 9 Major Earthquake Analysis | Hidden Markov Model Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -126,6 +126,28 @@ code span.vs { color: #4e9a06; } /* VerbatimString */
 code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -143,121 +165,122 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">HMM Notes</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="prelim.html"><a href="prelim.html"><i class="fa fa-check"></i><b>1</b> Preliminaries</a>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> About</a></li>
+<li class="chapter" data-level="2" data-path="prelim.html"><a href="prelim.html"><i class="fa fa-check"></i><b>2</b> Preliminaries</a>
 <ul>
-<li class="chapter" data-level="1.1" data-path="prelim.html"><a href="prelim.html#mix"><i class="fa fa-check"></i><b>1.1</b> Independent Mixture Models</a>
+<li class="chapter" data-level="2.1" data-path="prelim.html"><a href="prelim.html#mix"><i class="fa fa-check"></i><b>2.1</b> Independent Mixture Models</a>
 <ul>
-<li class="chapter" data-level="1.1.1" data-path="prelim.html"><a href="prelim.html#properties"><i class="fa fa-check"></i><b>1.1.1</b> Properties</a></li>
-<li class="chapter" data-level="1.1.2" data-path="prelim.html"><a href="prelim.html#parameter-estimation"><i class="fa fa-check"></i><b>1.1.2</b> Parameter Estimation</a></li>
+<li class="chapter" data-level="2.1.1" data-path="prelim.html"><a href="prelim.html#properties"><i class="fa fa-check"></i><b>2.1.1</b> Properties</a></li>
+<li class="chapter" data-level="2.1.2" data-path="prelim.html"><a href="prelim.html#parameter-estimation"><i class="fa fa-check"></i><b>2.1.2</b> Parameter Estimation</a></li>
 </ul></li>
-<li class="chapter" data-level="1.2" data-path="prelim.html"><a href="prelim.html#mc"><i class="fa fa-check"></i><b>1.2</b> Markov Chains</a>
+<li class="chapter" data-level="2.2" data-path="prelim.html"><a href="prelim.html#mc"><i class="fa fa-check"></i><b>2.2</b> Markov Chains</a>
 <ul>
-<li class="chapter" data-level="1.2.1" data-path="prelim.html"><a href="prelim.html#probabilities"><i class="fa fa-check"></i><b>1.2.1</b> Probabilities</a></li>
-<li class="chapter" data-level="1.2.2" data-path="prelim.html"><a href="prelim.html#stationary-distribution"><i class="fa fa-check"></i><b>1.2.2</b> Stationary Distribution</a></li>
-<li class="chapter" data-level="1.2.3" data-path="prelim.html"><a href="prelim.html#tp"><i class="fa fa-check"></i><b>1.2.3</b> Transition Probabilities Estimation</a></li>
+<li class="chapter" data-level="2.2.1" data-path="prelim.html"><a href="prelim.html#probabilities"><i class="fa fa-check"></i><b>2.2.1</b> Probabilities</a></li>
+<li class="chapter" data-level="2.2.2" data-path="prelim.html"><a href="prelim.html#stationary-distribution"><i class="fa fa-check"></i><b>2.2.2</b> Stationary Distribution</a></li>
+<li class="chapter" data-level="2.2.3" data-path="prelim.html"><a href="prelim.html#tp"><i class="fa fa-check"></i><b>2.2.3</b> Transition Probabilities Estimation</a></li>
 </ul></li>
-<li class="chapter" data-level="1.3" data-path="prelim.html"><a href="prelim.html#exercises"><i class="fa fa-check"></i><b>1.3</b> Exercises</a></li>
-<li class="chapter" data-level="1.4" data-path="prelim.html"><a href="prelim.html#solutions"><i class="fa fa-check"></i><b>1.4</b> Solutions</a></li>
+<li class="chapter" data-level="2.3" data-path="prelim.html"><a href="prelim.html#exercises"><i class="fa fa-check"></i><b>2.3</b> Exercises</a></li>
+<li class="chapter" data-level="2.4" data-path="prelim.html"><a href="prelim.html#solutions"><i class="fa fa-check"></i><b>2.4</b> Solutions</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="introhmm.html"><a href="introhmm.html"><i class="fa fa-check"></i><b>2</b> Introduction to Hidden Markov Models</a>
+<li class="chapter" data-level="3" data-path="introhmm.html"><a href="introhmm.html"><i class="fa fa-check"></i><b>3</b> Introduction to Hidden Markov Models</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="introhmm.html"><a href="introhmm.html#sdd"><i class="fa fa-check"></i><b>2.1</b> State-Dependent Distributions</a></li>
-<li class="chapter" data-level="2.2" data-path="introhmm.html"><a href="introhmm.html#marginal-distributions"><i class="fa fa-check"></i><b>2.2</b> Marginal Distributions</a>
+<li class="chapter" data-level="3.1" data-path="introhmm.html"><a href="introhmm.html#sdd"><i class="fa fa-check"></i><b>3.1</b> State-Dependent Distributions</a></li>
+<li class="chapter" data-level="3.2" data-path="introhmm.html"><a href="introhmm.html#marginal-distributions"><i class="fa fa-check"></i><b>3.2</b> Marginal Distributions</a>
 <ul>
-<li class="chapter" data-level="2.2.1" data-path="introhmm.html"><a href="introhmm.html#univariate-case"><i class="fa fa-check"></i><b>2.2.1</b> Univariate Case</a></li>
-<li class="chapter" data-level="2.2.2" data-path="introhmm.html"><a href="introhmm.html#bivariate"><i class="fa fa-check"></i><b>2.2.2</b> Bivariate Case</a></li>
+<li class="chapter" data-level="3.2.1" data-path="introhmm.html"><a href="introhmm.html#univariate-case"><i class="fa fa-check"></i><b>3.2.1</b> Univariate Case</a></li>
+<li class="chapter" data-level="3.2.2" data-path="introhmm.html"><a href="introhmm.html#bivariate"><i class="fa fa-check"></i><b>3.2.2</b> Bivariate Case</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="introhmm.html"><a href="introhmm.html#moments"><i class="fa fa-check"></i><b>2.3</b> Moments</a>
+<li class="chapter" data-level="3.3" data-path="introhmm.html"><a href="introhmm.html#moments"><i class="fa fa-check"></i><b>3.3</b> Moments</a>
 <ul>
-<li class="chapter" data-level="2.3.1" data-path="introhmm.html"><a href="introhmm.html#univariate-case-1"><i class="fa fa-check"></i><b>2.3.1</b> Univariate Case</a></li>
-<li class="chapter" data-level="2.3.2" data-path="introhmm.html"><a href="introhmm.html#bivariate-case"><i class="fa fa-check"></i><b>2.3.2</b> Bivariate Case</a></li>
+<li class="chapter" data-level="3.3.1" data-path="introhmm.html"><a href="introhmm.html#univariate-case-1"><i class="fa fa-check"></i><b>3.3.1</b> Univariate Case</a></li>
+<li class="chapter" data-level="3.3.2" data-path="introhmm.html"><a href="introhmm.html#bivariate-case"><i class="fa fa-check"></i><b>3.3.2</b> Bivariate Case</a></li>
 </ul></li>
-<li class="chapter" data-level="2.4" data-path="introhmm.html"><a href="introhmm.html#lik"><i class="fa fa-check"></i><b>2.4</b> Likelihood of Hidden Markov Models</a>
+<li class="chapter" data-level="3.4" data-path="introhmm.html"><a href="introhmm.html#lik"><i class="fa fa-check"></i><b>3.4</b> Likelihood of Hidden Markov Models</a>
 <ul>
-<li class="chapter" data-level="2.4.1" data-path="introhmm.html"><a href="introhmm.html#forsec"><i class="fa fa-check"></i><b>2.4.1</b> Forward Algorithm</a></li>
+<li class="chapter" data-level="3.4.1" data-path="introhmm.html"><a href="introhmm.html#forsec"><i class="fa fa-check"></i><b>3.4.1</b> Forward Algorithm</a></li>
 </ul></li>
-<li class="chapter" data-level="2.5" data-path="introhmm.html"><a href="introhmm.html#exercises-1"><i class="fa fa-check"></i><b>2.5</b> Exercises</a></li>
-<li class="chapter" data-level="2.6" data-path="introhmm.html"><a href="introhmm.html#solutions-1"><i class="fa fa-check"></i><b>2.6</b> Solutions</a></li>
+<li class="chapter" data-level="3.5" data-path="introhmm.html"><a href="introhmm.html#exercises-1"><i class="fa fa-check"></i><b>3.5</b> Exercises</a></li>
+<li class="chapter" data-level="3.6" data-path="introhmm.html"><a href="introhmm.html#solutions-1"><i class="fa fa-check"></i><b>3.6</b> Solutions</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="numerical.html"><a href="numerical.html"><i class="fa fa-check"></i><b>3</b> Numerical Maximization of the Likelihood</a>
+<li class="chapter" data-level="4" data-path="numerical.html"><a href="numerical.html"><i class="fa fa-check"></i><b>4</b> Numerical Maximization of the Likelihood</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="numerical.html"><a href="numerical.html#likscale"><i class="fa fa-check"></i><b>3.1</b> Scaling the Likelihood Computation</a></li>
-<li class="chapter" data-level="3.2" data-path="numerical.html"><a href="numerical.html#reparam"><i class="fa fa-check"></i><b>3.2</b> Reparameterization to Avoid Constraints</a>
+<li class="chapter" data-level="4.1" data-path="numerical.html"><a href="numerical.html#likscale"><i class="fa fa-check"></i><b>4.1</b> Scaling the Likelihood Computation</a></li>
+<li class="chapter" data-level="4.2" data-path="numerical.html"><a href="numerical.html#reparam"><i class="fa fa-check"></i><b>4.2</b> Reparameterization to Avoid Constraints</a>
 <ul>
-<li class="chapter" data-level="3.2.1" data-path="numerical.html"><a href="numerical.html#transition-probabilities"><i class="fa fa-check"></i><b>3.2.1</b> Transition Probabilities</a></li>
-<li class="chapter" data-level="3.2.2" data-path="numerical.html"><a href="numerical.html#parameters-of-state-dependent-distributions"><i class="fa fa-check"></i><b>3.2.2</b> Parameters of State-Dependent Distributions</a></li>
-<li class="chapter" data-level="3.2.3" data-path="numerical.html"><a href="numerical.html#initial-probabilities"><i class="fa fa-check"></i><b>3.2.3</b> Initial Probabilities</a></li>
+<li class="chapter" data-level="4.2.1" data-path="numerical.html"><a href="numerical.html#transition-probabilities"><i class="fa fa-check"></i><b>4.2.1</b> Transition Probabilities</a></li>
+<li class="chapter" data-level="4.2.2" data-path="numerical.html"><a href="numerical.html#parameters-of-state-dependent-distributions"><i class="fa fa-check"></i><b>4.2.2</b> Parameters of State-Dependent Distributions</a></li>
+<li class="chapter" data-level="4.2.3" data-path="numerical.html"><a href="numerical.html#initial-probabilities"><i class="fa fa-check"></i><b>4.2.3</b> Initial Probabilities</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="numerical.html"><a href="numerical.html#startval"><i class="fa fa-check"></i><b>3.3</b> Strategies for Choosing Starting Values</a></li>
-<li class="chapter" data-level="3.4" data-path="numerical.html"><a href="numerical.html#boot"><i class="fa fa-check"></i><b>3.4</b> Obtaining Standard Errors and Confidence Intervals</a></li>
-<li class="chapter" data-level="3.5" data-path="numerical.html"><a href="numerical.html#exercises-2"><i class="fa fa-check"></i><b>3.5</b> Exercises</a></li>
-<li class="chapter" data-level="3.6" data-path="numerical.html"><a href="numerical.html#solutions-2"><i class="fa fa-check"></i><b>3.6</b> Solutions</a></li>
+<li class="chapter" data-level="4.3" data-path="numerical.html"><a href="numerical.html#startval"><i class="fa fa-check"></i><b>4.3</b> Strategies for Choosing Starting Values</a></li>
+<li class="chapter" data-level="4.4" data-path="numerical.html"><a href="numerical.html#boot"><i class="fa fa-check"></i><b>4.4</b> Obtaining Standard Errors and Confidence Intervals</a></li>
+<li class="chapter" data-level="4.5" data-path="numerical.html"><a href="numerical.html#exercises-2"><i class="fa fa-check"></i><b>4.5</b> Exercises</a></li>
+<li class="chapter" data-level="4.6" data-path="numerical.html"><a href="numerical.html#solutions-2"><i class="fa fa-check"></i><b>4.6</b> Solutions</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="fbalg.html"><a href="fbalg.html"><i class="fa fa-check"></i><b>4</b> The Forward and Backward Algorithm</a>
+<li class="chapter" data-level="5" data-path="fbalg.html"><a href="fbalg.html"><i class="fa fa-check"></i><b>5</b> The Forward and Backward Algorithm</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="fbalg.html"><a href="fbalg.html#forward-and-backward-probabilities"><i class="fa fa-check"></i><b>4.1</b> Forward and Backward Probabilities</a></li>
-<li class="chapter" data-level="4.2" data-path="fbalg.html"><a href="fbalg.html#properties-of-hmms"><i class="fa fa-check"></i><b>4.2</b> Properties of HMMs</a>
+<li class="chapter" data-level="5.1" data-path="fbalg.html"><a href="fbalg.html#forward-and-backward-probabilities"><i class="fa fa-check"></i><b>5.1</b> Forward and Backward Probabilities</a></li>
+<li class="chapter" data-level="5.2" data-path="fbalg.html"><a href="fbalg.html#properties-of-hmms"><i class="fa fa-check"></i><b>5.2</b> Properties of HMMs</a>
 <ul>
-<li class="chapter" data-level="4.2.1" data-path="fbalg.html"><a href="fbalg.html#property"><i class="fa fa-check"></i><b>4.2.1</b> Property</a></li>
-<li class="chapter" data-level="4.2.2" data-path="fbalg.html"><a href="fbalg.html#property-1"><i class="fa fa-check"></i><b>4.2.2</b> Property</a></li>
-<li class="chapter" data-level="4.2.3" data-path="fbalg.html"><a href="fbalg.html#property-2"><i class="fa fa-check"></i><b>4.2.3</b> Property</a></li>
-<li class="chapter" data-level="4.2.4" data-path="fbalg.html"><a href="fbalg.html#property-3"><i class="fa fa-check"></i><b>4.2.4</b> Property</a></li>
-<li class="chapter" data-level="4.2.5" data-path="fbalg.html"><a href="fbalg.html#property-4"><i class="fa fa-check"></i><b>4.2.5</b> Property</a></li>
+<li class="chapter" data-level="5.2.1" data-path="fbalg.html"><a href="fbalg.html#property"><i class="fa fa-check"></i><b>5.2.1</b> Property</a></li>
+<li class="chapter" data-level="5.2.2" data-path="fbalg.html"><a href="fbalg.html#property-1"><i class="fa fa-check"></i><b>5.2.2</b> Property</a></li>
+<li class="chapter" data-level="5.2.3" data-path="fbalg.html"><a href="fbalg.html#property-2"><i class="fa fa-check"></i><b>5.2.3</b> Property</a></li>
+<li class="chapter" data-level="5.2.4" data-path="fbalg.html"><a href="fbalg.html#property-3"><i class="fa fa-check"></i><b>5.2.4</b> Property</a></li>
+<li class="chapter" data-level="5.2.5" data-path="fbalg.html"><a href="fbalg.html#property-4"><i class="fa fa-check"></i><b>5.2.5</b> Property</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="fbalg.html"><a href="fbalg.html#forward-probabilities-as-joint-probabilities"><i class="fa fa-check"></i><b>4.3</b> Forward Probabilities as Joint Probabilities</a></li>
-<li class="chapter" data-level="4.4" data-path="fbalg.html"><a href="fbalg.html#backward-probabilities-as-conditional-probabilities"><i class="fa fa-check"></i><b>4.4</b> Backward Probabilities as Conditional Probabilities</a></li>
+<li class="chapter" data-level="5.3" data-path="fbalg.html"><a href="fbalg.html#forward-probabilities-as-joint-probabilities"><i class="fa fa-check"></i><b>5.3</b> Forward Probabilities as Joint Probabilities</a></li>
+<li class="chapter" data-level="5.4" data-path="fbalg.html"><a href="fbalg.html#backward-probabilities-as-conditional-probabilities"><i class="fa fa-check"></i><b>5.4</b> Backward Probabilities as Conditional Probabilities</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="em.html"><a href="em.html"><i class="fa fa-check"></i><b>5</b> Expectation-Maximization Algorithm (Baum-Welch)</a>
+<li class="chapter" data-level="6" data-path="em.html"><a href="em.html"><i class="fa fa-check"></i><b>6</b> Expectation-Maximization Algorithm (Baum-Welch)</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="em.html"><a href="em.html#em-algorithm-general"><i class="fa fa-check"></i><b>5.1</b> EM Algorithm (General)</a></li>
-<li class="chapter" data-level="5.2" data-path="em.html"><a href="em.html#em-algorithm-for-hmms"><i class="fa fa-check"></i><b>5.2</b> EM Algorithm (for HMMs)</a>
+<li class="chapter" data-level="6.1" data-path="em.html"><a href="em.html#em-algorithm-general"><i class="fa fa-check"></i><b>6.1</b> EM Algorithm (General)</a></li>
+<li class="chapter" data-level="6.2" data-path="em.html"><a href="em.html#em-algorithm-for-hmms"><i class="fa fa-check"></i><b>6.2</b> EM Algorithm (for HMMs)</a>
 <ul>
-<li class="chapter" data-level="5.2.1" data-path="em.html"><a href="em.html#stationary-markov-chain"><i class="fa fa-check"></i><b>5.2.1</b> Stationary Markov Chain</a></li>
+<li class="chapter" data-level="6.2.1" data-path="em.html"><a href="em.html#stationary-markov-chain"><i class="fa fa-check"></i><b>6.2.1</b> Stationary Markov Chain</a></li>
 </ul></li>
-<li class="chapter" data-level="5.3" data-path="em.html"><a href="em.html#exercises-3"><i class="fa fa-check"></i><b>5.3</b> Exercises</a></li>
-<li class="chapter" data-level="5.4" data-path="em.html"><a href="em.html#solutions-3"><i class="fa fa-check"></i><b>5.4</b> Solutions</a></li>
+<li class="chapter" data-level="6.3" data-path="em.html"><a href="em.html#exercises-3"><i class="fa fa-check"></i><b>6.3</b> Exercises</a></li>
+<li class="chapter" data-level="6.4" data-path="em.html"><a href="em.html#solutions-3"><i class="fa fa-check"></i><b>6.4</b> Solutions</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="fdp.html"><a href="fdp.html"><i class="fa fa-check"></i><b>6</b> Forecasting, Decoding, and State Prediction</a>
+<li class="chapter" data-level="7" data-path="fdp.html"><a href="fdp.html"><i class="fa fa-check"></i><b>7</b> Forecasting, Decoding, and State Prediction</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="fdp.html"><a href="fdp.html#conditional-distribution"><i class="fa fa-check"></i><b>6.1</b> Conditional Distribution</a>
+<li class="chapter" data-level="7.1" data-path="fdp.html"><a href="fdp.html#conditional-distribution"><i class="fa fa-check"></i><b>7.1</b> Conditional Distribution</a>
 <ul>
-<li class="chapter" data-level="6.1.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities"><i class="fa fa-check"></i><b>6.1.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+<li class="chapter" data-level="7.1.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities"><i class="fa fa-check"></i><b>7.1.1</b> As Mixtures of State-Dependent Probabilities</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="fdp.html"><a href="fdp.html#forecast-distributions"><i class="fa fa-check"></i><b>6.2</b> Forecast Distributions</a>
+<li class="chapter" data-level="7.2" data-path="fdp.html"><a href="fdp.html#forecast-distributions"><i class="fa fa-check"></i><b>7.2</b> Forecast Distributions</a>
 <ul>
-<li class="chapter" data-level="6.2.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities-1"><i class="fa fa-check"></i><b>6.2.1</b> As Mixtures of State-Dependent Probabilities</a></li>
-<li class="chapter" data-level="6.2.2" data-path="fdp.html"><a href="fdp.html#forecast-distribution-in-the-limit"><i class="fa fa-check"></i><b>6.2.2</b> Forecast Distribution in the Limit</a></li>
+<li class="chapter" data-level="7.2.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities-1"><i class="fa fa-check"></i><b>7.2.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+<li class="chapter" data-level="7.2.2" data-path="fdp.html"><a href="fdp.html#forecast-distribution-in-the-limit"><i class="fa fa-check"></i><b>7.2.2</b> Forecast Distribution in the Limit</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="fdp.html"><a href="fdp.html#decoding"><i class="fa fa-check"></i><b>6.3</b> Decoding</a>
+<li class="chapter" data-level="7.3" data-path="fdp.html"><a href="fdp.html#decoding"><i class="fa fa-check"></i><b>7.3</b> Decoding</a>
 <ul>
-<li class="chapter" data-level="6.3.1" data-path="fdp.html"><a href="fdp.html#local-decoding"><i class="fa fa-check"></i><b>6.3.1</b> Local Decoding</a></li>
-<li class="chapter" data-level="6.3.2" data-path="fdp.html"><a href="fdp.html#global-decoding"><i class="fa fa-check"></i><b>6.3.2</b> Global Decoding</a></li>
+<li class="chapter" data-level="7.3.1" data-path="fdp.html"><a href="fdp.html#local-decoding"><i class="fa fa-check"></i><b>7.3.1</b> Local Decoding</a></li>
+<li class="chapter" data-level="7.3.2" data-path="fdp.html"><a href="fdp.html#global-decoding"><i class="fa fa-check"></i><b>7.3.2</b> Global Decoding</a></li>
 </ul></li>
-<li class="chapter" data-level="6.4" data-path="fdp.html"><a href="fdp.html#state-prediction"><i class="fa fa-check"></i><b>6.4</b> State Prediction</a></li>
-<li class="chapter" data-level="6.5" data-path="fdp.html"><a href="fdp.html#exercises-4"><i class="fa fa-check"></i><b>6.5</b> Exercises</a></li>
-<li class="chapter" data-level="6.6" data-path="fdp.html"><a href="fdp.html#solutions-4"><i class="fa fa-check"></i><b>6.6</b> Solutions</a></li>
+<li class="chapter" data-level="7.4" data-path="fdp.html"><a href="fdp.html#state-prediction"><i class="fa fa-check"></i><b>7.4</b> State Prediction</a></li>
+<li class="chapter" data-level="7.5" data-path="fdp.html"><a href="fdp.html#exercises-4"><i class="fa fa-check"></i><b>7.5</b> Exercises</a></li>
+<li class="chapter" data-level="7.6" data-path="fdp.html"><a href="fdp.html#solutions-4"><i class="fa fa-check"></i><b>7.6</b> Solutions</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html"><i class="fa fa-check"></i><b>7</b> Bayesian Inference for HMMs</a>
+<li class="chapter" data-level="8" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html"><i class="fa fa-check"></i><b>8</b> Bayesian Inference for HMMs</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching"><i class="fa fa-check"></i><b>7.1</b> Reparameterization to Avoid Label Switching</a></li>
-<li class="chapter" data-level="7.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure"><i class="fa fa-check"></i><b>7.2</b> Gibbs Sampling Procedure</a>
+<li class="chapter" data-level="8.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching"><i class="fa fa-check"></i><b>8.1</b> Reparameterization to Avoid Label Switching</a></li>
+<li class="chapter" data-level="8.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure"><i class="fa fa-check"></i><b>8.2</b> Gibbs Sampling Procedure</a>
 <ul>
-<li class="chapter" data-level="7.2.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gen"><i class="fa fa-check"></i><b>7.2.1</b> Generating Sample Paths of the MC</a></li>
-<li class="chapter" data-level="7.2.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#decom"><i class="fa fa-check"></i><b>7.2.2</b> Decomposing the Observed Counts into Regime Contributions</a></li>
-<li class="chapter" data-level="7.2.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#updating-the-parameters"><i class="fa fa-check"></i><b>7.2.3</b> Updating the Parameters</a></li>
-<li class="chapter" data-level="7.2.4" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#repeat-the-above"><i class="fa fa-check"></i><b>7.2.4</b> Repeat the Above</a></li>
+<li class="chapter" data-level="8.2.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gen"><i class="fa fa-check"></i><b>8.2.1</b> Generating Sample Paths of the MC</a></li>
+<li class="chapter" data-level="8.2.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#decom"><i class="fa fa-check"></i><b>8.2.2</b> Decomposing the Observed Counts into Regime Contributions</a></li>
+<li class="chapter" data-level="8.2.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#updating-the-parameters"><i class="fa fa-check"></i><b>8.2.3</b> Updating the Parameters</a></li>
+<li class="chapter" data-level="8.2.4" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#repeat-the-above"><i class="fa fa-check"></i><b>8.2.4</b> Repeat the Above</a></li>
 </ul></li>
-<li class="chapter" data-level="7.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#exercises-5"><i class="fa fa-check"></i><b>7.3</b> Exercises</a></li>
+<li class="chapter" data-level="8.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#exercises-5"><i class="fa fa-check"></i><b>8.3</b> Exercises</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="eq.html"><a href="eq.html"><i class="fa fa-check"></i><b>8</b> Major Earthquake Analysis</a>
+<li class="chapter" data-level="9" data-path="eq.html"><a href="eq.html"><i class="fa fa-check"></i><b>9</b> Major Earthquake Analysis</a>
 <ul>
-<li class="chapter" data-level="8.0.1" data-path="eq.html"><a href="eq.html#fitting-a-poisson-mixture-distribution"><i class="fa fa-check"></i><b>8.0.1</b> Fitting a Poisson Mixture Distribution</a></li>
-<li class="chapter" data-level="8.0.2" data-path="eq.html"><a href="eq.html#fitting-a-poisson-hmm-by-numerical-maximization"><i class="fa fa-check"></i><b>8.0.2</b> Fitting a Poisson-HMM by Numerical Maximization</a></li>
-<li class="chapter" data-level="8.0.3" data-path="eq.html"><a href="eq.html#fitting-a-poisson-hmm-by-the-em-algorithm"><i class="fa fa-check"></i><b>8.0.3</b> Fitting a Poisson-HMM by the EM Algorithm</a></li>
-<li class="chapter" data-level="8.0.4" data-path="eq.html"><a href="eq.html#forecasting-decoding-and-state-prediction"><i class="fa fa-check"></i><b>8.0.4</b> Forecasting, Decoding, and State Prediction</a></li>
-<li class="chapter" data-level="8.1" data-path="eq.html"><a href="eq.html#bayesian-inference-in-stan"><i class="fa fa-check"></i><b>8.1</b> Bayesian Inference in STAN</a></li>
+<li class="chapter" data-level="9.0.1" data-path="eq.html"><a href="eq.html#fitting-a-poisson-mixture-distribution"><i class="fa fa-check"></i><b>9.0.1</b> Fitting a Poisson Mixture Distribution</a></li>
+<li class="chapter" data-level="9.0.2" data-path="eq.html"><a href="eq.html#fitting-a-poisson-hmm-by-numerical-maximization"><i class="fa fa-check"></i><b>9.0.2</b> Fitting a Poisson-HMM by Numerical Maximization</a></li>
+<li class="chapter" data-level="9.0.3" data-path="eq.html"><a href="eq.html#fitting-a-poisson-hmm-by-the-em-algorithm"><i class="fa fa-check"></i><b>9.0.3</b> Fitting a Poisson-HMM by the EM Algorithm</a></li>
+<li class="chapter" data-level="9.0.4" data-path="eq.html"><a href="eq.html#forecasting-decoding-and-state-prediction"><i class="fa fa-check"></i><b>9.0.4</b> Forecasting, Decoding, and State Prediction</a></li>
+<li class="chapter" data-level="9.1" data-path="eq.html"><a href="eq.html#bayesian-inference-in-stan"><i class="fa fa-check"></i><b>9.1</b> Bayesian Inference in STAN</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>9</b> Appendix</a></li>
+<li class="chapter" data-level="10" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>10</b> Appendix</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -278,26 +301,26 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="eq" class="section level1 hasAnchor" number="8">
-<h1><span class="header-section-number">Chapter 8</span> Major Earthquake Analysis<a href="eq.html#eq" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="eq" class="section level1 hasAnchor" number="9">
+<h1><span class="header-section-number">Chapter 9</span> Major Earthquake Analysis<a href="eq.html#eq" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>We apply the concepts in the earlier chapters to the series of annual counts of major earthquakes (i.e. magnitude 7 and above) dataset from the textbook.</p>
 <p>The data can be read into <strong>R</strong></p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="eq.html#cb23-1" aria-hidden="true" tabindex="-1"></a>eq_dat <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;http://www.hmms-for-time-series.de/second/data/earthquakes.txt&quot;</span>)</span></code></pre></div>
 <div class="figure"><span style="display:block;" id="fig:e1"></span>
 <img src="08-earthquake-example_files/figure-html/e1-1.png" alt="Number of major earthquakes worldwide from 1900-2006." width="672" />
 <p class="caption">
-Figure 8.1: Number of major earthquakes worldwide from 1900-2006.
+Figure 9.1: Number of major earthquakes worldwide from 1900-2006.
 </p>
 </div>
 <div class="figure"><span style="display:block;" id="fig:e2"></span>
 <img src="08-earthquake-example_files/figure-html/e2-1.png" alt="Histogram of major earthquakes overlaid with a Poisson density of mean equal to the observed counts." width="672" />
 <p class="caption">
-Figure 8.2: Histogram of major earthquakes overlaid with a Poisson density of mean equal to the observed counts.
+Figure 9.2: Histogram of major earthquakes overlaid with a Poisson density of mean equal to the observed counts.
 </p>
 </div>
 <table class=" lightable-minimal" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-<span id="tab:e4">Table 8.1: </span>Summary of the major earthquakes.
+<span id="tab:e4">Table 9.1: </span>Summary of the major earthquakes.
 </caption>
 <thead>
 <tr>
@@ -320,10 +343,10 @@ variance
 </tr>
 </tbody>
 </table>
-<div id="fitting-a-poisson-mixture-distribution" class="section level3 hasAnchor" number="8.0.1">
-<h3><span class="header-section-number">8.0.1</span> Fitting a Poisson Mixture Distribution<a href="eq.html#fitting-a-poisson-mixture-distribution" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="fitting-a-poisson-mixture-distribution" class="section level3 hasAnchor" number="9.0.1">
+<h3><span class="header-section-number">9.0.1</span> Fitting a Poisson Mixture Distribution<a href="eq.html#fitting-a-poisson-mixture-distribution" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Note:</strong> See <a href="prelim.html#prelim">Preliminaries</a></p>
-<p>We may consider fitting a Poisson mixture distribution since earthquake counts are unbounded and there appears to be overdispersion as evident by the multimodal peaks in Figure <a href="eq.html#fig:e2">8.2</a> and sample variance <span class="math inline">\(s^2 \approx 52 &gt; 19 \approx \bar{x}\)</span> in Table <a href="eq.html#tab:e4">8.1</a>.</p>
+<p>We may consider fitting a Poisson mixture distribution since earthquake counts are unbounded and there appears to be overdispersion as evident by the multimodal peaks in Figure <a href="eq.html#fig:e2">9.2</a> and sample variance <span class="math inline">\(s^2 \approx 52 &gt; 19 \approx \bar{x}\)</span> in Table <a href="eq.html#tab:e4">9.1</a>.</p>
 <p>Suppose <span class="math inline">\(m=3\)</span> and the three components are Poisson-distributed with means <span class="math inline">\(\lambda_1, \lambda_2\)</span>, and <span class="math inline">\(\lambda_3\)</span>. Let <span class="math inline">\(\delta_1\)</span>, <span class="math inline">\(\delta_2\)</span>, and <span class="math inline">\(\delta_3\)</span> be the respective mixing parameters. The mixture distribution <span class="math inline">\(p\)</span> is given by</p>
 <p><span class="math display">\[p(x) = \delta_1 \frac{\lambda_1^x e^{-\lambda_1}}{x!} + \delta_2 \frac{\lambda_2^x e^{-\lambda_2}}{x!} + \delta_3 \frac{\lambda_3^x e^{-\lambda_3}}{x!}\]</span></p>
 <p>The likelihood is given by</p>
@@ -348,7 +371,7 @@ variance
 <p>we obtain the following parameter estimates</p>
 <table class=" lightable-minimal" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-<span id="tab:unnamed-chunk-8">Table 8.2: </span>Parameter estimates for the fitted three component Poisson independent mixture model.
+<span id="tab:unnamed-chunk-8">Table 9.2: </span>Parameter estimates for the fitted three component Poisson independent mixture model.
 </caption>
 <thead>
 <tr>
@@ -392,16 +415,16 @@ delta
 <pre><code>## [1] 356.8489</code></pre>
 <p><strong>Note:</strong> See Table 1.2 and Figure 1.4 of the textbook for a comparison of fitted mixture models with varying number of components.</p>
 </div>
-<div id="fitting-a-poisson-hmm-by-numerical-maximization" class="section level3 hasAnchor" number="8.0.2">
-<h3><span class="header-section-number">8.0.2</span> Fitting a Poisson-HMM by Numerical Maximization<a href="eq.html#fitting-a-poisson-hmm-by-numerical-maximization" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="fitting-a-poisson-hmm-by-numerical-maximization" class="section level3 hasAnchor" number="9.0.2">
+<h3><span class="header-section-number">9.0.2</span> Fitting a Poisson-HMM by Numerical Maximization<a href="eq.html#fitting-a-poisson-hmm-by-numerical-maximization" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Note:</strong> See <a href="introhmm.html#introhmm">Introduction to Hidden Markov Models</a> and Appendix A of the textbook.</p>
 <div class="figure"><span style="display:block;" id="fig:acf"></span>
 <img src="08-earthquake-example_files/figure-html/acf-1.png" alt="Autocorrelation plot for major earthquakes." width="672" />
 <p class="caption">
-Figure 8.3: Autocorrelation plot for major earthquakes.
+Figure 9.3: Autocorrelation plot for major earthquakes.
 </p>
 </div>
-<p>Instead of fitting an (independent) Poisson mixture distribution, we may consider fitting a Poisson-HMM to account for the strong, positive serial dependence as evident in Figure <a href="eq.html#fig:acf">8.3</a>.</p>
+<p>Instead of fitting an (independent) Poisson mixture distribution, we may consider fitting a Poisson-HMM to account for the strong, positive serial dependence as evident in Figure <a href="eq.html#fig:acf">9.3</a>.</p>
 <p><strong>Step 1:</strong> Reparameterize the “natural parameters” <span class="math inline">\(\boldsymbol{\Gamma}, \boldsymbol{\lambda}\)</span>, and <span class="math inline">\(\boldsymbol{\delta}\)</span> to the “working parameters”.</p>
 <p>Set
 <span class="math display">\[\eta_i = \log \lambda_i \qquad{(i = 1, \dots, m)}\]</span></p>
@@ -661,7 +684,7 @@ l &amp;\leftarrow l + \log u\\
 <span id="cb46-30"><a href="eq.html#cb46-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_minimal</span>(<span class="at">full_width=</span>T)</span></code></pre></div>
 <table class=" lightable-minimal" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-<span id="tab:unnamed-chunk-23">Table 8.3: </span>Bootstrap 90% Confidence Intervals for the parameters of the three-state HMM.
+<span id="tab:unnamed-chunk-23">Table 9.3: </span>Bootstrap 90% Confidence Intervals for the parameters of the three-state HMM.
 </caption>
 <thead>
 <tr>
@@ -846,19 +869,19 @@ delta3
 <div class="figure"><span style="display:block;" id="fig:boot"></span>
 <img src="08-earthquake-example_files/figure-html/boot-1.png" alt="500 Bootstrap samples for the state-dependent parameters of the fitted three-state Poisson-HMM. The area within the red dotted lines correspond to the 90% confidence interval." width="672" />
 <p class="caption">
-Figure 8.4: 500 Bootstrap samples for the state-dependent parameters of the fitted three-state Poisson-HMM. The area within the red dotted lines correspond to the 90% confidence interval.
+Figure 9.4: 500 Bootstrap samples for the state-dependent parameters of the fitted three-state Poisson-HMM. The area within the red dotted lines correspond to the 90% confidence interval.
 </p>
 </div>
 <div class="figure"><span style="display:block;" id="fig:boot3"></span>
 <img src="08-earthquake-example_files/figure-html/boot3-1.png" alt="500 Bootstrap samples for the initial probabilities of the fitted three-state Poisson-HMM. The area within the red dotted lines correspond to the 90% confidence interval." width="672" />
 <p class="caption">
-Figure 8.5: 500 Bootstrap samples for the initial probabilities of the fitted three-state Poisson-HMM. The area within the red dotted lines correspond to the 90% confidence interval.
+Figure 9.5: 500 Bootstrap samples for the initial probabilities of the fitted three-state Poisson-HMM. The area within the red dotted lines correspond to the 90% confidence interval.
 </p>
 </div>
 <div class="figure"><span style="display:block;" id="fig:boot2"></span>
 <img src="08-earthquake-example_files/figure-html/boot2-1.png" alt="500 Bootstrap samples for the transition probabilities of the fitted three-state Poisson-HMM. The area within the red dotted lines correspond to the 90% confidence interval." width="672" />
 <p class="caption">
-Figure 8.6: 500 Bootstrap samples for the transition probabilities of the fitted three-state Poisson-HMM. The area within the red dotted lines correspond to the 90% confidence interval.
+Figure 9.6: 500 Bootstrap samples for the transition probabilities of the fitted three-state Poisson-HMM. The area within the red dotted lines correspond to the 90% confidence interval.
 </p>
 </div>
 <p>We can also fit the three-state Poisson-HMM from the above using the <code>momentuHMM</code> package.</p>
@@ -914,8 +937,8 @@ Figure 8.6: 500 Bootstrap samples for the transition probabilities of the fitted
 <pre><code>## Decoding state sequence... DONE</code></pre>
 <p><img src="08-earthquake-example_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 </div>
-<div id="fitting-a-poisson-hmm-by-the-em-algorithm" class="section level3 hasAnchor" number="8.0.3">
-<h3><span class="header-section-number">8.0.3</span> Fitting a Poisson-HMM by the EM Algorithm<a href="eq.html#fitting-a-poisson-hmm-by-the-em-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="fitting-a-poisson-hmm-by-the-em-algorithm" class="section level3 hasAnchor" number="9.0.3">
+<h3><span class="header-section-number">9.0.3</span> Fitting a Poisson-HMM by the EM Algorithm<a href="eq.html#fitting-a-poisson-hmm-by-the-em-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Note:</strong> See <a href="em.html#em">EM Algorithm (Baum-Welch)</a></p>
 <p>Alternatively, we may obtain MLEs of the three-state Poisson HMM by the EM algorithm.</p>
 <p><strong>E-Step</strong> Replace all quantities <span class="math inline">\(v_jk (t)\)</span>, <span class="math inline">\(u_j (t)\)</span> by their conditional expectations given the observations <span class="math inline">\(\boldsymbol{x}^(T)\)</span> and current parameter estimates:</p>
@@ -1082,11 +1105,11 @@ l &amp; \leftarrow l + \log u
 ## $delta
 ## [1]  1.000000e+00  3.977303e-84 2.817232e-235</code></pre>
 </div>
-<div id="forecasting-decoding-and-state-prediction" class="section level3 hasAnchor" number="8.0.4">
-<h3><span class="header-section-number">8.0.4</span> Forecasting, Decoding, and State Prediction<a href="eq.html#forecasting-decoding-and-state-prediction" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="forecasting-decoding-and-state-prediction" class="section level3 hasAnchor" number="9.0.4">
+<h3><span class="header-section-number">9.0.4</span> Forecasting, Decoding, and State Prediction<a href="eq.html#forecasting-decoding-and-state-prediction" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Note:</strong> See <a href="fdp.html#fdp">Forecasting, Decoding, and State Prediction</a>.</p>
-<div id="forecasting" class="section level4 hasAnchor" number="8.0.4.1">
-<h4><span class="header-section-number">8.0.4.1</span> Forecasting<a href="eq.html#forecasting" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="forecasting" class="section level4 hasAnchor" number="9.0.4.1">
+<h4><span class="header-section-number">9.0.4.1</span> Forecasting<a href="eq.html#forecasting" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The forecast probabilities <span class="math inline">\(\Pr(X_{T+h} = x|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})\)</span> can be computed by</p>
 <div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="eq.html#cb58-1" aria-hidden="true" tabindex="-1"></a>pois.HMM.forecast <span class="ot">&lt;-</span> <span class="cf">function</span>(xf,<span class="at">h=</span><span class="dv">1</span>,x,mod)</span>
 <span id="cb58-2"><a href="eq.html#cb58-2" aria-hidden="true" tabindex="-1"></a>{</span>
@@ -1116,12 +1139,12 @@ l &amp; \leftarrow l + \log u
 <div class="figure"><span style="display:block;" id="fig:forecastfour"></span>
 <img src="08-earthquake-example_files/figure-html/forecastfour-1.png" alt="Forecast probabilities for the fitted three-state Poisson-HMM for 1 to 4 years ahead." width="672" />
 <p class="caption">
-Figure 8.7: Forecast probabilities for the fitted three-state Poisson-HMM for 1 to 4 years ahead.
+Figure 9.7: Forecast probabilities for the fitted three-state Poisson-HMM for 1 to 4 years ahead.
 </p>
 </div>
 </div>
-<div id="decoding-1" class="section level4 hasAnchor" number="8.0.4.2">
-<h4><span class="header-section-number">8.0.4.2</span> Decoding<a href="eq.html#decoding-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="decoding-1" class="section level4 hasAnchor" number="9.0.4.2">
+<h4><span class="header-section-number">9.0.4.2</span> Decoding<a href="eq.html#decoding-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Local decoding can be computed using the forward and backward algorithms from above. Similar to computing <span class="math inline">\(\hat{u}\)</span> in the <strong>E step</strong> of the EM algorithm, the <code>pois.HMM.state_probs</code> computes the state probabilities then <code>pois.HMM.local_decoding</code> determines the most likely state at each time.</p>
 <div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="eq.html#cb59-1" aria-hidden="true" tabindex="-1"></a>pois.HMM.state_probs <span class="ot">&lt;-</span> <span class="cf">function</span>(x,mod)</span>
 <span id="cb59-2"><a href="eq.html#cb59-2" aria-hidden="true" tabindex="-1"></a>{</span>
@@ -1152,7 +1175,7 @@ Figure 8.7: Forecast probabilities for the fitted three-state Poisson-HMM for 1 
 <div class="figure"><span style="display:block;" id="fig:local"></span>
 <img src="08-earthquake-example_files/figure-html/local-1.png" alt="Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time." width="672" />
 <p class="caption">
-Figure 8.8: Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time.
+Figure 9.8: Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time.
 </p>
 </div>
 <p>We can also perform local decoding using <code>momentuHMM</code></p>
@@ -1170,7 +1193,7 @@ Figure 8.8: Local decoding for the three-state Poisson-HMM. The horizontal lines
 <div class="figure"><span style="display:block;" id="fig:comparelocal"></span>
 <img src="08-earthquake-example_files/figure-html/comparelocal-1.png" alt="Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time using  pois.HMM.local_decoding (purple) and momentuHMM (orange)." width="672" />
 <p class="caption">
-Figure 8.9: Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time using pois.HMM.local_decoding (purple) and momentuHMM (orange).
+Figure 9.9: Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time using pois.HMM.local_decoding (purple) and momentuHMM (orange).
 </p>
 </div>
 <p>Global decoding can be computed using the Viterbi algorithm</p>
@@ -1199,13 +1222,13 @@ Figure 8.9: Local decoding for the three-state Poisson-HMM. The horizontal lines
 <div class="figure"><span style="display:block;" id="fig:global"></span>
 <img src="08-earthquake-example_files/figure-html/global-1.png" alt="Global decoding for the three-state Poisson-HMM." width="672" />
 <p class="caption">
-Figure 8.10: Global decoding for the three-state Poisson-HMM.
+Figure 9.10: Global decoding for the three-state Poisson-HMM.
 </p>
 </div>
 <div class="figure"><span style="display:block;" id="fig:comparelg"></span>
 <img src="08-earthquake-example_files/figure-html/comparelg-1.png" alt="Global (green) and local (brown) decoding for the three-state Poisson-HMM." width="672" />
 <p class="caption">
-Figure 8.11: Global (green) and local (brown) decoding for the three-state Poisson-HMM.
+Figure 9.11: Global (green) and local (brown) decoding for the three-state Poisson-HMM.
 </p>
 </div>
 <p>The result of local and global decoding are very similar but not identical.</p>
@@ -1221,14 +1244,14 @@ Figure 8.11: Global (green) and local (brown) decoding for the three-state Poiss
 <div class="figure"><span style="display:block;" id="fig:compareglobal"></span>
 <img src="08-earthquake-example_files/figure-html/compareglobal-1.png" alt="Global decoding for the three-state Poisson-HMM using  pois.HMM.gocal_decoding (purple) and momentuHMM (orange)." width="672" />
 <p class="caption">
-Figure 8.12: Global decoding for the three-state Poisson-HMM using pois.HMM.gocal_decoding (purple) and momentuHMM (orange).
+Figure 9.12: Global decoding for the three-state Poisson-HMM using pois.HMM.gocal_decoding (purple) and momentuHMM (orange).
 </p>
 </div>
 <p>There appears to be some differences between the results obtained from our function and from <code>momentuHMM</code>.</p>
 <p><strong>Note:</strong> In both cases, the MC does not assume stationarity and the initial distribution is <span class="math inline">\(\boldsymbol{\delta} = (1/3, 1/3, 1/3)\)</span>.</p>
 </div>
-<div id="state-predictions" class="section level4 hasAnchor" number="8.0.4.3">
-<h4><span class="header-section-number">8.0.4.3</span> State Predictions<a href="eq.html#state-predictions" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="state-predictions" class="section level4 hasAnchor" number="9.0.4.3">
+<h4><span class="header-section-number">9.0.4.3</span> State Predictions<a href="eq.html#state-predictions" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The state prediction for <span class="math inline">\(h\)</span> steps ahead can be computed by</p>
 <div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="eq.html#cb71-1" aria-hidden="true" tabindex="-1"></a>pois.HMM.state_prediction <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">h=</span><span class="dv">1</span>,x,mod)</span>
 <span id="cb71-2"><a href="eq.html#cb71-2" aria-hidden="true" tabindex="-1"></a>{</span>
@@ -1257,8 +1280,8 @@ Figure 8.12: Global decoding for the three-state Poisson-HMM using pois.HMM.goca
 <p>Notice that as <span class="math inline">\(h \rightarrow \infty\)</span>, the state distribution approaches the stationary distribution.</p>
 </div>
 </div>
-<div id="bayesian-inference-in-stan" class="section level2 hasAnchor" number="8.1">
-<h2><span class="header-section-number">8.1</span> Bayesian Inference in STAN<a href="eq.html#bayesian-inference-in-stan" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="bayesian-inference-in-stan" class="section level2 hasAnchor" number="9.1">
+<h2><span class="header-section-number">9.1</span> Bayesian Inference in STAN<a href="eq.html#bayesian-inference-in-stan" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>We can fit the three-state Poisson-HMM to the earthquake data using R-STAN.</p>
 <div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="eq.html#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstan)</span>
 <span id="cb76-2"><a href="eq.html#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span>
@@ -1322,33 +1345,11 @@ Figure 8.12: Global decoding for the three-state Poisson-HMM using pois.HMM.goca
 <span id="cb77-57"><a href="eq.html#cb77-57" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span></span></code></pre></div>
 <p>We first run 2000 iterations for each for each of the 4 chains, with the first 1000 draws drawn during the warm-up phase</p>
 <div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="eq.html#cb78-1" aria-hidden="true" tabindex="-1"></a>pois.HMM.stanfit <span class="ot">&lt;-</span> <span class="fu">stan</span>(<span class="at">model_code =</span> pois.HMM.stan, <span class="at">data =</span> stan_data, <span class="at">refresh=</span><span class="dv">2000</span>)</span></code></pre></div>
-<pre><code>## Trying to compile a simple C file</code></pre>
-<pre><code>## Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-## clang -arch arm64 -I&quot;/Library/Frameworks/R.framework/Resources/include&quot; -DNDEBUG   -I&quot;/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/Rcpp/include/&quot;  -I&quot;/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/&quot;  -I&quot;/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/unsupported&quot;  -I&quot;/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/BH/include&quot; -I&quot;/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/src/&quot;  -I&quot;/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/&quot;  -I&quot;/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppParallel/include/&quot;  -I&quot;/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/rstan/include&quot; -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include &#39;/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp&#39;  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-## In file included from &lt;built-in&gt;:1:
-## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Core:88:
-## /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name &#39;namespace&#39;
-## namespace Eigen {
-## ^
-## /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected &#39;;&#39; after top level declarator
-## namespace Eigen {
-##                ^
-##                ;
-## In file included from &lt;built-in&gt;:1:
-## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-## /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: &#39;complex&#39; file not found
-## #include &lt;complex&gt;
-##          ^~~~~~~~~
-## 3 errors generated.
-## make: *** [foo.o] Error 1
-## 
+<pre><code>## 
 ## SAMPLING FOR MODEL &#39;b37fb1f59e6ff956bdf58582435d9468&#39; NOW (CHAIN 1).
 ## Chain 1: 
-## Chain 1: Gradient evaluation took 0.000144 seconds
-## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.44 seconds.
+## Chain 1: Gradient evaluation took 0.00011 seconds
+## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.1 seconds.
 ## Chain 1: Adjust your expectations accordingly!
 ## Chain 1: 
 ## Chain 1: 
@@ -1356,15 +1357,15 @@ Figure 8.12: Global decoding for the three-state Poisson-HMM using pois.HMM.goca
 ## Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 1: 
-## Chain 1:  Elapsed Time: 0.825686 seconds (Warm-up)
-## Chain 1:                0.423728 seconds (Sampling)
-## Chain 1:                1.24941 seconds (Total)
+## Chain 1:  Elapsed Time: 0.8606 seconds (Warm-up)
+## Chain 1:                0.548921 seconds (Sampling)
+## Chain 1:                1.40952 seconds (Total)
 ## Chain 1: 
 ## 
 ## SAMPLING FOR MODEL &#39;b37fb1f59e6ff956bdf58582435d9468&#39; NOW (CHAIN 2).
 ## Chain 2: 
-## Chain 2: Gradient evaluation took 5e-05 seconds
-## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.
+## Chain 2: Gradient evaluation took 5.6e-05 seconds
+## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.56 seconds.
 ## Chain 2: Adjust your expectations accordingly!
 ## Chain 2: 
 ## Chain 2: 
@@ -1372,15 +1373,15 @@ Figure 8.12: Global decoding for the three-state Poisson-HMM using pois.HMM.goca
 ## Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 2: 
-## Chain 2:  Elapsed Time: 0.82065 seconds (Warm-up)
-## Chain 2:                0.433992 seconds (Sampling)
-## Chain 2:                1.25464 seconds (Total)
+## Chain 2:  Elapsed Time: 0.784481 seconds (Warm-up)
+## Chain 2:                0.522786 seconds (Sampling)
+## Chain 2:                1.30727 seconds (Total)
 ## Chain 2: 
 ## 
 ## SAMPLING FOR MODEL &#39;b37fb1f59e6ff956bdf58582435d9468&#39; NOW (CHAIN 3).
 ## Chain 3: 
-## Chain 3: Gradient evaluation took 5.8e-05 seconds
-## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.58 seconds.
+## Chain 3: Gradient evaluation took 5.9e-05 seconds
+## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.59 seconds.
 ## Chain 3: Adjust your expectations accordingly!
 ## Chain 3: 
 ## Chain 3: 
@@ -1388,15 +1389,15 @@ Figure 8.12: Global decoding for the three-state Poisson-HMM using pois.HMM.goca
 ## Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 3: 
-## Chain 3:  Elapsed Time: 0.885861 seconds (Warm-up)
-## Chain 3:                0.43413 seconds (Sampling)
-## Chain 3:                1.31999 seconds (Total)
+## Chain 3:  Elapsed Time: 0.8352 seconds (Warm-up)
+## Chain 3:                0.407458 seconds (Sampling)
+## Chain 3:                1.24266 seconds (Total)
 ## Chain 3: 
 ## 
 ## SAMPLING FOR MODEL &#39;b37fb1f59e6ff956bdf58582435d9468&#39; NOW (CHAIN 4).
 ## Chain 4: 
-## Chain 4: Gradient evaluation took 5.2e-05 seconds
-## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.52 seconds.
+## Chain 4: Gradient evaluation took 6e-05 seconds
+## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.6 seconds.
 ## Chain 4: Adjust your expectations accordingly!
 ## Chain 4: 
 ## Chain 4: 
@@ -1404,107 +1405,107 @@ Figure 8.12: Global decoding for the three-state Poisson-HMM using pois.HMM.goca
 ## Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 4: 
-## Chain 4:  Elapsed Time: 0.821964 seconds (Warm-up)
-## Chain 4:                0.483482 seconds (Sampling)
-## Chain 4:                1.30545 seconds (Total)
+## Chain 4:  Elapsed Time: 0.978233 seconds (Warm-up)
+## Chain 4:                0.479573 seconds (Sampling)
+## Chain 4:                1.45781 seconds (Total)
 ## Chain 4:</code></pre>
 <p>The posterior estimates are</p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="eq.html#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pois.HMM.stanfit,<span class="at">digits_summary =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="eq.html#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pois.HMM.stanfit,<span class="at">digits_summary =</span> <span class="dv">3</span>)</span></code></pre></div>
 <pre><code>## Inference for Stan model: b37fb1f59e6ff956bdf58582435d9468.
 ## 4 chains, each with iter=2000; warmup=1000; thin=1; 
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##                 mean se_mean    sd     2.5%      25%      50%      75%    97.5%
-## Gamma[1,1]     0.860   0.002 0.084    0.656    0.822    0.876    0.916    0.969
-## Gamma[1,2]     0.092   0.002 0.075    0.006    0.040    0.077    0.125    0.282
-## Gamma[1,3]     0.047   0.001 0.042    0.001    0.017    0.037    0.066    0.152
-## Gamma[2,1]     0.090   0.001 0.059    0.016    0.050    0.077    0.115    0.225
-## Gamma[2,2]     0.816   0.002 0.082    0.636    0.777    0.829    0.871    0.936
-## Gamma[2,3]     0.094   0.001 0.060    0.013    0.051    0.082    0.126    0.237
-## Gamma[3,1]     0.074   0.001 0.068    0.002    0.025    0.056    0.105    0.254
-## Gamma[3,2]     0.231   0.002 0.112    0.056    0.150    0.215    0.298    0.479
-## Gamma[3,3]     0.694   0.002 0.123    0.421    0.620    0.709    0.784    0.892
-## lambda[1]     13.164   0.016 0.829   11.489   12.662   13.170   13.699   14.774
-## lambda[2]     19.752   0.018 1.044   17.603   19.108   19.764   20.416   21.737
-## lambda[3]     29.766   0.031 1.900   26.157   28.449   29.709   31.009   33.585
-## ta[1,1]        0.860   0.002 0.084    0.656    0.822    0.876    0.916    0.969
-## ta[1,2]        0.092   0.002 0.075    0.006    0.040    0.077    0.125    0.282
-## ta[1,3]        0.047   0.001 0.042    0.001    0.017    0.037    0.066    0.152
-## ta[2,1]        0.090   0.001 0.059    0.016    0.050    0.077    0.115    0.225
-## ta[2,2]        0.816   0.002 0.082    0.636    0.777    0.829    0.871    0.936
-## ta[2,3]        0.094   0.001 0.060    0.013    0.051    0.082    0.126    0.237
-## ta[3,1]        0.074   0.001 0.068    0.002    0.025    0.056    0.105    0.254
-## ta[3,2]        0.231   0.002 0.112    0.056    0.150    0.215    0.298    0.479
-## ta[3,3]        0.694   0.002 0.123    0.421    0.620    0.709    0.784    0.892
-## statdist[1]    0.389   0.002 0.144    0.137    0.284    0.379    0.483    0.699
-## statdist[2]    0.418   0.002 0.129    0.173    0.325    0.418    0.505    0.675
-## statdist[3]    0.194   0.001 0.094    0.058    0.124    0.178    0.244    0.420
-## lp__        -353.985   0.064 2.484 -359.786 -355.376 -353.644 -352.140 -350.252
+## Gamma[1,1]     0.855   0.002 0.083    0.640    0.818    0.872    0.914    0.966
+## Gamma[1,2]     0.095   0.001 0.075    0.006    0.042    0.078    0.128    0.289
+## Gamma[1,3]     0.049   0.001 0.041    0.002    0.019    0.039    0.069    0.155
+## Gamma[2,1]     0.091   0.001 0.059    0.016    0.052    0.081    0.119    0.225
+## Gamma[2,2]     0.816   0.002 0.086    0.631    0.777    0.828    0.872    0.934
+## Gamma[2,3]     0.093   0.002 0.064    0.014    0.050    0.081    0.121    0.237
+## Gamma[3,1]     0.075   0.001 0.068    0.002    0.024    0.055    0.106    0.249
+## Gamma[3,2]     0.229   0.002 0.118    0.052    0.138    0.214    0.299    0.498
+## Gamma[3,3]     0.696   0.002 0.128    0.405    0.617    0.710    0.791    0.899
+## lambda[1]     13.113   0.022 0.899   11.252   12.613   13.144   13.684   14.774
+## lambda[2]     19.780   0.023 1.104   17.564   19.100   19.781   20.447   21.886
+## lambda[3]     29.741   0.034 1.956   26.216   28.371   29.660   30.988   33.771
+## ta[1,1]        0.855   0.002 0.083    0.640    0.818    0.872    0.914    0.966
+## ta[1,2]        0.095   0.001 0.075    0.006    0.042    0.078    0.128    0.289
+## ta[1,3]        0.049   0.001 0.041    0.002    0.019    0.039    0.069    0.155
+## ta[2,1]        0.091   0.001 0.059    0.016    0.052    0.081    0.119    0.225
+## ta[2,2]        0.816   0.002 0.086    0.631    0.777    0.828    0.872    0.934
+## ta[2,3]        0.093   0.002 0.064    0.014    0.050    0.081    0.121    0.237
+## ta[3,1]        0.075   0.001 0.068    0.002    0.024    0.055    0.106    0.249
+## ta[3,2]        0.229   0.002 0.118    0.052    0.138    0.214    0.299    0.498
+## ta[3,3]        0.696   0.002 0.128    0.405    0.617    0.710    0.791    0.899
+## statdist[1]    0.383   0.002 0.140    0.133    0.283    0.373    0.474    0.680
+## statdist[2]    0.421   0.002 0.128    0.177    0.331    0.421    0.508    0.678
+## statdist[3]    0.196   0.001 0.092    0.059    0.128    0.181    0.249    0.408
+## lp__        -353.963   0.072 2.535 -360.148 -355.307 -353.565 -352.148 -350.239
 ##             n_eff  Rhat
-## Gamma[1,1]   2468 1.002
-## Gamma[1,2]   2386 1.003
-## Gamma[1,3]   4158 1.000
-## Gamma[2,1]   2468 1.001
-## Gamma[2,2]   2884 1.000
-## Gamma[2,3]   5124 1.000
-## Gamma[3,1]   4680 1.001
-## Gamma[3,2]   4164 0.999
-## Gamma[3,3]   3909 1.000
-## lambda[1]    2675 1.000
-## lambda[2]    3327 0.999
-## lambda[3]    3806 0.999
-## ta[1,1]      2468 1.002
-## ta[1,2]      2386 1.003
-## ta[1,3]      4158 1.000
-## ta[2,1]      2468 1.001
-## ta[2,2]      2884 1.000
-## ta[2,3]      5124 1.000
-## ta[3,1]      4680 1.001
-## ta[3,2]      4164 0.999
-## ta[3,3]      3909 1.000
-## statdist[1]  4788 1.000
-## statdist[2]  4663 1.000
-## statdist[3]  4231 1.000
-## lp__         1509 1.000
+## Gamma[1,1]   2724 1.001
+## Gamma[1,2]   2658 1.000
+## Gamma[1,3]   3948 1.001
+## Gamma[2,1]   2243 1.000
+## Gamma[2,2]   1466 1.001
+## Gamma[2,3]   1824 1.001
+## Gamma[3,1]   4488 1.000
+## Gamma[3,2]   3928 1.000
+## Gamma[3,3]   3061 0.999
+## lambda[1]    1659 1.002
+## lambda[2]    2259 1.000
+## lambda[3]    3292 1.000
+## ta[1,1]      2724 1.001
+## ta[1,2]      2658 1.000
+## ta[1,3]      3948 1.001
+## ta[2,1]      2243 1.000
+## ta[2,2]      1466 1.001
+## ta[2,3]      1824 1.001
+## ta[3,1]      4488 1.000
+## ta[3,2]      3928 1.000
+## ta[3,3]      3061 0.999
+## statdist[1]  4025 1.000
+## statdist[2]  3821 1.000
+## statdist[3]  4769 0.999
+## lp__         1238 1.002
 ## 
-## Samples were drawn using NUTS(diag_e) at Mon Jun 12 00:35:33 2023.
+## Samples were drawn using NUTS(diag_e) at Mon Jun 12 00:51:21 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>
 <div class="figure"><span style="display:block;" id="fig:postl-1"></span>
 <img src="08-earthquake-example_files/figure-html/postl-1.png" alt="Posterior distribution for the state-dependent means of the three-state Poisson-HMM." width="672" />
 <p class="caption">
-Figure 8.13: Posterior distribution for the state-dependent means of the three-state Poisson-HMM.
+Figure 9.13: Posterior distribution for the state-dependent means of the three-state Poisson-HMM.
 </p>
 </div>
 <div class="figure"><span style="display:block;" id="fig:postl-2"></span>
 <img src="08-earthquake-example_files/figure-html/postl-2.png" alt="Posterior distribution for the state-dependent means of the three-state Poisson-HMM." width="672" />
 <p class="caption">
-Figure 8.14: Posterior distribution for the state-dependent means of the three-state Poisson-HMM.
+Figure 9.14: Posterior distribution for the state-dependent means of the three-state Poisson-HMM.
 </p>
 </div>
 <div class="figure"><span style="display:block;" id="fig:postl-3"></span>
 <img src="08-earthquake-example_files/figure-html/postl-3.png" alt="Posterior distribution for the state-dependent means of the three-state Poisson-HMM." width="672" />
 <p class="caption">
-Figure 8.15: Posterior distribution for the state-dependent means of the three-state Poisson-HMM.
+Figure 9.15: Posterior distribution for the state-dependent means of the three-state Poisson-HMM.
 </p>
 </div>
 <div class="figure"><span style="display:block;" id="fig:postd-1"></span>
 <img src="08-earthquake-example_files/figure-html/postd-1.png" alt="Posterior distribution for the initial distribution of the three-state Poisson-HMM." width="672" />
 <p class="caption">
-Figure 8.16: Posterior distribution for the initial distribution of the three-state Poisson-HMM.
+Figure 9.16: Posterior distribution for the initial distribution of the three-state Poisson-HMM.
 </p>
 </div>
 <div class="figure"><span style="display:block;" id="fig:postd-2"></span>
 <img src="08-earthquake-example_files/figure-html/postd-2.png" alt="Posterior distribution for the initial distribution of the three-state Poisson-HMM." width="672" />
 <p class="caption">
-Figure 8.17: Posterior distribution for the initial distribution of the three-state Poisson-HMM.
+Figure 9.17: Posterior distribution for the initial distribution of the three-state Poisson-HMM.
 </p>
 </div>
 <div class="figure"><span style="display:block;" id="fig:postd-3"></span>
 <img src="08-earthquake-example_files/figure-html/postd-3.png" alt="Posterior distribution for the initial distribution of the three-state Poisson-HMM." width="672" />
 <p class="caption">
-Figure 8.18: Posterior distribution for the initial distribution of the three-state Poisson-HMM.
+Figure 9.18: Posterior distribution for the initial distribution of the three-state Poisson-HMM.
 </p>
 </div>
 

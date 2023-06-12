@@ -23,3 +23,4 @@ Then the joint distribution of $\boldsymbol{X}^{(t)}$ and $\boldsymbol{C}^{(t)}$
 \Pr(\boldsymbol{X}^{(t)}, \boldsymbol{C}^{(t)}) = \Pr(C_1) \prod_{k=2}^t \Pr(C_k|C_{k-1}) \prod_{k=1}^t \Pr(X_k|C_k)
 (\#eq:joint)
 \end{equation}
+

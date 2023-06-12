@@ -1244,36 +1244,11 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ```
 
 ```
-## Trying to compile a simple C file
-```
-
-```
-## Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-## clang -arch arm64 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-## In file included from <built-in>:1:
-## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Core:88:
-## /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name 'namespace'
-## namespace Eigen {
-## ^
-## /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';' after top level declarator
-## namespace Eigen {
-##                ^
-##                ;
-## In file included from <built-in>:1:
-## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-## /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-## #include <complex>
-##          ^~~~~~~~~
-## 3 errors generated.
-## make: *** [foo.o] Error 1
 ## 
 ## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 1).
 ## Chain 1: 
-## Chain 1: Gradient evaluation took 0.000144 seconds
-## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.44 seconds.
+## Chain 1: Gradient evaluation took 0.00011 seconds
+## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.1 seconds.
 ## Chain 1: Adjust your expectations accordingly!
 ## Chain 1: 
 ## Chain 1: 
@@ -1281,15 +1256,15 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 1: 
-## Chain 1:  Elapsed Time: 0.825686 seconds (Warm-up)
-## Chain 1:                0.423728 seconds (Sampling)
-## Chain 1:                1.24941 seconds (Total)
+## Chain 1:  Elapsed Time: 0.8606 seconds (Warm-up)
+## Chain 1:                0.548921 seconds (Sampling)
+## Chain 1:                1.40952 seconds (Total)
 ## Chain 1: 
 ## 
 ## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 2).
 ## Chain 2: 
-## Chain 2: Gradient evaluation took 5e-05 seconds
-## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.
+## Chain 2: Gradient evaluation took 5.6e-05 seconds
+## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.56 seconds.
 ## Chain 2: Adjust your expectations accordingly!
 ## Chain 2: 
 ## Chain 2: 
@@ -1297,15 +1272,15 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 2: 
-## Chain 2:  Elapsed Time: 0.82065 seconds (Warm-up)
-## Chain 2:                0.433992 seconds (Sampling)
-## Chain 2:                1.25464 seconds (Total)
+## Chain 2:  Elapsed Time: 0.784481 seconds (Warm-up)
+## Chain 2:                0.522786 seconds (Sampling)
+## Chain 2:                1.30727 seconds (Total)
 ## Chain 2: 
 ## 
 ## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 3).
 ## Chain 3: 
-## Chain 3: Gradient evaluation took 5.8e-05 seconds
-## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.58 seconds.
+## Chain 3: Gradient evaluation took 5.9e-05 seconds
+## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.59 seconds.
 ## Chain 3: Adjust your expectations accordingly!
 ## Chain 3: 
 ## Chain 3: 
@@ -1313,15 +1288,15 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 3: 
-## Chain 3:  Elapsed Time: 0.885861 seconds (Warm-up)
-## Chain 3:                0.43413 seconds (Sampling)
-## Chain 3:                1.31999 seconds (Total)
+## Chain 3:  Elapsed Time: 0.8352 seconds (Warm-up)
+## Chain 3:                0.407458 seconds (Sampling)
+## Chain 3:                1.24266 seconds (Total)
 ## Chain 3: 
 ## 
 ## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 4).
 ## Chain 4: 
-## Chain 4: Gradient evaluation took 5.2e-05 seconds
-## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.52 seconds.
+## Chain 4: Gradient evaluation took 6e-05 seconds
+## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.6 seconds.
 ## Chain 4: Adjust your expectations accordingly!
 ## Chain 4: 
 ## Chain 4: 
@@ -1329,9 +1304,9 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 4: 
-## Chain 4:  Elapsed Time: 0.821964 seconds (Warm-up)
-## Chain 4:                0.483482 seconds (Sampling)
-## Chain 4:                1.30545 seconds (Total)
+## Chain 4:  Elapsed Time: 0.978233 seconds (Warm-up)
+## Chain 4:                0.479573 seconds (Sampling)
+## Chain 4:                1.45781 seconds (Total)
 ## Chain 4:
 ```
 
@@ -1352,59 +1327,59 @@ print(pois.HMM.stanfit,digits_summary = 3)
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##                 mean se_mean    sd     2.5%      25%      50%      75%    97.5%
-## Gamma[1,1]     0.860   0.002 0.084    0.656    0.822    0.876    0.916    0.969
-## Gamma[1,2]     0.092   0.002 0.075    0.006    0.040    0.077    0.125    0.282
-## Gamma[1,3]     0.047   0.001 0.042    0.001    0.017    0.037    0.066    0.152
-## Gamma[2,1]     0.090   0.001 0.059    0.016    0.050    0.077    0.115    0.225
-## Gamma[2,2]     0.816   0.002 0.082    0.636    0.777    0.829    0.871    0.936
-## Gamma[2,3]     0.094   0.001 0.060    0.013    0.051    0.082    0.126    0.237
-## Gamma[3,1]     0.074   0.001 0.068    0.002    0.025    0.056    0.105    0.254
-## Gamma[3,2]     0.231   0.002 0.112    0.056    0.150    0.215    0.298    0.479
-## Gamma[3,3]     0.694   0.002 0.123    0.421    0.620    0.709    0.784    0.892
-## lambda[1]     13.164   0.016 0.829   11.489   12.662   13.170   13.699   14.774
-## lambda[2]     19.752   0.018 1.044   17.603   19.108   19.764   20.416   21.737
-## lambda[3]     29.766   0.031 1.900   26.157   28.449   29.709   31.009   33.585
-## ta[1,1]        0.860   0.002 0.084    0.656    0.822    0.876    0.916    0.969
-## ta[1,2]        0.092   0.002 0.075    0.006    0.040    0.077    0.125    0.282
-## ta[1,3]        0.047   0.001 0.042    0.001    0.017    0.037    0.066    0.152
-## ta[2,1]        0.090   0.001 0.059    0.016    0.050    0.077    0.115    0.225
-## ta[2,2]        0.816   0.002 0.082    0.636    0.777    0.829    0.871    0.936
-## ta[2,3]        0.094   0.001 0.060    0.013    0.051    0.082    0.126    0.237
-## ta[3,1]        0.074   0.001 0.068    0.002    0.025    0.056    0.105    0.254
-## ta[3,2]        0.231   0.002 0.112    0.056    0.150    0.215    0.298    0.479
-## ta[3,3]        0.694   0.002 0.123    0.421    0.620    0.709    0.784    0.892
-## statdist[1]    0.389   0.002 0.144    0.137    0.284    0.379    0.483    0.699
-## statdist[2]    0.418   0.002 0.129    0.173    0.325    0.418    0.505    0.675
-## statdist[3]    0.194   0.001 0.094    0.058    0.124    0.178    0.244    0.420
-## lp__        -353.985   0.064 2.484 -359.786 -355.376 -353.644 -352.140 -350.252
+## Gamma[1,1]     0.855   0.002 0.083    0.640    0.818    0.872    0.914    0.966
+## Gamma[1,2]     0.095   0.001 0.075    0.006    0.042    0.078    0.128    0.289
+## Gamma[1,3]     0.049   0.001 0.041    0.002    0.019    0.039    0.069    0.155
+## Gamma[2,1]     0.091   0.001 0.059    0.016    0.052    0.081    0.119    0.225
+## Gamma[2,2]     0.816   0.002 0.086    0.631    0.777    0.828    0.872    0.934
+## Gamma[2,3]     0.093   0.002 0.064    0.014    0.050    0.081    0.121    0.237
+## Gamma[3,1]     0.075   0.001 0.068    0.002    0.024    0.055    0.106    0.249
+## Gamma[3,2]     0.229   0.002 0.118    0.052    0.138    0.214    0.299    0.498
+## Gamma[3,3]     0.696   0.002 0.128    0.405    0.617    0.710    0.791    0.899
+## lambda[1]     13.113   0.022 0.899   11.252   12.613   13.144   13.684   14.774
+## lambda[2]     19.780   0.023 1.104   17.564   19.100   19.781   20.447   21.886
+## lambda[3]     29.741   0.034 1.956   26.216   28.371   29.660   30.988   33.771
+## ta[1,1]        0.855   0.002 0.083    0.640    0.818    0.872    0.914    0.966
+## ta[1,2]        0.095   0.001 0.075    0.006    0.042    0.078    0.128    0.289
+## ta[1,3]        0.049   0.001 0.041    0.002    0.019    0.039    0.069    0.155
+## ta[2,1]        0.091   0.001 0.059    0.016    0.052    0.081    0.119    0.225
+## ta[2,2]        0.816   0.002 0.086    0.631    0.777    0.828    0.872    0.934
+## ta[2,3]        0.093   0.002 0.064    0.014    0.050    0.081    0.121    0.237
+## ta[3,1]        0.075   0.001 0.068    0.002    0.024    0.055    0.106    0.249
+## ta[3,2]        0.229   0.002 0.118    0.052    0.138    0.214    0.299    0.498
+## ta[3,3]        0.696   0.002 0.128    0.405    0.617    0.710    0.791    0.899
+## statdist[1]    0.383   0.002 0.140    0.133    0.283    0.373    0.474    0.680
+## statdist[2]    0.421   0.002 0.128    0.177    0.331    0.421    0.508    0.678
+## statdist[3]    0.196   0.001 0.092    0.059    0.128    0.181    0.249    0.408
+## lp__        -353.963   0.072 2.535 -360.148 -355.307 -353.565 -352.148 -350.239
 ##             n_eff  Rhat
-## Gamma[1,1]   2468 1.002
-## Gamma[1,2]   2386 1.003
-## Gamma[1,3]   4158 1.000
-## Gamma[2,1]   2468 1.001
-## Gamma[2,2]   2884 1.000
-## Gamma[2,3]   5124 1.000
-## Gamma[3,1]   4680 1.001
-## Gamma[3,2]   4164 0.999
-## Gamma[3,3]   3909 1.000
-## lambda[1]    2675 1.000
-## lambda[2]    3327 0.999
-## lambda[3]    3806 0.999
-## ta[1,1]      2468 1.002
-## ta[1,2]      2386 1.003
-## ta[1,3]      4158 1.000
-## ta[2,1]      2468 1.001
-## ta[2,2]      2884 1.000
-## ta[2,3]      5124 1.000
-## ta[3,1]      4680 1.001
-## ta[3,2]      4164 0.999
-## ta[3,3]      3909 1.000
-## statdist[1]  4788 1.000
-## statdist[2]  4663 1.000
-## statdist[3]  4231 1.000
-## lp__         1509 1.000
+## Gamma[1,1]   2724 1.001
+## Gamma[1,2]   2658 1.000
+## Gamma[1,3]   3948 1.001
+## Gamma[2,1]   2243 1.000
+## Gamma[2,2]   1466 1.001
+## Gamma[2,3]   1824 1.001
+## Gamma[3,1]   4488 1.000
+## Gamma[3,2]   3928 1.000
+## Gamma[3,3]   3061 0.999
+## lambda[1]    1659 1.002
+## lambda[2]    2259 1.000
+## lambda[3]    3292 1.000
+## ta[1,1]      2724 1.001
+## ta[1,2]      2658 1.000
+## ta[1,3]      3948 1.001
+## ta[2,1]      2243 1.000
+## ta[2,2]      1466 1.001
+## ta[2,3]      1824 1.001
+## ta[3,1]      4488 1.000
+## ta[3,2]      3928 1.000
+## ta[3,3]      3061 0.999
+## statdist[1]  4025 1.000
+## statdist[2]  3821 1.000
+## statdist[3]  4769 0.999
+## lp__         1238 1.002
 ## 
-## Samples were drawn using NUTS(diag_e) at Mon Jun 12 00:35:33 2023.
+## Samples were drawn using NUTS(diag_e) at Mon Jun 12 00:51:21 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
