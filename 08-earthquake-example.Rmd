@@ -287,7 +287,8 @@ if we assume that the MC is stationary
 ```{r warning=F, message=F}
 eq_init <- list(m=3, 
             lambda=c(10, 20, 25), 
-            gamma = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow=TRUE)
+            gamma = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow=TRUE),
+            delta=c(1, 1, 1)/3
             )
 
 (mod3s<-pois.HMM.mle(x,eq_init$m,eq_init$lambda,eq_init$gamma,stationary=TRUE))
@@ -821,49 +822,7 @@ xlim=c(0,max(xf)),ylim=c(0,0.12),xlab="count",ylab="probability",lwd=3)
 
 
 
-The forecast distribution from the above can be modified to compute the bivariate forecast distribution. 
 
-```{r}
-pois.HMM.forecast_bivariate <- function(xf1, xf2, x, mod){
-  n <- length(x)
-  nxf1 <- length(xf1)
-  nxf2 <- length(xf2)
-  dxf <- matrix(0, nrow=nxf1, ncol=nxf2)
-  foo <- mod$delta*dpois(x[1], mod$lambda)
-  sumfoo <- sum(foo)
-  lscale <- log(sumfoo)
-  foo <- foo/sumfoo
-  
-  for(t in 2:n){
-    foo <- foo%*%mod$gamma*dpois(x[t], mod$lambda)
-    sumfoo <- sum(foo)
-    lscale <- lscale + log(sumfoo)
-    foo <- foo/sumfoo
-  }
-  
-  for (i in 1:nxf1){
-    for(j in 1:nxf2){
-      for(s in 1:mod$m){
-        dxf[i, j] <- dxf[i, j] + foo[s]*dpois(xf1[i], mod$lambda[s]) + foo[s]*dpois(xf2[j], mod$lambda[s])
-      }
-    }
-  }
-  
- return(dxf) 
-}
-
-```
-
-For example, $\Pr(X_{T+1} \leq 10, X_{T+2} \leq 10|\boldsymbol{X}^{(T)})$ is 
-
-```{r}
-eq_forecast <- data.frame(pois.HMM.forecast_bivariate(1:10, 1:10, x, eq_init))
-
-eq_forecast %>%
-  kbl(caption="Bivariate Forecast Distribution of $X_{T+1}$ (rows) and $X_{T+2}$ (columns).") %>%
-  kable_minimal(full_width=T) %>%
-  kable_styling()
-```
 
 #### Decoding
 
@@ -1088,7 +1047,7 @@ Notice that as $h \rightarrow \infty$, the state distribution approaches the sta
 
 We can fit the three-state Poisson-HMM to the earthquake data using R-STAN. 
 
-```{r}
+```{r message=F, warning=F}
 library(rstan)
 library(bayesplot)
 stan_data <- list(T=dim(eq_dat)[1], m=3, x=eq_dat$V2)
@@ -1099,7 +1058,7 @@ stan_data <- list(T=dim(eq_dat)[1], m=3, x=eq_dat$V2)
 
 
 
-```{r}
+```{r message=F, warning=F}
 pois.HMM.stan <- 
 'data{
 int<lower=0> m;                       // number of states
@@ -1158,11 +1117,17 @@ model{
   }
 '
 
-pois.HMM.stanfit <- stan(model_code = poisHMM, data = stan_data, refresh=2000)
+```
+
+We first run 2000 iterations for each for each of the 4 chains, with the first 1000 draws drawn during the warm-up phase
+
+```{r}
+pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2000)
 ```
 
 
-We first run 2000 iterations for each for each of the 4 chains, with the first 1000 draws drawn during the warm-up phase
+
+
 
 The posterior estimates are 
 
@@ -1170,8 +1135,7 @@ The posterior estimates are
 print(pois.HMM.stanfit,digits_summary = 3)
 ```
 
-```{r}
-# Plot of the posterior draws for the lambda parameters
+```{r postl, fig.cap="Posterior distribution for the state-dependent means of the three-state Poisson-HMM.", echo=F}
 post_lambda <- rstan::extract(pois.HMM.stanfit, pars=c("lambda"))
 
 {hist(post_lambda[[1]][,1],main="",xlab=expression(lambda[1]))
@@ -1181,7 +1145,7 @@ hist(post_lambda[[1]][,3],main="",xlab=expression(lambda[3]))
 ```
 
 
-```{r}
+```{r postd, fig.cap="Posterior distribution for the initial distribution of the three-state Poisson-HMM.", echo=F}
 post_delta <- rstan::extract(pois.HMM.stanfit, pars=c("statdist"))
 
 {hist(post_delta[[1]][,1],main="",xlab=expression(delta[1]))
@@ -1189,8 +1153,6 @@ hist(post_delta[[1]][,2],main="",xlab=expression(delta[2]))
 hist(post_delta[[1]][,3],main="",xlab=expression(delta[3]))
 }
 ```
-
-
 
 
 
