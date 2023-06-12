@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 1 Preliminaries | Hidden Markov Model Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 1 Preliminaries | Hidden Markov Model Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="vinky-wang/HMM-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 1 Preliminaries | Hidden Markov Model Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Vinky Wang" />
+
+
+<meta name="date" content="2023-06-12" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="introhmm.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">HMM Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a>
+<ul>
+<li class="chapter" data-level="0.1" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i><b>0.1</b> Usage</a></li>
+<li class="chapter" data-level="0.2" data-path="index.html"><a href="index.html#render-book"><i class="fa fa-check"></i><b>0.2</b> Render book</a></li>
+<li class="chapter" data-level="0.3" data-path="index.html"><a href="index.html#preview-book"><i class="fa fa-check"></i><b>0.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="prelim.html"><a href="prelim.html"><i class="fa fa-check"></i><b>1</b> Preliminaries</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="prelim.html"><a href="prelim.html#mix"><i class="fa fa-check"></i><b>1.1</b> Independent Mixture Models</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="prelim.html"><a href="prelim.html#properties"><i class="fa fa-check"></i><b>1.1.1</b> Properties</a></li>
+<li class="chapter" data-level="1.1.2" data-path="prelim.html"><a href="prelim.html#parameter-estimation"><i class="fa fa-check"></i><b>1.1.2</b> Parameter Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="prelim.html"><a href="prelim.html#mc"><i class="fa fa-check"></i><b>1.2</b> Markov Chains</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="prelim.html"><a href="prelim.html#probabilities"><i class="fa fa-check"></i><b>1.2.1</b> Probabilities</a></li>
+<li class="chapter" data-level="1.2.2" data-path="prelim.html"><a href="prelim.html#stationary-distribution"><i class="fa fa-check"></i><b>1.2.2</b> Stationary Distribution</a></li>
+<li class="chapter" data-level="1.2.3" data-path="prelim.html"><a href="prelim.html#tp"><i class="fa fa-check"></i><b>1.2.3</b> Transition Probabilities Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="prelim.html"><a href="prelim.html#exercises"><i class="fa fa-check"></i><b>1.3</b> Exercises</a></li>
+<li class="chapter" data-level="1.4" data-path="prelim.html"><a href="prelim.html#solutions"><i class="fa fa-check"></i><b>1.4</b> Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="introhmm.html"><a href="introhmm.html"><i class="fa fa-check"></i><b>2</b> Introduction to Hidden Markov Models</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="introhmm.html"><a href="introhmm.html#sdd"><i class="fa fa-check"></i><b>2.1</b> State-Dependent Distributions</a></li>
+<li class="chapter" data-level="2.2" data-path="introhmm.html"><a href="introhmm.html#marginal-distributions"><i class="fa fa-check"></i><b>2.2</b> Marginal Distributions</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="introhmm.html"><a href="introhmm.html#univariate-case"><i class="fa fa-check"></i><b>2.2.1</b> Univariate Case</a></li>
+<li class="chapter" data-level="2.2.2" data-path="introhmm.html"><a href="introhmm.html#bivariate"><i class="fa fa-check"></i><b>2.2.2</b> Bivariate Case</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="introhmm.html"><a href="introhmm.html#moments"><i class="fa fa-check"></i><b>2.3</b> Moments</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="introhmm.html"><a href="introhmm.html#univariate-case-1"><i class="fa fa-check"></i><b>2.3.1</b> Univariate Case</a></li>
+<li class="chapter" data-level="2.3.2" data-path="introhmm.html"><a href="introhmm.html#bivariate-case"><i class="fa fa-check"></i><b>2.3.2</b> Bivariate Case</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="introhmm.html"><a href="introhmm.html#lik"><i class="fa fa-check"></i><b>2.4</b> Likelihood of Hidden Markov Models</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="introhmm.html"><a href="introhmm.html#forsec"><i class="fa fa-check"></i><b>2.4.1</b> Forward Algorithm</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="introhmm.html"><a href="introhmm.html#exercises-1"><i class="fa fa-check"></i><b>2.5</b> Exercises</a></li>
+<li class="chapter" data-level="2.6" data-path="introhmm.html"><a href="introhmm.html#solutions-1"><i class="fa fa-check"></i><b>2.6</b> Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="numerical.html"><a href="numerical.html"><i class="fa fa-check"></i><b>3</b> Numerical Maximization of the Likelihood</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="numerical.html"><a href="numerical.html#likscale"><i class="fa fa-check"></i><b>3.1</b> Scaling the Likelihood Computation</a></li>
+<li class="chapter" data-level="3.2" data-path="numerical.html"><a href="numerical.html#reparam"><i class="fa fa-check"></i><b>3.2</b> Reparameterization to Avoid Constraints</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="numerical.html"><a href="numerical.html#transition-probabilities"><i class="fa fa-check"></i><b>3.2.1</b> Transition Probabilities</a></li>
+<li class="chapter" data-level="3.2.2" data-path="numerical.html"><a href="numerical.html#parameters-of-state-dependent-distributions"><i class="fa fa-check"></i><b>3.2.2</b> Parameters of State-Dependent Distributions</a></li>
+<li class="chapter" data-level="3.2.3" data-path="numerical.html"><a href="numerical.html#initial-probabilities"><i class="fa fa-check"></i><b>3.2.3</b> Initial Probabilities</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="numerical.html"><a href="numerical.html#startval"><i class="fa fa-check"></i><b>3.3</b> Strategies for Choosing Starting Values</a></li>
+<li class="chapter" data-level="3.4" data-path="numerical.html"><a href="numerical.html#boot"><i class="fa fa-check"></i><b>3.4</b> Obtaining Standard Errors and Confidence Intervals</a></li>
+<li class="chapter" data-level="3.5" data-path="numerical.html"><a href="numerical.html#exercises-2"><i class="fa fa-check"></i><b>3.5</b> Exercises</a></li>
+<li class="chapter" data-level="3.6" data-path="numerical.html"><a href="numerical.html#solutions-2"><i class="fa fa-check"></i><b>3.6</b> Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="fbalg.html"><a href="fbalg.html"><i class="fa fa-check"></i><b>4</b> The Forward and Backward Algorithm</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="fbalg.html"><a href="fbalg.html#forward-and-backward-probabilities"><i class="fa fa-check"></i><b>4.1</b> Forward and Backward Probabilities</a></li>
+<li class="chapter" data-level="4.2" data-path="fbalg.html"><a href="fbalg.html#properties-of-hmms"><i class="fa fa-check"></i><b>4.2</b> Properties of HMMs</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="fbalg.html"><a href="fbalg.html#property"><i class="fa fa-check"></i><b>4.2.1</b> Property</a></li>
+<li class="chapter" data-level="4.2.2" data-path="fbalg.html"><a href="fbalg.html#property-1"><i class="fa fa-check"></i><b>4.2.2</b> Property</a></li>
+<li class="chapter" data-level="4.2.3" data-path="fbalg.html"><a href="fbalg.html#property-2"><i class="fa fa-check"></i><b>4.2.3</b> Property</a></li>
+<li class="chapter" data-level="4.2.4" data-path="fbalg.html"><a href="fbalg.html#property-3"><i class="fa fa-check"></i><b>4.2.4</b> Property</a></li>
+<li class="chapter" data-level="4.2.5" data-path="fbalg.html"><a href="fbalg.html#property-4"><i class="fa fa-check"></i><b>4.2.5</b> Property</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="fbalg.html"><a href="fbalg.html#forward-probabilities-as-joint-probabilities"><i class="fa fa-check"></i><b>4.3</b> Forward Probabilities as Joint Probabilities</a></li>
+<li class="chapter" data-level="4.4" data-path="fbalg.html"><a href="fbalg.html#backward-probabilities-as-conditional-probabilities"><i class="fa fa-check"></i><b>4.4</b> Backward Probabilities as Conditional Probabilities</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="em.html"><a href="em.html"><i class="fa fa-check"></i><b>5</b> Expectation-Maximization Algorithm (Baum-Welch)</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="em.html"><a href="em.html#em-algorithm-general"><i class="fa fa-check"></i><b>5.1</b> EM Algorithm (General)</a></li>
+<li class="chapter" data-level="5.2" data-path="em.html"><a href="em.html#em-algorithm-for-hmms"><i class="fa fa-check"></i><b>5.2</b> EM Algorithm (for HMMs)</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="em.html"><a href="em.html#stationary-markov-chain"><i class="fa fa-check"></i><b>5.2.1</b> Stationary Markov Chain</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="em.html"><a href="em.html#exercises-3"><i class="fa fa-check"></i><b>5.3</b> Exercises</a></li>
+<li class="chapter" data-level="5.4" data-path="em.html"><a href="em.html#solutions-3"><i class="fa fa-check"></i><b>5.4</b> Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="fdp.html"><a href="fdp.html"><i class="fa fa-check"></i><b>6</b> Forecasting, Decoding, and State Prediction</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="fdp.html"><a href="fdp.html#conditional-distribution"><i class="fa fa-check"></i><b>6.1</b> Conditional Distribution</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities"><i class="fa fa-check"></i><b>6.1.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="fdp.html"><a href="fdp.html#forecast-distributions"><i class="fa fa-check"></i><b>6.2</b> Forecast Distributions</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities-1"><i class="fa fa-check"></i><b>6.2.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+<li class="chapter" data-level="6.2.2" data-path="fdp.html"><a href="fdp.html#forecast-distribution-in-the-limit"><i class="fa fa-check"></i><b>6.2.2</b> Forecast Distribution in the Limit</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="fdp.html"><a href="fdp.html#decoding"><i class="fa fa-check"></i><b>6.3</b> Decoding</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="fdp.html"><a href="fdp.html#local-decoding"><i class="fa fa-check"></i><b>6.3.1</b> Local Decoding</a></li>
+<li class="chapter" data-level="6.3.2" data-path="fdp.html"><a href="fdp.html#global-decoding"><i class="fa fa-check"></i><b>6.3.2</b> Global Decoding</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="fdp.html"><a href="fdp.html#state-prediction"><i class="fa fa-check"></i><b>6.4</b> State Prediction</a></li>
+<li class="chapter" data-level="6.5" data-path="fdp.html"><a href="fdp.html#exercises-4"><i class="fa fa-check"></i><b>6.5</b> Exercises</a></li>
+<li class="chapter" data-level="6.6" data-path="fdp.html"><a href="fdp.html#solutions-4"><i class="fa fa-check"></i><b>6.6</b> Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html"><i class="fa fa-check"></i><b>7</b> Bayesian Inference for HMMs</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching"><i class="fa fa-check"></i><b>7.1</b> Reparameterization to Avoid Label Switching</a></li>
+<li class="chapter" data-level="7.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure"><i class="fa fa-check"></i><b>7.2</b> Gibbs Sampling Procedure</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gen"><i class="fa fa-check"></i><b>7.2.1</b> Generating Sample Paths of the MC</a></li>
+<li class="chapter" data-level="7.2.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#decom"><i class="fa fa-check"></i><b>7.2.2</b> Decomposing the Observed Counts into Regime Contributions</a></li>
+<li class="chapter" data-level="7.2.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#updating-the-parameters"><i class="fa fa-check"></i><b>7.2.3</b> Updating the Parameters</a></li>
+<li class="chapter" data-level="7.2.4" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#repeat-the-above"><i class="fa fa-check"></i><b>7.2.4</b> Repeat the Above</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#exercises-5"><i class="fa fa-check"></i><b>7.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="eq.html"><a href="eq.html"><i class="fa fa-check"></i><b>8</b> Major Earthquake Analysis</a>
+<ul>
+<li class="chapter" data-level="8.0.1" data-path="eq.html"><a href="eq.html#fitting-a-poisson-mixture-distribution"><i class="fa fa-check"></i><b>8.0.1</b> Fitting a Poisson Mixture Distribution</a></li>
+<li class="chapter" data-level="8.0.2" data-path="eq.html"><a href="eq.html#fitting-a-poisson-hmm-by-numerical-maximization"><i class="fa fa-check"></i><b>8.0.2</b> Fitting a Poisson-HMM by Numerical Maximization</a></li>
+<li class="chapter" data-level="8.0.3" data-path="eq.html"><a href="eq.html#fitting-a-poisson-hmm-by-the-em-algorithm"><i class="fa fa-check"></i><b>8.0.3</b> Fitting a Poisson-HMM by the EM Algorithm</a></li>
+<li class="chapter" data-level="8.0.4" data-path="eq.html"><a href="eq.html#forecasting-decoding-and-state-prediction"><i class="fa fa-check"></i><b>8.0.4</b> Forecasting, Decoding, and State Prediction</a></li>
+<li class="chapter" data-level="8.1" data-path="eq.html"><a href="eq.html#bayesian-inference-in-stan"><i class="fa fa-check"></i><b>8.1</b> Bayesian Inference in STAN</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>9</b> Appendix</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hidden Markov Model Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="prelim" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Preliminaries<a href="prelim.html#prelim" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>We cover</p>
+<ol style="list-style-type: decimal">
+<li><p><a href="prelim.html#mix">(Finite) Mixture distributions</a>, which is the structure of the marginal distribution of an HMM</p></li>
+<li><p><a href="prelim.html#mc">Markov chains</a>, which is the structure of the underlying ‘parameter process’ of an HMM</p></li>
+</ol>
+<div id="mix" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Independent Mixture Models<a href="prelim.html#mix" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>A (finite) <strong>independent mixture distribution</strong> consists of <span class="math inline">\(m\)</span> finitely many component distributions with <em>probability mass</em> (pmf) or <em>density</em> (pdf) functions <span class="math inline">\(p_1, \dots, p_m\)</span> with probabilities <span class="math inline">\(\delta_1, \dots, \delta_m\)</span> of being “active” that is determined by a discrete random variable <span class="math inline">\(C\)</span> which performs the “mixing”.</p>
+<p>That is,</p>
+<p><span class="math display">\[\begin{equation}
+  C = \left\{\begin{aligned}
+  &amp;1 &amp;&amp; \delta_1\\
+  &amp;2 &amp;&amp; \delta_2\\
+  &amp;\vdots &amp;&amp; \vdots\\
+  &amp;m &amp;&amp; \delta_m = 1 - \delta_1 - \delta_2 - \cdots - \delta_m\\
+\end{aligned}
+\right.
+\end{equation}\]</span></p>
+<p>determines which component is active, then the observations are generated from the active component density.</p>
+<p><strong>Note:</strong> See Figure 1.3 of the textbook as an example.</p>
+<div id="properties" class="section level3 hasAnchor" number="1.1.1">
+<h3><span class="header-section-number">1.1.1</span> Properties<a href="prelim.html#properties" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Let <span class="math inline">\(X\)</span> denote the discrete random variable which has the mixture distribution. Let <span class="math inline">\(Y_i\)</span> denote the random variable with pmf <span class="math inline">\(p_i\)</span>. <span class="math inline">\(X\)</span> has the following properties</p>
+<p><strong>probability mass function</strong></p>
+<p><span class="math display" id="eq:pmf">\[\begin{align}
+  p(x)
+  &amp;= \sum_{i=1}^m \Pr(X = x | C=i) \Pr(C=i)\\
+  &amp;= \sum_{i=1}^m \delta_i p_i(x)
+  \tag{1.1}
+\end{align}\]</span></p>
+<p><strong>expectation</strong></p>
+<p><span class="math display" id="eq:exp">\[\begin{align}
+  E(X)
+  &amp;= \sum_{i=1}^m \Pr(C=i) E(X| C = i)\\
+  &amp;= \sum_{i=1}^m \delta_i E (Y_i)
+  \tag{1.2}
+\end{align}\]</span></p>
+<p><strong>k-th moment about the origin</strong></p>
+<p><span class="math display" id="eq:moment">\[\begin{align}
+  E(X^k)
+  &amp;= \sum_{i=1}^m \delta_i E (Y_i^k)
+  \qquad{k = 1, 2, \dots} \tag{1.3}
+\end{align}\]</span></p>
+<p>Notice, the above are weighings of the <span class="math inline">\(i\)</span>-th component with weights <span class="math inline">\(\delta_i\)</span>.</p>
+<p><strong>Note:</strong> The continuous case is analagous.</p>
+</div>
+<div id="parameter-estimation" class="section level3 hasAnchor" number="1.1.2">
+<h3><span class="header-section-number">1.1.2</span> Parameter Estimation<a href="prelim.html#parameter-estimation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The <strong>likelihood</strong> is given by</p>
+<p><span class="math display" id="eq:likelihood">\[\begin{equation}
+L(\boldsymbol{\theta_1} , \dots, \boldsymbol{\theta_m} , \delta_1, \dots , \delta_m | x_1, \dots , x_n) = \prod_{j=1}^n \sum_{i=1}^m \delta_i p_i (x_j, \boldsymbol{\theta_i} )
+\tag{1.4}
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{\theta_1} , \dots, \boldsymbol{\theta_m}\)</span> are the parameter vectors of the component distributions, <span class="math inline">\(\delta_1, \dots , \delta_m\)</span> are the mixing parameters, and <span class="math inline">\(x_1, \dots , x_n\)</span> are the <span class="math inline">\(n\)</span> observations.</p>
+<p>It is often not possible to analytically maximize the likelihood (i.e. no closed form solution), so numerical maximization or the EM algorithm is used instead.</p>
+<p><strong>Note:</strong> See Section 1.2.3 of the textbook for a discussion of unbounded likelihood in mixtures of continuous distributions.</p>
+</div>
+</div>
+<div id="mc" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Markov Chains<a href="prelim.html#mc" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>A <strong>Markov Chain</strong> (MC) is a sequence of random variables <span class="math inline">\(\{C_t: t \in \mathbb{N}\}\)</span> that satisfy the <em>Markov property</em> for all <span class="math inline">\(t \in \mathbb{N}\)</span></p>
+<p><span class="math display">\[\Pr(C_{t+1}|C_t, \dots, C_1) = \Pr(C_{t+1}|C_t)\]</span></p>
+<p>or for compactness,</p>
+<p><span class="math display">\[\Pr(C_{t+1}| \boldsymbol{C}^{(t)} ) = \Pr(C_{t+1}|C_t) \qquad{\text{where } \boldsymbol{C}^{(t)} = (C_1, C_2, \dots, C_t)}\]</span></p>
+<p>That is, conditioning on the ‘history’ of the process up to time <span class="math inline">\(t\)</span> is equivalent to conditioning only on the most recent value <span class="math inline">\(C_t\)</span>; so the past and future are dependent only through the present.</p>
+<div id="probabilities" class="section level3 hasAnchor" number="1.2.1">
+<h3><span class="header-section-number">1.2.1</span> Probabilities<a href="prelim.html#probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The <strong>transition probabilities</strong> are the probabilities of the MC transitioning to state <span class="math inline">\(j\)</span> in <span class="math inline">\(t\)</span> steps given that it was in state <span class="math inline">\(i\)</span></p>
+<p><span class="math display">\[\gamma_{ij} = \Pr (C_{s+t}=j|C_s =i)\]</span></p>
+<p>The MC is <strong>homogenous</strong> when <span class="math inline">\(\gamma_{ij} (t)\)</span> depend only on the step size and not on <span class="math inline">\(s\)</span>.</p>
+<p>The <strong>unconditional probabilities</strong> <span class="math inline">\(\Pr (C_t = j)\)</span> of a MC being in a given state at a given time <span class="math inline">\(t\)</span> are often denoted by the row vector</p>
+<p><span class="math display">\[\boldsymbol{u} (t) = (\Pr(C_t = 1), \dots, \Pr(C_t = m)) \qquad{\text{t} \in \mathbb{N}}\]</span></p>
+<p>where <span class="math inline">\(u(1)\)</span> is the <strong>initial distribution</strong> of the MC.</p>
+</div>
+<div id="stationary-distribution" class="section level3 hasAnchor" number="1.2.2">
+<h3><span class="header-section-number">1.2.2</span> Stationary Distribution<a href="prelim.html#stationary-distribution" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A <strong>stationary distribution</strong> <span class="math inline">\(\boldsymbol{\delta}\)</span> of the MC satisfy
+<span class="math display">\[\boldsymbol{\delta \Gamma} = \boldsymbol{\delta}\]</span> and <span class="math display">\[\boldsymbol{\delta 1&#39;} = 1\]</span></p>
+<p>An <strong><em>irreducible</em></strong><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, <em>homogenous, discrete-time, finite state-space</em> MC has a unique, strictly positive, stationary distribution. If the MC is also <strong><em>aperiodic</em></strong> (returns back to the state at irregular time steps), then the MC has a unique limiting distribution which is precisely the stationary distribution.</p>
+<p><strong>Note:</strong> A MC that started from its stationary distribution will continue to have that stationary distribution at all subsequent time points. This process is referred to as a “stationary Markov chain” in the textbook, but others may refer to “stationary” as how we defined homogenous here.</p>
+<p>The stationary distribution can be computed by solving
+<span class="math display" id="eq:stationary">\[\begin{equation}
+\boldsymbol{\delta} = \boldsymbol{1} (\boldsymbol{I}_m - \boldsymbol{\Gamma} + \boldsymbol{U})^{-1}
+\tag{1.5}
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{U}\)</span> is a square matrix of ones and <span class="math inline">\(\boldsymbol{I}_m\)</span> is an <span class="math inline">\((m \times m)\)</span> identity matrix.</p>
+<p><strong>Note:</strong> We will see in later sections how the assumption of stationary simplifies computation.</p>
+</div>
+<div id="tp" class="section level3 hasAnchor" number="1.2.3">
+<h3><span class="header-section-number">1.2.3</span> Transition Probabilities Estimation<a href="prelim.html#tp" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The transition probabilities can be estimated using the relative frequencies of transitions between states.</p>
+<p>Let <span class="math inline">\(f_{ij}\)</span> denote the number of transitions observed from state <span class="math inline">\(i\)</span> to state <span class="math inline">\(j\)</span>. Let <span class="math inline">\(c_1, c_2, \dots, c_T\)</span> be a realization of an <span class="math inline">\(m-\)</span>state MC <span class="math inline">\(\{C_t\}\)</span>.</p>
+<div id="non-stationary-case" class="section level4 hasAnchor" number="1.2.3.1">
+<h4><span class="header-section-number">1.2.3.1</span> Non-stationary case<a href="prelim.html#non-stationary-case" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The likelihood of the transition probabilities conditioned on the first observation is</p>
+<p><span class="math display">\[L(\gamma_{ij}|c_1) = \prod_{i=1}^m \prod_{j=1}^m \gamma_{ij}^{f_{ij}}\]</span></p>
+<p>and the log-likelihood is</p>
+<p><span class="math display">\[l (\gamma_{ij}|c_1) = \sum_{i=1}^m \left( \sum_{j=1}^m f_{ij} \log \gamma_{ij} \right)\]</span></p>
+<p>Let <span class="math inline">\(l_i = \sum_{j=1}^m f_{ij} \log \gamma_{ij}\)</span>. Let <span class="math inline">\(\gamma_{ii} = 1 - \sum_{k \neq i} \gamma_{ik}\)</span>.</p>
+<p>Then we can maximize <span class="math inline">\(l\)</span> by maximizing each <span class="math inline">\(l_i\)</span> separately with respect to the transition probabilities, in terms of the off-diagonals.</p>
+<p>That is,</p>
+<p>substitute the off-diagonal transition probabilities</p>
+<p><span class="math display">\[l(\gamma_{ij}|c_1) = \sum_{i=1}^m f_{ii} \log (1 - \sum_{k \neq i} \gamma_{ik}) + \sum_{i \neq j} f_{ij} \log \gamma_{ij}\]</span></p>
+<p>differentiate with respect to <span class="math inline">\(\gamma_{ij}\)</span></p>
+<p><span class="math display">\[\begin{align*}
+\frac{dl}{d \gamma_{ij}}
+&amp;= \frac{-f_{ii}}{1 - \sum_{k \neq i} \gamma_{ik}} + \frac{f_{ij}}{\gamma_{ij}}\\
+&amp;= \frac{- f_{ii}}{\gamma_{ii}} + \frac{f_{ij}}{\gamma_{ij}}
+\end{align*}\]</span></p>
+<p>set to zero</p>
+<p><span class="math display">\[\begin{equation*}
+0 = - \frac{f_{ii}}{\gamma_{ii}} + \frac{f_{ij}}{\gamma_{ij}}\\
+\frac{f_{ii}}{\gamma_{ii}} = \frac{f_{ij}}{\gamma_{ij}}\\
+f_{ii} \gamma_{ij} = f_{ij} \gamma_{ii} \qquad{\text{for } \gamma_{ii}, \gamma_{ij}  \neq 0}
+\end{equation*}\]</span></p>
+<p>Then summing over <span class="math inline">\(j\)</span>,</p>
+<p><span class="math display">\[\begin{equation*}
+\sum_{j=1}^m f_{ij}  \gamma_{ii} =  \sum_{j=1}^m f_{ii}  \gamma_{ij}\\
+\gamma_{ii} \sum_{j=1}^m f_{ij} = f_{ii} \qquad{\text{since } \sum_{j} \gamma_{ij} = 1}
+\end{equation*}\]</span></p>
+<p>it follows that</p>
+<p><span class="math inline">\(\gamma_{ii} = \frac{f_{ii}}{\sum_{j=1}^m f_{ij}}\)</span> and <span class="math inline">\(\gamma_{ij} = \frac{f_{ij} \gamma_{ii}}{f_{ii}} = \frac{f_{ij} f_{ii}}{f_{ii} \sum_{j=1}^m f_{ij}} = \frac{f_{ij}}{\sum_{j=1}^m f_{ij}}\)</span></p>
+<p>Therefore, the conditional maximum likelihood estimator of the transition probabilities, assuming non-stationarity, is given by <span class="math inline">\(\hat{\gamma_{ij}} = \frac{f_{ij}}{\sum_{k=1}^m f_{ik}} \qquad{(i, j = 1, \dots, m)}\)</span>.</p>
+</div>
+<div id="stationary-case" class="section level4 hasAnchor" number="1.2.3.2">
+<h4><span class="header-section-number">1.2.3.2</span> Stationary case<a href="prelim.html#stationary-case" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Let <span class="math inline">\(\delta_{c_1}\)</span> be the stationary distribution.</p>
+<p>The likelihood of the transition probabilities is</p>
+<p><span class="math display">\[L(\gamma_{ij}) = \delta_{c_1} \prod_{i=1}^m \prod_{j=1}^m \gamma_{ij}^{f_{ij}}\]</span></p>
+<p>and the log-likelihood is</p>
+<p><span class="math display">\[l (\gamma_{ij}) = \log \delta_{c_1} + \sum_{i=1}^m \sum_{j=1}^m f_{ij} \log \gamma_{ij}\]</span></p>
+<p>We will maximize <span class="math inline">\(l\)</span> subject to <span class="math inline">\(\gamma_{ij}\)</span> using Lagrange multipliers this time with the <span class="math inline">\(m\)</span> constraints <span class="math inline">\(\sum_{j} \gamma_{ij} = 1\)</span>.</p>
+<p>That is,</p>
+<p>write the new objective function as</p>
+<p><span class="math display">\[F(\gamma_{ij}) = \log \delta_{c_1} + \sum_{i=1}^m \sum_{j=1}^m f_{ij} \log \gamma_{ij} - \sum_{i = 1}^m \lambda_i \left( \sum_{j=1}^m \gamma_{ij}  -1 \right)\]</span></p>
+<p>differentiate with respect to <span class="math inline">\(\gamma_{ij}\)</span></p>
+<p><span class="math display">\[\frac{dF}{d \gamma_{ij}} = \frac{f_{ij}}{\gamma_{ij}} - \lambda_i\]</span></p>
+<p>set to zero</p>
+<p><span class="math display">\[\begin{equation*}
+0 = \frac{f_{ij}}{\gamma_{ij}} - \lambda_i\\
+\end{equation*}\]</span></p>
+<p>It follows that <span class="math inline">\(\lambda_i = \frac{f_{ij}}{\gamma_{ij}}\)</span> and <span class="math inline">\(f_{ij} = \frac{\gamma_{ij}}{\lambda_i}\)</span></p>
+<p>Solving for <span class="math inline">\(\lambda_i\)</span></p>
+<p><span class="math display">\[\begin{equation*}
+\sum_{j=1}^m \gamma_{ij} = \sum_{j=1}^m \frac{f_{ij}}{\lambda_i} = 1\\
+\sum_{j=1}^m f_{ij} = \lambda_i
+\end{equation*}\]</span></p>
+<p>it follows that <span class="math inline">\(\hat{\gamma}_{ij} = \frac{f_{ij}}{\lambda_i} = \frac{f_{ij}}{\sum_{j=1}^m f_{ij}}\)</span>.</p>
+<p>Therefore, the unconditional maximum likelihood estimator of the transition probabilities, assuming stationarity, is given by <span class="math inline">\(\hat{\gamma}_{ij} = \frac{f_{ij}}{\sum_{j=1}^m f_{ij}}\)</span>.</p>
+</div>
+</div>
+</div>
+<div id="exercises" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Exercises<a href="prelim.html#exercises" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Prove 1-4.</p>
+<ol style="list-style-type: decimal">
+<li>All finite state-space homogenous Markov chains satisfy the <strong>Chapman-Kolmogorov equations</strong></li>
+</ol>
+<p><span class="math display" id="eq:ck">\[\begin{align}
+\boldsymbol{\Gamma}(t+u) = \boldsymbol{\Gamma}(t) \boldsymbol{\Gamma}(u)
+\tag{1.6}
+\end{align}\]</span></p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>It follows from <a href="prelim.html#eq:ck">(1.6)</a> that <span class="math inline">\(\boldsymbol{\Gamma} (t) = \boldsymbol{\Gamma} (1)^t\)</span>. That is, the matrix of <span class="math inline">\(t-\)</span>step transition probabilities is the <span class="math inline">\(t\)</span>-th power of the matrix of one-step transition probabilities.</p></li>
+<li><p>To deduce the distribution at time <span class="math inline">\(t+1\)</span> from that at <span class="math inline">\(t\)</span>, we postmultiply by the transition probability matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span>. That is,</p></li>
+</ol>
+<p><span class="math display" id="eq:post">\[\begin{equation}
+  \boldsymbol{u} (t+1) = \boldsymbol{u} (t) \boldsymbol{\Gamma}
+  \tag{1.7}
+\end{equation}\]</span></p>
+<ol start="4" style="list-style-type: decimal">
+<li>The vector <span class="math inline">\(\boldsymbol{\delta}\)</span> with non-negative elements is a stationary distribution of the MC with tpm <span class="math inline">\(\boldsymbol{\Gamma}\)</span> if and only if <span class="math inline">\(\boldsymbol{\delta} ( \boldsymbol{I_m} - \boldsymbol{\Gamma} + \boldsymbol{U}) = \boldsymbol{1}\)</span> where <span class="math inline">\(\boldsymbol{1}\)</span> is a row vector of ones, <span class="math inline">\(\boldsymbol{I_m}\)</span> is the <span class="math inline">\(m \times m\)</span> identity matrix, and <span class="math inline">\(\boldsymbol{U}\)</span> is the <span class="math inline">\(m \times m\)</span> matrix of ones.</li>
+</ol>
+<p>Solve 5-7.</p>
+<ol start="5" style="list-style-type: decimal">
+<li>Suppose that the sequence of rainy and sunny days is such that each day’s weather depends only on the previous day’s, and the transition probabilities are given by</li>
+</ol>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>day t+1</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>day t</strong></td>
+<td>rainy</td>
+<td>sunny</td>
+</tr>
+<tr class="even">
+<td>rainy</td>
+<td>0.9</td>
+<td>0.1</td>
+</tr>
+<tr class="odd">
+<td>sunny</td>
+<td>0.6</td>
+<td>0.4</td>
+</tr>
+</tbody>
+</table>
+<p>Suppose that today’s weather (t=1) is sunny. What is the distribution of today’s weather and tomorrow’s weather? What is the stationary distribution?</p>
+<ol start="6" style="list-style-type: decimal">
+<li><p>Let <span class="math inline">\(X\)</span> be a random variable which is distributed as a <span class="math inline">\((\delta_1, \delta_2)-\)</span> mixture of two distributions with expectations <span class="math inline">\(\mu_1, \mu_2\)</span> and variances <span class="math inline">\(\sigma_1, \sigma_2\)</span>, respectively, where <span class="math inline">\(\delta_1 + \delta_2 = 1\)</span>. Show that <span class="math inline">\(Var(X) = \delta_1 \sigma_1^2 + \delta_2 \sigma_2^2 + \delta_1 \delta_2 (\mu_1 + \mu_2)^2\)</span></p></li>
+<li><p>Consider a stationary two-state Markov chain with transition probability matrix given by
+<span class="math display">\[\boldsymbol{\Gamma} = \left(\begin{array}{cc}
+  \gamma_{11} &amp; \gamma_{12}\\
+  \gamma_{21} &amp; \gamma_{22}
+  \end{array}\right)
+  \]</span></p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Show that the stationary distribution is <span class="math display">\[(\delta_1, \delta_2) = \frac{1}{\gamma_{12} + \gamma_{21}} (\gamma_{21}, \gamma_{12})\]</span></p></li>
+<li><p>Consider the case</p></li>
+</ol>
+<p><span class="math display">\[\boldsymbol{\Gamma} =
+\left(\begin{array}{cc}
+\gamma_{11} &amp; \gamma_{12}\\
+\gamma_{21} &amp; \gamma_{22}
+\end{array}\right)
+\]</span></p>
+<p>and the following two sequences of observations that are assumed to be generated by the above Markov chain.</p>
+<p><span class="math display">\[\text{Sequence 1}: 1 1 1 2 2 1\]</span>
+<span class="math display">\[\text{Sequence 2}: 2 1 1 2 1 1\]</span></p>
+<p>Compute the probability of each of the sequences.</p></li>
+</ol>
+<p>Code 8-9.</p>
+<ol start="8" style="list-style-type: decimal">
+<li><ol style="list-style-type: lower-alpha">
+<li><p>Write an <strong>R</strong> function <code>statdist(gamma)</code> that computes the stationary distribution of the Markov chain with tpm <code>gamma</code>.</p></li>
+<li><p>Use the function to find the stationary distribution of the following transition probabilitiy matrices. Identify the irreducible tpm(s).</p></li>
+</ol>
+<ol style="list-style-type: lower-roman">
+<li><p><span class="math display">\[\begin{align}
+\begin{pmatrix}
+  0.7 &amp; 0.2 &amp; 0.1\\
+  0 &amp; 0.6 &amp; 0.4\\
+  0.5 &amp; 0 &amp; 0.5
+\end{pmatrix}
+\end{align}\]</span></p></li>
+<li><p><span class="math display">\[\begin{align}
+\begin{pmatrix}
+  0.25 &amp; 0.25 &amp; 0.25 &amp; 0.25\\
+  0.25 &amp; 0.25 &amp; 0.5 &amp; 0\\
+  0 &amp; 0 &amp; 0.25 &amp; 0.75\\
+  0 &amp; 0 &amp; 0.5 &amp; 0.5\\
+\end{pmatrix}
+\end{align}\]</span></p></li>
+<li><p><span class="math display">\[\begin{align}
+\begin{pmatrix}
+  1 &amp; 0 &amp; 0 &amp; 0\\
+  0.5 &amp; 0 &amp; 0.5 &amp; 0\\
+  0 &amp; 0.75 &amp; 0 &amp; 0.75\\
+  0 &amp; 0 &amp; 0 &amp; 1\\
+\end{pmatrix}
+\end{align}\]</span></p></li>
+</ol></li>
+<li>Write an <strong>R</strong> function <code>rMC(n, m, gamma, delta=NULL)</code> that generates a series of length <span class="math inline">\(n\)</span> from an <span class="math inline">\(m\)</span>-state Markov chain with tpm <code>gamma</code>. Use the initial state distribution if it is provided and the stationary distribution as the initial distribution otherwise.</li>
+</ol>
+</div>
+<div id="solutions" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Solutions<a href="prelim.html#solutions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Question 1</strong></p>
+<p>Let <span class="math inline">\(i, j \in \mathbb{N}\)</span>.</p>
+<p>Then</p>
+<p><span class="math display">\[\begin{align*}
+\left( \boldsymbol{\Gamma} (t + u) \right)_{ij}
+&amp;= \Pr(C_{t + u + s} = j| C_s = i)\\
+&amp;= \sum_{k=1}^m \Pr(C_{t+u+s} = j| C_{t+s} = k, C_s = i) \Pr(C_{t+s} = k|C_s = i)
+\qquad{\text{by LOTP}}\\
+&amp;= \sum_{k=1}^m \Pr(C_{t+u+s} = j|C_{t+s} = k) \Pr(C_{t+s} = k|C_s = i)
+\qquad{\text{by Markov property}}\\
+&amp;= \sum_{k=1}^m \Pr(C_{u+s} = j|C_s = k) \Pr(C_{t+s} = k|C_s = i)
+\qquad{\text{by homogeneity of Markov chains}}\\
+&amp;= \sum_{k=1}^m \Pr(C_{t+s} = k|C_s = i) \Pr(C_{u+s} = j|C_s = k)\\
+&amp;= \sum_{k=1}^m \left( \boldsymbol{\Gamma} (t) \right)_{ik} \left( \boldsymbol{\Gamma} (u) \right)_{kj}
+\end{align*}\]</span></p>
+<p>Since the <span class="math inline">\(i, j\)</span>-th entry of <span class="math inline">\(\boldsymbol{\Gamma} (t+u)\)</span> is equal to the <span class="math inline">\(i, j\)</span>-th entry of <span class="math inline">\(\boldsymbol{\Gamma} (t) \boldsymbol{\Gamma} (u)\)</span> for arbitrary <span class="math inline">\(i, j \in \mathbb{N}\)</span>, we conclude that <span class="math inline">\(\boldsymbol{\Gamma} (t + u) = \boldsymbol{\Gamma} (t) \boldsymbol{\Gamma} (u)\)</span>.</p>
+<p><strong>Question 2</strong></p>
+<p><span class="math display">\[\begin{align*}
+\boldsymbol{\Gamma} (1)
+&amp;= \boldsymbol{\Gamma} (1) \cdot \boldsymbol{\Gamma} (1) \cdots \boldsymbol{\Gamma} (1)
+\qquad{\text{t-times}}\\
+&amp;= \boldsymbol{\Gamma} (1 + 1 + \cdots + 1)
+\qquad{\text{by Chapman-Kolomogorov equations}}\\
+&amp;= \boldsymbol{\Gamma} (t)
+\end{align*}\]</span></p>
+<p><strong>Question 3</strong></p>
+<p>Let <span class="math inline">\(j \in \mathbb{N}\)</span>. Then</p>
+<p><span class="math display">\[\begin{align*}
+\left( \boldsymbol{u} (t+1) \right)_{1j}
+&amp;= \Pr(C_{t+1} = j|C_t = i) \Pr(C_t = i)
+\qquad{\text{by Chain rule}}\\
+&amp;= \boldsymbol{u} (t) \gamma_{ij} (t)\\
+&amp;= \left(  \boldsymbol{u} (t) \boldsymbol{\Gamma}\right)_{1j}
+\end{align*}\]</span></p>
+<p>Since the <span class="math inline">\(j\)</span>-th entry of <span class="math inline">\(\boldsymbol{u} (t+1)\)</span> is equal to the <span class="math inline">\(j\)</span>-th entry of <span class="math inline">\(\boldsymbol{u} (t) \boldsymbol{\Gamma}\)</span>, we conclude that <span class="math inline">\(\boldsymbol{u} (t+1) = \boldsymbol{u} (t) \boldsymbol{\Gamma}\)</span>.</p>
+<p><strong>Question 4</strong></p>
+<p><span class="math inline">\((\Rightarrow)\)</span> Suppose <span class="math inline">\(\boldsymbol{\delta}\)</span> is a stationary distribution of a discrete-time homogenous Markov chain on <span class="math inline">\(m\)</span> states. That is, <span class="math inline">\(\boldsymbol{\delta \Gamma} = \boldsymbol{\delta}\)</span> and <span class="math inline">\(\boldsymbol{\delta 1} = \boldsymbol{1}&#39;\)</span>.</p>
+<p>Then</p>
+<p><span class="math display">\[\begin{align*}
+\boldsymbol{\delta} (\boldsymbol{I}_m - \boldsymbol{\Gamma} + \boldsymbol{U})
+&amp;= \boldsymbol{\delta} \boldsymbol{I}_m - \boldsymbol{\delta \Gamma} + \boldsymbol{\delta U}\\
+&amp;= \boldsymbol{\delta U}\\
+&amp;= (\delta_1, \delta_2, \dots, \delta_m)
+\begin{pmatrix}
+1 &amp; 1 &amp; \cdots &amp; 1\\
+1 &amp; 1 &amp; \cdots &amp; 1\\
+\vdots &amp; \vdots &amp; \cdots &amp; \vdots\\
+1 &amp; 1 &amp; \cdots &amp; 1
+\end{pmatrix}\\
+&amp;= (\delta_1 + \delta_2 + \cdots + \delta_m, \delta_1 + \delta_2 + \cdots + \delta_m, \dots, \delta_1 + \delta_2 + \cdots + \delta_m)\\
+&amp;= (1, 1, \dots, 1)\\
+&amp;= \boldsymbol{1}
+\end{align*}\]</span></p>
+<p><span class="math inline">\((\Leftarrow)\)</span> Suppose <span class="math inline">\(\boldsymbol{\delta} (\boldsymbol{I}_m - \boldsymbol{\Gamma} + \boldsymbol{U})\)</span>.</p>
+<p>Then</p>
+<p><span class="math display">\[\begin{equation*}
+\boldsymbol{\delta} - \boldsymbol{\delta} \boldsymbol{\Gamma} + \boldsymbol{\delta} \boldsymbol{U} = \boldsymbol{1}\\
+\boldsymbol{\delta} \boldsymbol{1}&#39; - \boldsymbol{\delta \Gamma} \boldsymbol{1}&#39; + \boldsymbol{\delta U}  \boldsymbol{1}&#39; =   \boldsymbol{1} \boldsymbol{1}&#39;\\
+\end{equation*}\]</span></p>
+<p>And <span class="math inline">\(\boldsymbol{\Gamma 1}&#39; = \boldsymbol{1}&#39;\)</span> since <span class="math inline">\(\sum_{j} \gamma_{ij} = 1\)</span>, <span class="math inline">\(\boldsymbol{U 1}&#39; = \boldsymbol{m} = (m, \dots, m)&#39; = \boldsymbol{m 1}&#39;\)</span>, and <span class="math inline">\(\boldsymbol{1 1}&#39; = m\)</span></p>
+<p>So
+<span class="math display">\[\begin{equation*}
+\boldsymbol{\delta} \boldsymbol{1}&#39; - \boldsymbol{\delta} \boldsymbol{1}&#39; + \boldsymbol{\delta m 1&#39;} =   m\\
+\boldsymbol{\delta m 1&#39;} =   m\\
+\boldsymbol{\delta 1&#39;} =   1
+\end{equation*}\]</span></p>
+<p>Therefore, <span class="math inline">\(\boldsymbol{\delta}\)</span> is a stationary distribution if and only if <span class="math inline">\(\boldsymbol{\delta} ( \boldsymbol{I}_m - \boldsymbol{\Gamma} + \boldsymbol{U}) = \boldsymbol{1}\)</span></p>
+<p><strong>Question 5</strong></p>
+<p>The distribution of today’s weather is <span class="math inline">\(\boldsymbol{u} (1) = (\Pr(C_1 = 1, \Pr(C_1 = 2)) = (0, 1)\)</span></p>
+<p>We can obtain the distribution of tomorrow’s weather by postmultiplying <span class="math inline">\(\boldsymbol{u} (1)\)</span> by <span class="math inline">\(\boldsymbol{\Gamma}\)</span> (Equation <a href="prelim.html#eq:post">(1.7)</a>), which is</p>
+<p><span class="math inline">\(\boldsymbol{u} (2) = (\Pr(C_2 = 1), \Pr (C_2 = 2)) = \boldsymbol{u} (1) \boldsymbol{\Gamma} = (0.6, 0.4)\)</span>.</p>
+<p>The stationary distribution can be obtained by solving <span class="math inline">\(\boldsymbol{\delta \Gamma} = \boldsymbol{\delta}\)</span> and <span class="math inline">\(\boldsymbol{\delta 1&#39;} = \boldsymbol{1}\)</span>.</p>
+<p>So</p>
+<p><span class="math display">\[\begin{equation*}
+(\delta_1, \delta_2) \begin{pmatrix}
+0.9 &amp; 0.1\\
+0.6 &amp; 0.4
+\end{pmatrix}
+= \begin{pmatrix}
+\delta_1\\
+\delta_2
+\end{pmatrix}\\
+0.9 \delta_1 + 0.6 \delta_2 = \delta_1\\
+0.1 \delta_1 + 0.4 \delta_2 = \delta_2
+\end{equation*}\]</span></p>
+<p>and we have the additional constraint that <span class="math inline">\(\delta_1 + \delta_2 = 1\)</span>. Solving the above systems of equation, we get that <span class="math inline">\(\boldsymbol{\delta} = (\delta_1, \delta_2) = (\frac{6}{7}, \frac{1}{7})\)</span>.</p>
+<p><strong>Question 6</strong>
+Let <span class="math inline">\(Y_1, Y_2\)</span> be the component random variables of the mixture distributions with expectations <span class="math inline">\(\mu_1, \mu_2\)</span>, and variances <span class="math inline">\(\sigma_1^2, \sigma_2^2\)</span>, respectively. Then <span class="math inline">\(E(Y_1^2) - (E(Y_1))^2 = \sigma_1^2 \Rightarrow E(Y_1^2) = \sigma_1^2 + (E(Y_1))^2\)</span>. Similarly, <span class="math inline">\(E(Y_2^2) = \sigma_2^2 + (E(Y_2))^2\)</span>.</p>
+<p>Then</p>
+<p><span class="math display">\[\begin{align}
+Var(X)
+&amp;= E(X^2) - (E(X))^2\\
+&amp;= \delta_1 E(Y_1^2) + \delta_2 E(Y_2^2) - (\delta_1 E(Y_1) + \delta_2 E(Y_2))^2
+\qquad{\text{by Equation 2.2 and 2.3}}\\
+&amp;= \delta_1 (\sigma_1^2 + (E(Y_1))^2) + \delta_2 (\sigma_2^2 + (E(Y_2))^2) - (\delta_1 E(Y_1) + \delta_2 E(Y_2))^2
+\qquad{\text{by the above}}\\
+&amp;= \delta_1 \sigma_1^2 + \delta_1 (E(Y_1))^2 + \delta_2 \sigma_2^2 + \delta_2 (E(Y_2))^2 - \delta_1^2 (E(Y_1))^2 - 2 \delta_1 \delta_2 E(Y_1) E(Y_2) - \delta_2^2 (E(Y_2))^2\\
+&amp;= \delta_1 \sigma_1^2 + \delta_1 \mu_1^2 + \delta_2 \sigma_2^2 + \delta_2 \mu_2^2 - \delta_1^2 \mu_1^2 - 2 \delta_1 \delta_2 \mu_1 \mu_2 - \delta_2^2 \mu_2^2\\
+&amp;= \delta_1 \sigma_1^2 + \delta_2 \sigma_2^2 + \delta_1 \mu_1^2 (1 - \delta_1) + \delta_2 \mu_2^2 (1 - \delta_2) - 2 \delta_1 \delta_2 \mu_1 \mu_2\\
+&amp;= \delta_1 \sigma_1^2 + \delta_2 \sigma_2^2 + \delta_1 \delta_2 \mu_1^2 - 2 \delta_1 \delta_2 \mu_1 \mu_2 + \delta_1 \delta_2 \mu_2^2
+\qquad{\text{since } \delta_1 + \delta_2 = 1}\\
+&amp;= \delta_1 \sigma_1^2 + \delta_2 \sigma_2^2 + \delta_1 \delta_2 (\mu_1 - \mu_2)^2
+\end{align}\]</span></p>
+<p><strong>Question 7</strong></p>
+<p><strong>Part a</strong></p>
+<p>We need to solve <span class="math inline">\(\boldsymbol{\delta \Gamma} = \boldsymbol{\delta}\)</span> and <span class="math inline">\(\boldsymbol{\delta 1&#39;} = 1\)</span>.</p>
+<p>Hence,</p>
+<p><span class="math display">\[\begin{equation*}
+(\delta_1, \delta_2) \begin{pmatrix}
+\gamma_{11} &amp; \gamma_{12}\\
+\gamma_{21} &amp; \gamma_{22}
+\end{pmatrix}
+= \begin{pmatrix}
+\delta_1\\
+\delta_2
+\end{pmatrix}\\
+\gamma_{11} \delta_1 + \gamma_{21} \delta_2 = \delta_1\\
+\gamma_{12} \delta_1 + \gamma_{22} \delta_2 = \delta_2
+\end{equation*}\]</span></p>
+<p>Since <span class="math inline">\(\gamma_{11} + \gamma_{12} = 1\)</span> and <span class="math inline">\(\gamma_{21} + \gamma_{22} = 1\)</span>, and we have the additional constraint that <span class="math inline">\(\delta_1 + \delta_2 = 1\)</span>, this is equivalent to solving the systems of equations</p>
+<p><span class="math display">\[\begin{equation*}
+(1 - \gamma_{12}) \delta_1  + \gamma_{21} \delta_2 = \delta_1\\
+\gamma_{12} \delta_1 + (1 - \gamma_{21}) \delta_2 = \delta_2\\
+\delta_1 + \delta_2 = 1
+\end{equation*}\]</span></p>
+<p>Then solving system of equations above, we get <span class="math inline">\(\frac{1}{\gamma_{12} + \gamma_{21}} (\gamma_{21}, \gamma_{12})\)</span></p>
+<p><strong>Part b</strong></p>
+<p>By <a href="prelim.html#tp">Transition Probabilities Estimation</a>,</p>
+<p><span class="math inline">\(\Pr(\text{sequence 1}) = \gamma_{11}^{f_{11}} \gamma_{12}^{f_{12}} \gamma_{21}^{f_{21}} \gamma_{22}^{f_{22}} = (0.9)^2 (0.1)^1 (0.2)^1 (0.8)^1 = 0.01296\)</span></p>
+<p>and</p>
+<p><span class="math inline">\(\Pr(\text{sequence 2}) = \gamma_{11}^{f_{11}} \gamma_{12}^{f_{12}} \gamma_{21}^{f_{21}} \gamma_{22}^{f_{22}} = (0.9)^2 (0.1)^1 (0.2)^2 (0.8)^0 = 0.00324\)</span></p>
+<p><strong>Question 8</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="prelim.html#cb3-1" aria-hidden="true" tabindex="-1"></a>statdist <span class="ot">=</span> <span class="cf">function</span>(Gamma){</span>
+<span id="cb3-2"><a href="prelim.html#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># number of components</span></span>
+<span id="cb3-3"><a href="prelim.html#cb3-3" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">=</span> <span class="fu">nrow</span>(Gamma)</span>
+<span id="cb3-4"><a href="prelim.html#cb3-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-5"><a href="prelim.html#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># identity matrix (mxm)</span></span>
+<span id="cb3-6"><a href="prelim.html#cb3-6" aria-hidden="true" tabindex="-1"></a>  I <span class="ot">=</span> <span class="fu">diag</span>(m)</span>
+<span id="cb3-7"><a href="prelim.html#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ones matrix (mxm)</span></span>
+<span id="cb3-8"><a href="prelim.html#cb3-8" aria-hidden="true" tabindex="-1"></a>  U <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">1</span>,m<span class="sc">*</span>m), <span class="at">nrow=</span>m,<span class="at">ncol=</span>m)</span>
+<span id="cb3-9"><a href="prelim.html#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># vector of ones (1xm)</span></span>
+<span id="cb3-10"><a href="prelim.html#cb3-10" aria-hidden="true" tabindex="-1"></a>  one_vec <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span>, m)</span>
+<span id="cb3-11"><a href="prelim.html#cb3-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-12"><a href="prelim.html#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># I - Gamma + U</span></span>
+<span id="cb3-13"><a href="prelim.html#cb3-13" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">=</span> I <span class="sc">-</span> Gamma <span class="sc">+</span> U</span>
+<span id="cb3-14"><a href="prelim.html#cb3-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-15"><a href="prelim.html#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># delta(Im - Gamma + U) = 1</span></span>
+<span id="cb3-16"><a href="prelim.html#cb3-16" aria-hidden="true" tabindex="-1"></a>  delta <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X), one_vec)</span>
+<span id="cb3-17"><a href="prelim.html#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(delta)</span>
+<span id="cb3-18"><a href="prelim.html#cb3-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="prelim.html#cb4-1" aria-hidden="true" tabindex="-1"></a>matrix_i <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.7</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="dv">0</span>, <span class="fl">0.6</span>, <span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">nrow=</span><span class="dv">3</span>, <span class="at">ncol=</span><span class="dv">3</span>))</span>
+<span id="cb4-2"><a href="prelim.html#cb4-2" aria-hidden="true" tabindex="-1"></a>matrix_ii <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.75</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>), <span class="at">nrow=</span><span class="dv">4</span>, <span class="at">ncol=</span><span class="dv">4</span>))</span>
+<span id="cb4-3"><a href="prelim.html#cb4-3" aria-hidden="true" tabindex="-1"></a>matrix_iii <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.75</span>, <span class="dv">0</span>, <span class="fl">0.25</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">nrow=</span><span class="dv">4</span>, <span class="at">ncol=</span><span class="dv">4</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="prelim.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">statdist</span>(matrix_i)</span></code></pre></div>
+<pre><code>## [1] 0.4761905 0.2380952 0.2857143</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="prelim.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">statdist</span>(matrix_ii)</span></code></pre></div>
+<pre><code>## [1] 2.434560e-17 1.720846e-17 4.000000e-01 6.000000e-01</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="prelim.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">statdist</span>(matrix_iii)</span></code></pre></div>
+<p>Matrix (iii) causes an error because there is no unique stationary distribution. Once the Markov chain is in state 1, it will stay in state 1 at all subsequent time points and once it is in state 4, it will stay in state 4 at all subsequent time points. It is also reducible because the transitions to the other states cannot be reached.</p>
+<p>Matrix (i) is irreducible because all states can be reached. Matrix (ii) is reducible because the transitions to states 3 and 4 cannot be reached.</p>
+<p><strong>Question 9</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="prelim.html#cb10-1" aria-hidden="true" tabindex="-1"></a>rMC <span class="ot">=</span> <span class="cf">function</span>(n, m, gamma, <span class="at">delta=</span><span class="cn">NULL</span>){</span>
+<span id="cb10-2"><a href="prelim.html#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Solve for stationary distribution if none provided</span></span>
+<span id="cb10-3"><a href="prelim.html#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(delta)) delta <span class="ot">=</span> <span class="fu">statdist</span>(gamma)</span>
+<span id="cb10-4"><a href="prelim.html#cb10-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-5"><a href="prelim.html#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulate sequence of states</span></span>
+<span id="cb10-6"><a href="prelim.html#cb10-6" aria-hidden="true" tabindex="-1"></a>  state_seq <span class="ot">=</span> <span class="fu">c</span>()</span>
+<span id="cb10-7"><a href="prelim.html#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">548</span>)</span>
+<span id="cb10-8"><a href="prelim.html#cb10-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-9"><a href="prelim.html#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="do">## For t=1</span></span>
+<span id="cb10-10"><a href="prelim.html#cb10-10" aria-hidden="true" tabindex="-1"></a>  state_seq[<span class="dv">1</span>] <span class="ot">=</span> <span class="fu">sample</span>(m, <span class="dv">1</span>, <span class="at">prob=</span>delta) <span class="co"># the initial distribution</span></span>
+<span id="cb10-11"><a href="prelim.html#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="prelim.html#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="do">## For t &gt; 1</span></span>
+<span id="cb10-13"><a href="prelim.html#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n){</span>
+<span id="cb10-14"><a href="prelim.html#cb10-14" aria-hidden="true" tabindex="-1"></a>    state_seq <span class="ot">&lt;-</span> <span class="fu">c</span>(state_seq, <span class="fu">sample</span>(m, <span class="dv">1</span>, <span class="at">prob=</span>gamma[state_seq[i<span class="dv">-1</span>], ]))</span>
+<span id="cb10-15"><a href="prelim.html#cb10-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-16"><a href="prelim.html#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(state_seq)</span>
+<span id="cb10-17"><a href="prelim.html#cb10-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>The textbook does not formally introduce irreducibility, so we refer to <span class="citation">(<a href="#ref-Lalley" role="doc-biblioref"><strong>Lalley?</strong></a>)</span><a href="prelim.html#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="introhmm.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/vinky-wang/HMM-Notes/edit/BRANCH/01-preliminaries.Rmd",
+"text": "Suggest an edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "https://github.com/vinky-wang/HMM-Notes/raw/BRANCH/01-preliminaries.Rmd"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

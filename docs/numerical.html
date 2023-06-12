@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 7 Bayesian Inference for HMMs | Hidden Markov Model Notes</title>
+  <title>Chapter 3 Numerical Maximization of the Likelihood | Hidden Markov Model Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 7 Bayesian Inference for HMMs | Hidden Markov Model Notes" />
+  <meta property="og:title" content="Chapter 3 Numerical Maximization of the Likelihood | Hidden Markov Model Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="vinky-wang/HMM-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 7 Bayesian Inference for HMMs | Hidden Markov Model Notes" />
+  <meta name="twitter:title" content="Chapter 3 Numerical Maximization of the Likelihood | Hidden Markov Model Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="fdp.html"/>
-<link rel="next" href="eq.html"/>
+<link rel="prev" href="introhmm.html"/>
+<link rel="next" href="fbalg.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -284,99 +284,177 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="bayesian-inference-for-hmms" class="section level1 hasAnchor" number="7">
-<h1><span class="header-section-number">Chapter 7</span> Bayesian Inference for HMMs<a href="bayesian-inference-for-hmms.html#bayesian-inference-for-hmms" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>We apply Bayesian inference in the context of Poisson-HMMs with Gibbs sampling.</p>
-<p><strong>Note:</strong> We use STAN for Bayesian inference in the <a href="eq.html#eq">Earthquake Analysis</a> which uses Hamiltonian Monte Carlo sampling.</p>
-<div id="reparameterization-to-avoid-label-switching" class="section level2 hasAnchor" number="7.1">
-<h2><span class="header-section-number">7.1</span> Reparameterization to Avoid Label Switching<a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Consider each observed count <span class="math inline">\(x_t\)</span> as the sum <span class="math inline">\(\sum_j x_{jt}\)</span> of contributions from up to <span class="math inline">\(m\)</span> regimes. That is, if the MC is in state <span class="math inline">\(i\)</span> at a given time, then regimes <span class="math inline">\(1, \dots, i\)</span> are all “active” and regimes <span class="math inline">\(i+1, \dots, m\)</span> are all inactive at that time.</p>
-<p>Then parameterizing the model in terms of the non-negative increments <span class="math inline">\(\boldsymbol{\tau} = (\tau_1, \dots, \tau_m)\)</span> where <span class="math inline">\(\tau_j = \lambda_j - \lambda_{j-1}\)</span> (with <span class="math inline">\(\tau_0 \equiv 0\)</span>), or equivalently, <span class="math inline">\(\lambda_i = \sum_{j=1}^i \tau_j\)</span>, the random variable <span class="math inline">\(\tau_j\)</span> can be thought of as the mean contribution of regime <span class="math inline">\(j\)</span> to the count observed at a give time, if regime <span class="math inline">\(j\)</span> is active.</p>
-<p>This parameterization has the effect of placing the <span class="math inline">\(\lambda_j\)</span> in increasing order, which is useful to prevent label switching.</p>
-</div>
-<div id="gibbs-sampling-procedure" class="section level2 hasAnchor" number="7.2">
-<h2><span class="header-section-number">7.2</span> Gibbs Sampling Procedure<a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="numerical" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Numerical Maximization of the Likelihood<a href="numerical.html#numerical" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>We cover solutions to several potential issues when performing direct numerical maximization of the likelihood (using the <a href="introhmm.html#forsec">forward algorithm</a>)</p>
 <ol style="list-style-type: decimal">
-<li><p>Given the observed counts <span class="math inline">\(\boldsymbol{x}^{(T)}\)</span> and current values of the parameters <span class="math inline">\(\boldsymbol{\Gamma}, \boldsymbol{\lambda}\)</span>, generate a sample path of the MC.</p></li>
-<li><p>Use this sample path to decompose the observed counts into (simulated) regime contributions.</p></li>
-<li><p>With the MC sample path available and regime contributions, update <span class="math inline">\(\boldsymbol{\Gamma}, \boldsymbol{\tau}\)</span>.</p></li>
-<li><p>Repeat steps 1-3 for a large number of times, called a “burn-in period”. Then repeat steps 1-3 to obtain the posterior estimates.</p></li>
+<li><p><a href="numerical.html#likscale">Scaling the likelihood</a> to avoid numerical under/over-flow</p></li>
+<li><p><a href="numerical.html#reparam">Reparameterizing</a> in order to use an unconstrained optimizer</p></li>
+<li><p><a href="numerical.html#startval">Choosing a range of starting values</a> to avoid multiple maxima when finding the global maximum</p></li>
 </ol>
-<div id="gen" class="section level3 hasAnchor" number="7.2.1">
-<h3><span class="header-section-number">7.2.1</span> Generating Sample Paths of the MC<a href="bayesian-inference-for-hmms.html#gen" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Given the observations <span class="math inline">\(\boldsymbol{x}^{(T)}\)</span> and current values of the parameters <span class="math inline">\(\boldsymbol{\theta} = (\boldsymbol{\Gamma}, \boldsymbol{\lambda})\)</span>, simulate a sample path <span class="math inline">\(\boldsymbol{C}^{(T)}\)</span> of the MC.</p>
-<p>First, draw the state of the MC at the last time point <span class="math inline">\(C_T\)</span> from <span class="math inline">\(\Pr(C_T|x^{(T)}, \boldsymbol{\theta}) \propto \alpha_T (C_T)\)</span>.</p>
-<p>This follows from</p>
-<p><span class="math display">\[\Pr(C_t|\boldsymbol{x}^{(t)}, \boldsymbol{\theta}) = \frac{\Pr(C_t, \boldsymbol{x}^{(t)}|\boldsymbol{\theta})}{\Pr(\boldsymbol{x}^{(t)}|\boldsymbol{\theta})} = \frac{\alpha_t(C_t)}{L_t} \propto \alpha_t(C_t) \qquad{\text{for } t=1, \dots, T}\]</span></p>
-<p>Next, draw the remaining states of MC from descending time points <span class="math inline">\(C_{T-1}, C_{T-2}, \dots, C_{1}\)</span>, by the following</p>
+<div id="likscale" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> Scaling the Likelihood Computation<a href="numerical.html#likscale" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The forward probabilities of <span class="math inline">\(\boldsymbol{\alpha_t}\)</span> become progressively smaller as <span class="math inline">\(t\)</span> increases (see <a href="introhmm.html#introhmm">Exercise 1b</a>), which may lead to numerical underflow. Since the likelihood is a product of matrices, not of scalars, it is not possible to circumvent numerical underflow by simply computing the log of the likelihood. Instead, the vector of forward probabilities <span class="math inline">\(\boldsymbol{\alpha_t}\)</span> can be scaled at each time <span class="math inline">\(t\)</span>, so that the log likelihood is a sum of the logs of the scale factors.</p>
+<p>Define, for <span class="math inline">\(t = 0, 1, \dots, T\)</span>, the vector</p>
+<p><span class="math display">\[\boldsymbol{\phi_t} = \frac{\boldsymbol{\alpha_t}}{w_t}\]</span></p>
+<p>where <span class="math inline">\(w_t = \sum_i \alpha_t(i) = \boldsymbol{\alpha_t 1&#39;}\)</span></p>
+<p>By the definitions of <span class="math inline">\(\boldsymbol{\phi_t}\)</span> and <span class="math inline">\(w_t\)</span>, the immediate consequences are the following:</p>
+<p><span class="math display">\[\begin{align}
+&amp;\tag{1} \qquad &amp;w_0 &amp;= \boldsymbol{\alpha_0 1&#39;} = \boldsymbol{\delta 1&#39;} = 1\\
+&amp;\tag{2} \qquad &amp;\boldsymbol{\phi_0} &amp;= \boldsymbol{\delta}\\
+&amp;\tag{3} &amp; w_t \boldsymbol{\phi_t} &amp;= w_{t-1} \boldsymbol{\phi_{t-1} \Gamma P} (x_t)\\
+&amp;\tag{4} &amp; L_T = \boldsymbol{\alpha_T 1&#39;} &amp;= w_T (\boldsymbol{\phi_T 1&#39;}) = w_T
+\end{align}\]</span></p>
+<p>Thus, the log-likelihood is</p>
+<p><span class="math display" id="eq:scalelik">\[\begin{equation}\log L_T = \sum_{t=1}^T \log(\frac{w_t}{w_{t-1}}) = \sum_{t=1}^T \log(\boldsymbol{\phi_{t-1} \Gamma P} (x_t) \boldsymbol{1&#39;})
+\tag{3.1}
+\end{equation}\]</span></p>
+<p><strong>Note:</strong></p>
+<p><span class="math inline">\((1)\)</span> follows from <span class="math inline">\(w_0 = \boldsymbol{\alpha_0 1&#39;} = \boldsymbol{\delta 1&#39;} = \delta_1 + \cdots \delta_m = 1\)</span></p>
+<p><span class="math inline">\((2)\)</span> follows from <span class="math inline">\(\boldsymbol{\phi_0} = \frac{\boldsymbol{\alpha_0}}{w_0} = \boldsymbol{\delta} \frac{1}{1} = \boldsymbol{\delta}\)</span></p>
+<p><span class="math inline">\((3)\)</span> follows from <span class="math inline">\(\boldsymbol{\phi_t} = \frac{\boldsymbol{\alpha_t}}{w_t} \Rightarrow w_t \boldsymbol{\phi_t} = \boldsymbol{\alpha_t} = \boldsymbol{\alpha_{t-1} \Gamma P} (x_t) = w_{t-1} \boldsymbol{\phi_{t-1} \Gamma P} (x_t)\)</span></p>
+<p><span class="math inline">\((4)\)</span> follows from <span class="math inline">\(L_T = \boldsymbol{\alpha_T 1&#39;} = w_T(\boldsymbol{\phi_T 1&#39;}) = w_T (\sum_T \phi_T) = w_T (\sum_T \frac{\alpha_T}{w_T} ) = w_T\)</span></p>
+<p>Equation <a href="numerical.html#eq:scalelik">(3.1)</a> follows from <span class="math inline">\(L_T = w_T = \frac{w_1}{w_0} \frac{w_2}{w_1} \cdots \frac{w_T}{w_{T-1}} = \prod_{t=1}^T \frac{w_t}{w_{t-1}} = (\boldsymbol{\phi_{t-1} \Gamma P} (x_t) \boldsymbol{1&#39;}\)</span>, which follows from <span class="math inline">\((3)\)</span> <span class="math inline">\(w_t = w_{t-1} (\boldsymbol{\phi_{t-1} \Gamma P} (x_t) \boldsymbol{1&#39;})\)</span>.</p>
 </div>
-<div id="decom" class="section level3 hasAnchor" number="7.2.2">
-<h3><span class="header-section-number">7.2.2</span> Decomposing the Observed Counts into Regime Contributions<a href="bayesian-inference-for-hmms.html#decom" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Given the sample path <span class="math inline">\(\boldsymbol{C}^{(T)}\)</span> of the MC (from step 1), suppose that <span class="math inline">\(C_t = i\)</span> so that regimes <span class="math inline">\(1, \dots, i\)</span> are active at time <span class="math inline">\(t\)</span>. Decompose each observation <span class="math inline">\(x_t (t=1, 2, \dots, T)\)</span> into regime contributions <span class="math inline">\(x_{1t}, \dots, x_{it}\)</span> such that <span class="math inline">\(\sum_{j=1}^i x_{jt} = x_t\)</span> by</p>
-<p><span class="math display">\[f(x_{1t}, \dots, x_{it}|C_t = i, X_t = x_t) = \frac{x_t}{x_{1t}! \cdots x_{it}!} \tau_1^{x_{1t}} \cdots \tau_i^{x_{it}}\]</span></p>
-</div>
-<div id="updating-the-parameters" class="section level3 hasAnchor" number="7.2.3">
-<h3><span class="header-section-number">7.2.3</span> Updating the Parameters<a href="bayesian-inference-for-hmms.html#updating-the-parameters" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Suppose we assign the following priors,</p>
-<p><span class="math display">\[\boldsymbol{\Gamma}_r \sim Dirichlet(\boldsymbol{\nu_r})\]</span></p>
-<p><span class="math display">\[\tau_j = \lambda_j - \lambda_{j-1} \sim Gamma(\text{shape} = a_j, \text{rate} = b_j)\]</span></p>
-<p>That is,</p>
-<p>the rows <span class="math inline">\(\boldsymbol{\Gamma}_1, \boldsymbol{\Gamma}_2, \dots, \boldsymbol{\Gamma}_m\)</span> have a Dirichlet distribution with parameters <span class="math inline">\(\nu_1, \nu_2, \dots, \nu_m\)</span> respectively. Hence, <span class="math inline">\(f(\boldsymbol{\Gamma}_1, \boldsymbol{\Gamma}_2, \dots, \boldsymbol{\Gamma}_m) \propto \boldsymbol{\Gamma}_1^{\nu_1 -1} \cdots \boldsymbol{\Gamma}_m^{\nu_m -1}\)</span> where <span class="math inline">\(\sum_{i=1}^m \boldsymbol{\Gamma}_i = 1, \boldsymbol{\Gamma}_i \geq 0\)</span>.</p>
-<p>and the increment <span class="math inline">\(\tau_j\)</span> is such that <span class="math inline">\(f(\tau_j) = \frac{b^a}{\Gamma(a)} x^{a-1} e^{-bx}\)</span>. Hence, <span class="math inline">\(\tau_j\)</span> have mean <span class="math inline">\(\frac{a}{b}\)</span>, variance <span class="math inline">\(\frac{a}{b^2}\)</span>, and coefficient of variation <span class="math inline">\(\frac{1}{\sqrt{a}}\)</span>.</p>
-<p>Update <span class="math inline">\(\boldsymbol{\Gamma}\)</span> and <span class="math inline">\(\boldsymbol{\tau}\)</span> using the <a href="bayesian-inference-for-hmms.html#gen">MC path</a> and <a href="bayesian-inference-for-hmms.html#decom">regime contributions</a> by drawing</p>
-<p><span class="math display">\[\boldsymbol{\Gamma}_r \sim Dirichlet(\boldsymbol{\nu_r} + \boldsymbol{T}_r)\]</span> where <span class="math inline">\(\boldsymbol{T}_r\)</span> is the <span class="math inline">\(r\)</span>-th row of the (simulated) matrix of transition counts</p>
-<p>and</p>
-<p><span class="math display">\[\tau_j \sim Gamma(a_j + \sum_{t=1}^T x_{jt}, b_j + N_j)\]</span> where <span class="math inline">\(N_j\)</span> denotes the number of times regime <span class="math inline">\(j\)</span> was active in the simulated sample path of the MC and <span class="math inline">\(x_{jt}\)</span> is the contribution of regime <span class="math inline">\(j\)</span> to <span class="math inline">\(x_t\)</span>.</p>
-<p><strong>Note:</strong> The posterior distributions for the above follow from the fact that observations of regime contributions <span class="math inline">\(x_{i1}, \dots, x_{it}\)</span> where the variables <span class="math inline">\(x_{jt} \sim Poisson(\tau_j)\)</span> and <span class="math inline">\(x=\sum_j x_{jt}\)</span>, <span class="math inline">\(f(x_{1t}, \dots, x_{it}|C_t = i, X_t = x_t) = \frac{x_t}{x_{1t}! \cdots x_{it}!} \tau_1^{x_{1t}} \cdots \tau_i^{x_{it}}\)</span>, <span class="math inline">\(\boldsymbol{T}_r \sim Dirichlet(\boldsymbol{\nu}_r)\)</span>, and <span class="math inline">\(\tau_j \sim Gamma(a, b)\)</span>.</p>
-</div>
-<div id="repeat-the-above" class="section level3 hasAnchor" number="7.2.4">
-<h3><span class="header-section-number">7.2.4</span> Repeat the Above<a href="bayesian-inference-for-hmms.html#repeat-the-above" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Repeat steps 1 to 3 for a large number of samples, called the “burn-in period”. Now repeat steps 1 to 3 for the posterior estimates.</p>
-</div>
-</div>
-<div id="exercises-5" class="section level2 hasAnchor" number="7.3">
-<h2><span class="header-section-number">7.3</span> Exercises<a href="bayesian-inference-for-hmms.html#exercises-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="reparam" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Reparameterization to Avoid Constraints<a href="numerical.html#reparam" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The parameters of the Markov chain, state-dependent distributions, and initial distributions must be reparameterized in order to use an unconstrained optimizer, such as <code>nlm</code>.</p>
+<div id="transition-probabilities" class="section level3 hasAnchor" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Transition Probabilities<a href="numerical.html#transition-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For the transition probabilities <span class="math inline">\(\gamma_{ij}\)</span>, to ensure that <span class="math inline">\(\sum_{j} \gamma_{ij} = 1\)</span> and <span class="math inline">\(\gamma_{ij} \geq 0\)</span>, apply the following reparameterization:</p>
 <ol style="list-style-type: decimal">
-<li><p>Consider <span class="math inline">\(u\)</span> defined by <span class="math inline">\(u=\sum_{j=1}^i u_j\)</span>, where the variables <span class="math inline">\(u_j\)</span> are independent Poisson random variables with means <span class="math inline">\(\tau_j\)</span>. Show that, conditional on <span class="math inline">\(u\)</span>, the joint distribution <span class="math inline">\(u_1, u_2, \dots, u_i\)</span> is a multinomial with total <span class="math inline">\(u\)</span> and probability vector <span class="math inline">\(\frac{(\tau_1, \dots, \tau_i)}{\sum_{j=1}^i \tau_j}\)</span>.</p></li>
-<li><p>Let <span class="math inline">\(\boldsymbol{w}=(w_1, \dots, w_m)\)</span> be an observation from a multinomial distribution with probability vector <span class="math inline">\(\boldsymbol{y}\)</span>, which has a Dirichlet distribution with parameter vector <span class="math inline">\(\boldsymbol{d} = (d_1, \dots, d_m)\)</span>. Show that the posterior distribution <span class="math inline">\(\boldsymbol{y}\)</span> is the Dirichlet distribution with parameters <span class="math inline">\(\boldsymbol{d} + \boldsymbol{w}\)</span>.</p></li>
-<li><p>Let <span class="math inline">\(y_1, y_2, \dots, y_n\)</span> be a random sample from the Poisson distribution with mean <span class="math inline">\(\tau\)</span>, which is gamma distributed with parameters <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>. Show that the posterior distribution of <span class="math inline">\(\tau\)</span>, is the gamma distribution with parameters <span class="math inline">\(a+\sum_{i=1}^n y_i\)</span> and <span class="math inline">\(b+n\)</span>.</p></li>
+<li><p>Define a new matrix <span class="math inline">\(\boldsymbol{T}\)</span> with entries <span class="math inline">\(\tau_{ij}\)</span> for <span class="math inline">\(i \neq j\)</span></p></li>
+<li><p>Choose a strictly increasing function <span class="math inline">\(g: \mathbb{R} \rightarrow \mathbb{R}^+\)</span></p></li>
+<li><p>Define new entries <span class="math inline">\(\nu_{ij}\)</span> where</p></li>
 </ol>
-<p><strong>Question 1</strong></p>
-<p>Since <span class="math inline">\(u= \sum_{j=1}^i u_j\)</span>, <span class="math inline">\(u_j \sim Poisson(\tau_j)\)</span>, and the <span class="math inline">\(u_j\)</span>’s are independent, it follows that <span class="math inline">\(u \sim Poisson(\sum_{j=1}^i \tau_j)\)</span>, hence <span class="math inline">\(f(u) = \frac{\sum_{j=1}^i \tau_j^u e^{- \sum_{j=1}^i \tau_j}}{u!}\)</span>.</p>
+<p><span class="math display">\[\begin{equation}
+  \nu_{ij} = \left\{\begin{aligned}
+  &amp; g(\tau_{ij}) &amp;&amp; \text{ for } i \neq j\\
+  &amp;1 &amp;&amp; \text{ for } i = j\\
+\end{aligned}
+\right.
+\end{equation}\]</span></p>
+<ol start="4" style="list-style-type: decimal">
+<li><p>Maximize <span class="math inline">\(L_T\)</span> with respect to <span class="math inline">\(\boldsymbol{T}\)</span> (and state-dependent parameters and initial probabilities)</p></li>
+<li><p>Transform back</p></li>
+</ol>
+<p><span class="math display">\[\hat{\gamma_{ij}} = \frac{\hat{\nu}_{ij}}{\sum_{k=1}^m \hat{\nu}_{ik}} = \frac{g^{-1} (\hat{\tau}_{ik})}{\sum_{k=1, k \neq i}^m g^{-1} (\hat{\tau}_{ik})} \qquad{\text{ for }} i, j = 1, 2, \dots, m\]</span>.</p>
+</div>
+<div id="parameters-of-state-dependent-distributions" class="section level3 hasAnchor" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Parameters of State-Dependent Distributions<a href="numerical.html#parameters-of-state-dependent-distributions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For parameters of the state-dependent distribution,</p>
+<ol style="list-style-type: decimal">
+<li>Define new parameters</li>
+</ol>
+<p><span class="math inline">\(\qquad{\text{i.}}\)</span> If <span class="math inline">\(X_t \sim \text{Poisson} (\lambda_i)\)</span>, then define <span class="math inline">\(\eta_i = \log \lambda_i\)</span> for <span class="math inline">\(i = 1, \dots, m\)</span></p>
+<p><span class="math inline">\(\qquad{\text{ii.}}\)</span> If <span class="math inline">\(X_t \sim \text{Binomial} (p_i)\)</span>, then define <span class="math inline">\(\eta_i = \log {\frac{p_i}{1 - p_i}}\)</span> for <span class="math inline">\(i = 1, \dots, m\)</span></p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Maximize <span class="math inline">\(L_T\)</span> with respect to <span class="math inline">\(\eta_i\)</span> (and transition and initial probabilities)</p></li>
+<li><p>Transform back</p></li>
+</ol>
+<p><span class="math inline">\(\qquad{\text{i. }} \hat{\boldsymbol{\lambda}} = \exp(\boldsymbol{\hat{\eta}})\)</span></p>
+<p><span class="math inline">\(\qquad{\text{ii. }} \hat{\boldsymbol{p}} = \frac{\exp(\boldsymbol{\hat{\eta}})}{1 + \exp{\boldsymbol{\hat{\eta}}}}\)</span></p>
+</div>
+<div id="initial-probabilities" class="section level3 hasAnchor" number="3.2.3">
+<h3><span class="header-section-number">3.2.3</span> Initial Probabilities<a href="numerical.html#initial-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For the initial probabilities <span class="math inline">\(\delta_i\)</span>, to ensure that <span class="math inline">\(\delta_i \geq 0\)</span> and <span class="math inline">\(\sum_i \delta_i = 1\)</span>,</p>
+<ol style="list-style-type: decimal">
+<li>Define new parameters</li>
+</ol>
+<p><span class="math display">\[\pi_i = \log(\delta_i)\]</span></p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Maximize <span class="math inline">\(L_T\)</span> with respect to <span class="math inline">\(\eta_i\)</span> (and state-dependent parameters and transition probabilities)</p></li>
+<li><p>Transform back</p></li>
+</ol>
+<p><span class="math display">\[\hat{\boldsymbol{\delta}} = \exp(\hat{\boldsymbol{\pi}})\]</span></p>
+</div>
+</div>
+<div id="startval" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> Strategies for Choosing Starting Values<a href="numerical.html#startval" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>There may be multiple maxima (i.e. local maxima) in the likelihood. There is no simple method of determining in general whether a numerical maximization has reached the global maximum. A strategy is to use a range of starting values for the maximization, and see whether the same maximum is identified in each case.</p>
+<p>Possible starting values for the state-dependent distribution could be to take values close to measures of location.</p>
+<ul>
+<li><p>E.g. For a two-state Poisson-HMM, use values slightly smaller and slightly larger than the mean as starting values.</p></li>
+<li><p>E.g. For a three-state Poisson-HMM, use the lower quartile, median, and upper quartile of the observed counts as starting values.</p></li>
+</ul>
+<p>Possible starting values for the transition probabilities could be to assign a common starting value to all the off-diagonal transition probabilities.</p>
+<p>Possible starting values for the stationary distribution could be to assign uniform probability to all the states.</p>
+</div>
+<div id="boot" class="section level2 hasAnchor" number="3.4">
+<h2><span class="header-section-number">3.4</span> Obtaining Standard Errors and Confidence Intervals<a href="numerical.html#boot" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Parametric bootstrapping</strong> uses fitted parameters <span class="math inline">\(\hat{\boldsymbol{\Theta}}\)</span> to generate <strong>bootstrap</strong> samples of observations, which can be used to evaluate properties of the model and obtain standard errors and confidence intervals.</p>
+<p>To obtain the variance-covariance matrix of <span class="math inline">\(\boldsymbol{\Theta}\)</span>:</p>
+<ol style="list-style-type: decimal">
+<li><p>Fit the model (i.e. compute <span class="math inline">\(\boldsymbol{\Theta}\)</span>)</p></li>
+<li><ol style="list-style-type: lower-alpha">
+<li>Generate a sample of observations from the fitted model of the same length as the original number of observations (i.e. generate bootstrap samples from the model with parameters <span class="math inline">\(\boldsymbol{\hat{\Theta}}\)</span>)</li>
+</ol></li>
+</ol>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>Estimate the parameters <span class="math inline">\(\boldsymbol{\Theta}\)</span> by <span class="math inline">\(\boldsymbol{\hat{\Theta}^*}\)</span> for the bootstrap sample</p></li>
+<li><p>Repeat steps <span class="math inline">\((a)\)</span> and <span class="math inline">\((b)\)</span> for (a large number of) <em>B</em> times and record the values <span class="math inline">\(\boldsymbol{\hat{\Theta}}^*\)</span></p></li>
+</ol>
+<ol start="3" style="list-style-type: decimal">
+<li>Estimate the variance-covariance matrix of <span class="math inline">\(\hat{\boldsymbol{\Theta}}\)</span> by the sample variance-covariance matrix of the boostrap estimates <span class="math inline">\(\boldsymbol{\hat{\Theta}}^* (b)\)</span> for <span class="math inline">\(b= 1, 2, \dots, B\)</span></li>
+</ol>
+<p><span class="math display">\[\widehat{\text{Var-Cov}} (\hat{\boldsymbol{\Theta}}) = \frac{1}{B-1} \sum_{b=1}^B (\hat{\boldsymbol{\Theta}}^* (b) - \hat{\boldsymbol{\Theta}}^*(\cdot))&#39;(\hat{\boldsymbol{\Theta}}^* (b) - \hat{\boldsymbol{\Theta}}^*(\cdot))\]</span></p>
+<p>where <span class="math inline">\(\hat{\boldsymbol{\Theta}}^*(\cdot) = B^{-1} \sum_{b=1}^B \hat{\boldsymbol{\Theta}}^*(b)\)</span></p>
+<p>The bootstrap confidence intervals can be obtained by the ‘percentile method’ where the <span class="math inline">\(100 - \alpha \%\)</span> confidence interval has lower and upper limits of the <span class="math inline">\(\frac{\alpha}{2}\)</span>- and <span class="math inline">\(100 - \frac{\alpha}{2}-\)</span> th percentile.</p>
+<p><strong>Note:</strong> See Section 3.6.1 of the textbook for a discussion of obtaining standard errors and confidence intervals using the Hessian.</p>
+</div>
+<div id="exercises-2" class="section level2 hasAnchor" number="3.5">
+<h2><span class="header-section-number">3.5</span> Exercises<a href="numerical.html#exercises-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ol style="list-style-type: decimal">
+<li><p>Consider the following parameterization of the tpm of an <span class="math inline">\(m\)</span>-state Markov chain. Let <span class="math inline">\(\tau_{ij} \in \mathbb{R} (i, j = 1, 2, \dots, m,; i \neq j)\)</span> be <span class="math inline">\(m(m-1)\)</span> arbitrary real numbers. Let <span class="math inline">\(g: \mathbb{R} \rightarrow \mathbb{R}^+\)</span> be some strictly increasing function, e.g. <span class="math inline">\(g(x) = e^x\)</span>. Define <span class="math inline">\(\nu_{ij}\)</span> and <span class="math inline">\(\gamma_{ij}\)</span> as from <a href="numerical.html#reparam">the above</a></p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Show that the matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span> with entries <span class="math inline">\(\gamma_{ij}\)</span> that are constructed in this way is a tpm.</p></li>
+<li><p>Given <span class="math inline">\(m \times m\)</span> tpm <span class="math inline">\(\boldsymbol{\Gamma} = (\gamma_{ij})\)</span>, derive an expression for the parameters <span class="math inline">\(\tau_{ij}\)</span>, for <span class="math inline">\(i, j = 1, 2, \dots, m\)</span>; <span class="math inline">\(i \neq j\)</span>.</p></li>
+</ol></li>
+</ol>
+</div>
+<div id="solutions-2" class="section level2 hasAnchor" number="3.6">
+<h2><span class="header-section-number">3.6</span> Solutions<a href="numerical.html#solutions-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Part a</strong>
+We will first show that the rows of <span class="math inline">\(\boldsymbol{\Gamma}\)</span> sum to 1.</p>
+<p>Let <span class="math inline">\(i = 1, \dots, m\)</span>. Then</p>
+<p><span class="math display">\[\begin{align*}
+\sum_{j=1}^m \gamma_{ij}
+&amp;= \sum_{j=1}^m \frac{\nu_{ij}}{\sum_{k=1}^m \nu_{ik}}\\
+&amp;= \frac{1}{1 + \sum_{k=1, k \neq i}^m g(\tau_{ik})} + \sum_{k=1, k \neq i}^m \frac{g (\tau_{ik})}{1 + \sum_{k=1, k \neq i}^m g(\tau_{ik})}\\
+&amp;= \frac{1 + \sum_{k=1, k \neq i}^m g(\tau_{ik})}{1 + \sum_{k=1, k \neq i}^m g(\tau_{ik})}\\
+&amp;= 1
+\end{align*}\]</span></p>
+<p>Thus <span class="math inline">\(\sum_{j=1}^m \gamma_{ij} = 1\)</span>.</p>
+<p>Now we will show that the entries of <span class="math inline">\(\boldsymbol{\Gamma}\)</span> are between 0 and 1.</p>
+<p>Since <span class="math inline">\(g: \mathbb{R} \rightarrow \mathbb{R}^+\)</span>, it follows from our definition of <span class="math inline">\(\gamma_{ij}\)</span> that</p>
+<p><span class="math display">\[\begin{align}
+  \gamma_{ij} &amp;= \frac{\nu_{ij}}{\sum_{k=1}^m \nu_{ik}} =
+  \left\{\begin{aligned}
+  &amp;\frac{1}{1 + \sum_{k=1, k \neq i}^m g(\tau_{ik})} \geq \frac{1}{1 + 0} = 1 &amp;&amp; \text{ if } i = j\\
+  &amp; \frac{g (\tau_{ij})}{1 + \sum_{k=1, k \neq i}^m g(\tau_{ik})} \geq \frac{0}{1 + 0} = 0 &amp;&amp; \text{ if } i \neq j\\
+\end{aligned}
+\right.
+\end{align}\]</span></p>
+<p>Thus, <span class="math inline">\(\gamma_{ij} \geq 0\)</span>.</p>
+<p>Then</p>
+<p><span class="math inline">\(1 = \sum_{j=1}^m \gamma_{ij} \geq \gamma_{ij}\)</span> since <span class="math inline">\(\gamma_{ij}\)</span> are non-negative.</p>
+<p>Thus, <span class="math inline">\(\gamma_{ij} \leq 1\)</span>.</p>
+<p>Therefore, the constructed <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is a tpm.</p>
+<p><strong>Part b</strong></p>
+<p>Let <span class="math inline">\(i, j = 1, 2, \dots, m\)</span>. Define <span class="math inline">\(g^{-1}\)</span> to be the inverse function of <span class="math inline">\(g\)</span>, <span class="math inline">\(g^{-1}: \mathbb{R}^+ \rightarrow \mathbb{R}\)</span>.</p>
 <p>Then</p>
 <p><span class="math display">\[\begin{align}
-f(u_1, \dots, u_i|u)
-&amp;= \frac{f(u_1, \dots, u_i, u)}{f(u)}\\
-&amp;= \frac{\left(\frac{\tau_1^{u_1} e^{- \tau_1}}{u_1 !}\right) \cdots \left(\frac{\tau_j^{u_i} e^{- \tau_j}}{u_i !}\right)}{\frac{\sum_{j=1}^i \tau_j^u e^{- \sum_{j=1}^i \tau_j}}{u!}}\\
-&amp;= \frac{1}{u_1! \cdots u_i!} \left(\tau_1^{u_1}\right) \cdots \left(\tau_j^{u_i}\right) \left(e^{-\sum_{j=1}^i \tau_j}\right) \left(\frac{u!}{\sum_{j=1}^i \tau_j^u e^{- \sum_{j=1}^i \tau_j}}\right)\\
-&amp;= \frac{u!}{u_1! \cdots u_i!} \left( \tau_1^{u_1} \right) \cdots \left( \tau_j^{u_i} \right) \frac{1}{\sum_{j=1}^i \tau_j^{u_1 + \dots + u_i}}\\
-&amp;= \frac{u!}{u_1! \cdots u_i!} \left( \frac{\tau_1}{\sum_{j=1}^i \tau_j} \right)^{u_1} \cdots \left( \frac{\tau_j}{\sum_{j=1}^i \tau_j} \right)^{u_i}
+g^{-1} \left(\frac{\gamma_{ij}}{\gamma_{ii}}\right)
+&amp;= g^{-1} \left(\gamma_{ij} (\frac{1}{\gamma_{ii}}) \right)\\
+&amp;= g^{-1} \left(\gamma_{ij} (\frac{1 + \sum_{k=1, k \neq i}^m \nu_{ik}}{\nu_{ii}}) \right)
+\qquad{\text{since } \gamma_{ii} = \frac{\nu_{ii}}{\sum_{k=1}^m \nu_{ik}}}\\
+&amp;= g^{-1} \left(\gamma_{ij} (\frac{1 + \sum_{k=1, k \neq i}^m g(\tau_{ik})}{1}) \right)
+\qquad{\text{by definition of } \nu_{ii}}\\
+&amp;= g^{-1} \left(\gamma_{ij} (1 + \sum_{k=1, k \neq i}^m g (\tau_{ik})) \right)\\
+&amp;= g^{-1} \left(g (\tau_{ij})\right)
+\qquad{\text{since } \gamma_{ij} = \frac{\nu_{ij}}{\sum_{k=1}^m \nu_{ik}} = \frac{g(\tau_{ij})}{1 + \sum_{k = 1, k \neq i}^m \nu_{ik}}, i \neq j}\\
+&amp;= \tau_{ij}
 \end{align}\]</span></p>
-<p>Thus, <span class="math inline">\(u_1, \dots, u_i|u \sim Multinomial \left(\frac{\tau_1, \dots, \tau_i}{\sum_{j=1}^i \tau_j}; u \right)\)</span>.</p>
-<p><strong>Question 2</strong></p>
-<p>The posterior distribution of <span class="math inline">\(\boldsymbol{y}\)</span> is</p>
-<p><span class="math display">\[\begin{align}
-\Pr(\boldsymbol{y}|\boldsymbol{w})
-&amp;= \frac{\Pr(\boldsymbol{y}, \boldsymbol{w})}{\Pr(\boldsymbol{w})}\\
-&amp;= \frac{\Pr(\boldsymbol{w}|\boldsymbol{y})\Pr(\boldsymbol{y})}{\Pr(\boldsymbol{w})}\\
-&amp; \propto \Pr(\boldsymbol{w}|\boldsymbol{y}) \Pr(\boldsymbol{y})\\
-&amp; \propto \frac{n!}{w_1! \cdots w_m!} y_1^{w_1} \cdots y_2^{w_2} \cdots y_m^{w_m} \cdot y_1^{d_1 -1} \cdot y_2^{d_2-1} \cdots y_m^{d_m-1}\\
-&amp; \propto y_1^{(w_1 + d_1)-1} y_2^{(w_2+d_2)-1} \cdots y_m^{(w_m + d_m)-1}
-\end{align}\]</span></p>
-<p>Thus, <span class="math inline">\(\boldsymbol{y}|\boldsymbol{w} \sim Dir(\boldsymbol{w}+\boldsymbol{d})\)</span>.</p>
-<p><strong>Question 3</strong></p>
-<p>The posterior distribution of <span class="math inline">\(\tau\)</span> is</p>
-<p><span class="math display">\[\begin{align}
-\Pr(\tau|y_1, \dots, y_n)
-&amp;= \frac{\Pr(\tau_1, y_1, \dots, y_n)}{\Pr(y_1, \dots, y_n)}\\
-&amp;= \frac{\Pr(y_1, \dots, y_n|\tau) \Pr(\tau)}{\Pr(y_1, \dots, y_n)}\\
-&amp; \propto \Pr(y_1, \dots, y_n|\tau) \Pr(\tau)\\
-&amp;= \prod_{i=1}^n \frac{\tau^{y_i} e^{-\tau}}{y_i !} \frac{b^a}{\Gamma(a)} \tau^{a-1} e^{-b \tau}\\
-&amp; \propto \prod_{i=1}^n \tau^{y_i} e^{- \tau} \tau^{a-1} e^{-b \tau}\\
-&amp;= \tau^{\sum_{i=1}^n y_i} e^{-n \tau} \tau^{a-1} e^{-b \tau}\\
-&amp;= \tau^{a+\sum_{i=1}^n y_i - 1} e^{-(b+n)\tau}
-\end{align}\]</span></p>
-<p>Thus, <span class="math inline">\(\tau|y_1, \dots, y_n \sim Gamma(a+\sum_{i=1}^n y_i, b+n)\)</span>.</p>
 
 </div>
 </div>
@@ -385,8 +463,8 @@ f(u_1, \dots, u_i|u)
           </div>
         </div>
       </div>
-<a href="fdp.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="eq.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="introhmm.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="fbalg.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -417,7 +495,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/vinky-wang/HMM-Notes/edit/BRANCH/07-bayesian-inference.Rmd",
+"link": "https://github.com/vinky-wang/HMM-Notes/edit/BRANCH/03-numerical-maximization.Rmd",
 "text": "Suggest an edit"
 },
 "history": {
@@ -428,7 +506,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "https://github.com/vinky-wang/HMM-Notes/raw/BRANCH/07-bayesian-inference.Rmd"],
+"download": ["_main.pdf", "https://github.com/vinky-wang/HMM-Notes/raw/BRANCH/03-numerical-maximization.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null

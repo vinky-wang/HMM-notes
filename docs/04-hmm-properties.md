@@ -1,15 +1,423 @@
-# Footnotes and citations 
+# The Forward and Backward Algorithm {#fbalg}
 
-## Footnotes
+The forward and backward probabilities are used for obtaining MLEs by the EM algorithm, state decoding, and state predictions. We cover several properties of the HMMs used to show that 
 
-Footnotes are put inside the square brackets after a caret `^[]`. Like this one ^[This is a footnote.]. 
+(1) forward probabilities are the joint probability of $\boldsymbol{X}^{(t)}$ and $\boldsymbol{C}^{(t)}$
 
-## Citations
+(2) backward probabilities are the conditional probability of $\boldsymbol{X}^{(t)}$ and $\boldsymbol{C}^{(t)}$
 
-Reference items in your bibliography file(s) using `@key`.
-
-For example, we are using the **bookdown** package [@R-bookdown] (check out the last code chunk in index.Rmd to see how this citation key was added) in this sample book, which was built on top of R Markdown and **knitr** [@xie2015] (this citation was added manually in an external file book.bib). 
-Note that the `.bib` files need to be listed in the index.Rmd with the YAML `bibliography` key.
+(3) their product is the likelihood $L_T = \Pr(\boldsymbol{X}^{(T)}, \boldsymbol{C}^{(T)})$
 
 
-The RStudio Visual Markdown Editor can also make it easier to insert citations: <https://rstudio.github.io/visual-markdown-editing/#/citations>
+## Forward and Backward Probabilities
+
+For $t = 1, 2, \dots, T$
+
+\begin{align}
+\boldsymbol{\alpha}_t 
+&= \boldsymbol{\delta P} (x_1) \boldsymbol{\Gamma P} (x_2) \boldsymbol{\Gamma} \cdots \boldsymbol{\Gamma P} (x_T)\\
+&= \boldsymbol{\delta P} (x_1) \prod_{s=2}^t \boldsymbol{\Gamma P} (x_s)
+\end{align}
+
+and
+
+\begin{align}
+\boldsymbol{\beta'}_t 
+&= \boldsymbol{\Gamma P} (x_{t+1}) \boldsymbol{\Gamma P} (x_{t+2}) \cdots \boldsymbol{\Gamma P} (x_T) \boldsymbol{1'}\\
+&= \left(\prod_{s=t+1}^T \boldsymbol{\Gamma P} (x_s) \right) \boldsymbol{1'}
+\end{align}
+
+with the convention that an empty product is the identity matrix. 
+
+In recursive form,
+
+for $t = 1, 2, \dots, T-1$, 
+
+\begin{align}
+\boldsymbol{\alpha}_{t+1} = \boldsymbol{\alpha}_t \boldsymbol{\Gamma P} (x_{t+1})
+(\#eq:reforward)
+\end{align}
+
+and 
+
+\begin{align}
+\boldsymbol{\beta}_t' = \boldsymbol{\Gamma P} (x_{t+1}) \boldsymbol{\beta'}_{t+1}
+(\#eq:rebackward)
+\end{align}
+
+
+
+
+## Properties of HMMs
+
+### Property 
+
+For positive integers t,
+
+\begin{equation}
+\Pr(\boldsymbol{X}^{(t+1)}, C_t, C_{t+1}) = \Pr(\boldsymbol{X}^{(t)}, C_t) \Pr(C_{t+1}|C_t) \Pr(X_{t+1}|C_{t+1})
+(\#eq:factorize)
+\end{equation}
+
+
+*Proof*
+
+By Equation \@ref(eq:joint), for $\Pr(\boldsymbol{X}^{(t+1)}, \boldsymbol{C}^{(t+1)})$, it follows that 
+
+$$\Pr(\boldsymbol{X}^{(t+1)}, \boldsymbol{C}^{(t+1)}) = \Pr(\boldsymbol{X}^{(t)}, \boldsymbol{C}^{(t)}) \Pr(C_{t+1}|C_t) \Pr(X_{t+1}|C_{t+1})$$
+
+Then summing over $\boldsymbol{C}^{(t+1)}$, it follows that 
+
+
+\begin{align}
+\sum_{\boldsymbol{C}^{(t-1)}} \Pr(\boldsymbol{X}^{(t+1)}, \boldsymbol{C}^{(t+1)}) 
+&= \sum_{\boldsymbol{C}^{(t-1)}} \Pr(\boldsymbol{X}^{(t)}, \boldsymbol{C}^{(t)}) \Pr(C_{t+1}|C_t) \Pr(X_{t+1}|C_{t+1})\\
+\stackrel{\text{by LOTP}}{\Rightarrow} \Pr(\boldsymbol{X}^{(t+1)}, C_t, C_{t+1})
+&= \Pr(\boldsymbol{X}^{(t)}, C_t) \Pr(C_{t+1}|C_t) \Pr(X_{t+1}|C_{t+1})
+\end{align}
+
+
+### Property 
+
+A generalization of \@ref(eq:factorize) is the following:
+
+For any integer $T \geq t+1$,
+
+\begin{equation}
+\Pr(\boldsymbol{X}_1^{(T)}, C_t, C_{t+1}) = \Pr(\boldsymbol{X}_1^{(t)}, C_t) \Pr(C_{t+1}|C_t) \Pr(\boldsymbol{X}_{t+1}^T|C_{t+1})
+(\#eq:genfactorize)
+\end{equation}
+
+
+*Proof*
+
+By \@ref(eq:joint), $\Pr(\boldsymbol{X}_1^T, \boldsymbol{C}_1^T) = \Pr(C_1) \prod_{k=2}^T \Pr(C_k|C_{k-1}) \prod_{k=1}^T \Pr(X_k|C_k)$, which can be rewritten as
+
+$$\Pr(\boldsymbol{X}_1^T, \boldsymbol{C}_1^T) = \Pr(C_1) \prod_{k=2}^t  \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(C_k|C_{k-1}) \prod_{k=1}^t \Pr(X_k|C_k) \prod_{k=t+1}^T \Pr(X_k|C_k)$$
+
+Then summing over $\boldsymbol{C}_{t+2}^T$ and $\boldsymbol{C}_1^{t-1}$, it follows that
+
+\begin{align}
+\Pr(\boldsymbol{X}_1^T, C_t, C_{t+1})
+&= \sum_{\boldsymbol{C}_{t+2}^T} \sum_{\boldsymbol{C}_{1}^{t-1}} \Pr(\boldsymbol{X}_1^T, \boldsymbol{C}_1^T)
+\qquad{\text{by LOTP}}\\
+&= \sum_{\boldsymbol{C}_{t+2}^T} \sum_{\boldsymbol{C}_{1}^{t-1}} \Pr(C_1) \prod_{k=2}^t  \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(C_k|C_{k-1}) \prod_{k=1}^t \Pr(X_k|C_k) \prod_{k=t+1}^T \Pr(X_k|C_k)\\
+&= \sum_{\boldsymbol{C}_1^{t-1}} \Pr(C_1) \prod_{k=2}^t \Pr(C_k|C_{k-1}) \prod_{k=1}^t \Pr(X_k|C_k) \sum_{\boldsymbol{C}_{t+2}^T} \prod_{k=t+1}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)\\
+&= \sum_{\boldsymbol{C}_1^{t-1}} \Pr(\boldsymbol{X}_1^t, \boldsymbol{C}_1^t) \Pr(C_{t+1}|C_t) \sum_{\boldsymbol{C}_{t+2}^{T}} \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\qquad{\text{by LOTP}}\\
+&= \Pr(\boldsymbol{X}_1^t, C_t) \Pr(C_{t+1}|C_t) \Pr(\boldsymbol{X}_{t+1}^T|C_{t+1})
+\end{align}
+
+
+### Property 
+
+For $t=0, 1, \dots, T-1$,
+
+\begin{equation}
+\Pr(\boldsymbol{X}_{t+1}^T|C_{t+1}) = \Pr(X_{t+1}|C_{t+1}) \Pr(\boldsymbol{X}_{t+2}^T|C_{t+1})
+(\#eq:back)
+\end{equation}
+
+
+*Proof*
+
+From \@ref(eq:joint), it follows that 
+
+\begin{align}
+\Pr(\boldsymbol{X}_{t+1}^T|\boldsymbol{C}_{t+1})
+&= \Pr(C_{t+1}) \Pr(X_{t+1}|C_{t+1}) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+2}^T \Pr(X_k|C_k)\\
+&= \Pr(X_{t+1}|C_{t+1}) \left( \Pr(C_{t+1}) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+2}^T \Pr(X_k|C_k) \right)\\
+&= \Pr(X_{t+1}|C_{t+1}) \Pr(\boldsymbol{X}_{t+2}^T, \boldsymbol{C}_{t+1}^T)
+\end{align}
+
+Summing over $\boldsymbol{C}_{t+2}^T$, 
+
+\begin{align}
+\sum_{\boldsymbol{C}_{t+2}^T} \Pr(\boldsymbol{X}_{t+1}^T|\boldsymbol{C}_{t+1}) 
+&= \sum_{\boldsymbol{C}_{t+2}^T} \Pr(X_{t+1}|C_{t+1})  \Pr(\boldsymbol{X}_{t+2}^T, \boldsymbol{C}_{t+1}^T) \\
+\stackrel{\text{by LOTP}}{\Rightarrow}
+\Pr(\boldsymbol{X}_{t+1}^T, C_{t+1})
+&= \Pr(X_{t+1}|C_{t+1}) \Pr(\boldsymbol{X}_{t+2}^T, C_{t+1})
+\end{align}
+
+Dividing both sides by $\Pr(C_{t+1})$,
+
+\begin{align}
+\frac{1}{\Pr(C_{t+1})} \Pr(\boldsymbol{X}_{t+1}^T, C_{t+1})
+&= \frac{1}{\Pr(C_{t+1})} \Pr(X_{t+1}|C_{t+1}) \Pr(\boldsymbol{X}_{t+2}^T, C_{t+1})\\
+\stackrel{\text{by Bayes Rule}}{\Rightarrow}
+\Pr(\boldsymbol{X}_{t+1}^T|C_{t+1}) 
+&= \Pr(X_{t+1}|C_{t+1}) \Pr(\boldsymbol{X}_{t+2}^T|C_{t+1})
+\end{align}
+
+
+
+
+### Property 
+
+For $t = 1, 2, \dots, T-1$,
+
+\begin{equation}
+\Pr(\boldsymbol{X}_{t+1}^T|C_{t+1}) = \Pr(\boldsymbol{X}_{t+1}^T|C_t, C_{t+1})
+(\#eq:back2)
+\end{equation}
+
+
+*Proof*
+
+On the left-hand side:
+
+\begin{align}
+\Pr(\boldsymbol{X}_{t+1}^T|C_{t+1})
+&= \frac{1}{\Pr(C_{t+1})} \Pr(\boldsymbol{X}_{t+1}^T,C_{t+1})
+\qquad{\text{by Bayes Rule}}\\
+&= \frac{1}{\Pr(C_{t+1})} \sum_{\boldsymbol{C}_{t+2}^T} \Pr(\boldsymbol{X}_{t+1}^T,C_{t+1})
+\qquad{\text{by LOTP}}\\
+&= \frac{1}{\Pr(C_{t+1})} \sum_{\boldsymbol{C}_{t+2}^T} \Pr(C_{t+1}) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\qquad{\text{by Equation (10.2)}} \\
+&= \sum_{\boldsymbol{C}_{t+2}^T} \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\end{align}
+
+On the right-hand side:
+
+\begin{align}
+\Pr(\boldsymbol{X}_{t+1}^T|C_t, C_{t+1})
+&= \frac{1}{\Pr(C_t, C_{t+1})} \Pr(\boldsymbol{X}_{t+1}^T|C_t, C_{t+1})
+\qquad{\text{by Bayes Rule}}\\
+&= \frac{1}{\Pr(C_t, C_{t+1})} \sum_{\boldsymbol{C}_{t+2}^T} \Pr(\boldsymbol{X}_{t+1}^T, \boldsymbol{C}_t^T)
+\qquad{\text{by LOTP}}\\
+&= \frac{1}{\Pr(C_t, C_{t+1})} \sum_{\boldsymbol{C}_{t+2}^T} \Pr(C_t) \Pr(C_{t+1}|C_t) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\qquad{\text{by Equation (10.2)}}\\
+&= \frac{1}{ \Pr(C_t) \Pr(C_{t+1}|C_t)} \sum_{\boldsymbol{C}_{t+2}^T} \Pr(C_t) \Pr(C_{t+1}|C_t) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\qquad{\text{by Bayes Rule}}\\
+&= \sum_{\boldsymbol{C}_{t+2}^T} \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\end{align}
+
+
+### Property
+
+The following shows the conditional independence of $\boldsymbol{X}_1^t$ and $\boldsymbol{X}_{t+1}^T$ given $C_t$. 
+
+For $t = 1, 2 \dots, T-1$,
+
+\begin{equation}
+\Pr(\boldsymbol{X}_1^T|C_t) = \Pr(\boldsymbol{X}_1^t|C_t) \Pr(\boldsymbol{X}_{t+1}^T|C_t)
+(\#eq:link)
+\end{equation}
+
+*Proof*
+
+\begin{align}
+\Pr(\boldsymbol{X_1}^T, \boldsymbol{C_1}^T)
+&= \Pr(\boldsymbol{X_1}^t, \boldsymbol{C_1}^t) \frac{1}{\Pr(C_t)} \Pr(\boldsymbol{X_{t+1}}^T, \boldsymbol{C_t}^T)
+\end{align}
+
+Then summing over $\boldsymbol{C}_1^{t-1}$ and $\boldsymbol{C}_{t+1}^{T}$,
+
+\begin{align}
+\sum_{\boldsymbol{C}_1^{t-1}} \sum_{\boldsymbol{C}_{t+1}^{T}}
+\Pr(\boldsymbol{X_1}^T, \boldsymbol{C_1}^T)
+&= \sum_{\boldsymbol{C}_1^{t-1}} \sum_{\boldsymbol{C}_{t+1}^{T}} \Pr(\boldsymbol{X_1}^t, \boldsymbol{C_1}^t) \frac{1}{\Pr(C_t)} \Pr(\boldsymbol{X_{t+1}}^T, \boldsymbol{C_t}^T)\\
+\stackrel{\text{by LOTP}}{\Rightarrow}
+\Pr(\boldsymbol{X}_1^T, C_t)
+&= \Pr(\boldsymbol{X}_1^t, C_t) \frac{1}{\Pr(C_t)} \Pr(\boldsymbol{X}_{t+1}^T, C_t)\\
+&= \Pr(\boldsymbol{X}_1^t, C_t) \Pr(\boldsymbol{X}_{t+1}^T|C_t)
+\end{align}
+
+
+
+## Forward Probabilities as Joint Probabilities
+
+::: {.proposition #forward}
+For t = 1, 2, ..., T and j = 1, 2, ..., m,
+:::
+
+\begin{align}
+\alpha_t (j) = \Pr(\boldsymbol{X}^{(t)} = \boldsymbol{x}^{(t)}, C_t = j)
+(\#eq:ajoint)
+\end{align}
+
+*Proof*
+
+We prove the above by induction on $t$. 
+
+Recall from Equation \@ref(eq:ascalar) , $\alpha_{t+1}(j) = \left(\sum_{i=1}^m \alpha_t (i) \gamma_{ij} \right) p_j (x_{t+1})$
+
+Base Case:
+
+If $t = 1$, it follows from Equation \@ref(eq:reforward) that 
+
+\begin{align}
+\alpha_1 (j)
+&= \delta_j p(x_1)\\
+&= \Pr(C_1 = j) \Pr(X_1 = x_1|C_1=j)\\
+&= \Pr(X_1 = x_1, C_1 = j)
+\end{align}
+
+Inductive Step:
+
+Let $t \in \{1, 2, \dots, T\}$. Suppose $\alpha_t (j) = \Pr(\boldsymbol{X}^{(t)} = \boldsymbol{x}^{(t)}, C_t = j)$. Then
+
+\begin{align}
+\alpha_{t+1} (j) 
+&= \sum_{i=1}^m \alpha_t (i) \gamma_{ij} p (x_{t+1}) 
+\qquad{\text{by the above}}\\
+&= \sum_{i=1}^m \Pr(\boldsymbol{X}^{(t)} = \boldsymbol{x}^{(t)}, C_t = i) \Pr(C_{t+1}=j|C_t = i) \Pr(X_{t+1} = x_{t+1}|C_{t+1} = j)\\
+&= \sum_{i = 1}^m \Pr(\boldsymbol{X}^{(t+1)} = \boldsymbol{x}^{(t+1)}, C_t = i, C_{t+1} = j)
+\qquad{\text{by Equation (5.3)}}\\
+&= \Pr(\boldsymbol{X}^{(t+1)} = \boldsymbol{x}^{(t+1)}, C_{t+1} = j)
+\qquad{\text{by LOTP}}
+\end{align}
+
+
+
+## Backward Probabilities as Conditional Probabilities
+
+::: {.proposition #backward}
+For t = 1, 2, ..., T and i = 1, 2, ..., m,
+:::
+
+\begin{align}
+\beta_t (i) = \Pr(\boldsymbol{X}_{t+1}^T = \boldsymbol{x}_{t+1}^T|C_t = i)
+(\#eq:bconditional)
+\end{align}
+
+provided that $\Pr(C_t = i) > 0$.
+
+*Proof*
+
+We prove the above by induction on $t$.
+
+Base Case:
+
+If $t = T-1$, it follows from Equation \@ref(eq:rebackward) that
+
+\begin{align}
+\beta_{T-1} (i) 
+&= \sum_{j} \Pr(C_T = j|C_{T-1} = i) \Pr(X_T=x_T|C_T=j)\\
+&= \sum_{j} \Pr(C_T = j|C_{T-1} = i) \Pr(X_T = x_T|C_T = j, C_{T-1} = i)
+\qquad{\text{by Equation (5.7)}}\\
+&= \sum_{j} \frac{1}{\Pr(C_{T-1} = i)} \Pr(X_T = x_T, C_T = j, C_{T-1} = i)
+\qquad{\text{by Chain Rule}}\\
+&= \frac{1}{\Pr(C_{T-1} = i)} \sum_{j}  \Pr(X_T = x_T, C_T = j, C_{T-1} = i)\\
+&= \frac{1}{\Pr(C_{T-1} = i)} \Pr(X_T = x_T, C_{T-1} = i)
+\qquad{\text{by LOTP}}\\
+&= \Pr(X_T = x_T|C_{T-1} = i)
+\qquad{\text{by Bayes Rule}}
+\end{align}
+
+Inductive Step:
+
+Let $t \in \{1, 2, \dots, T-1\}$. Suppose $\beta_t (i) = \Pr(\boldsymbol{X}_{t+1}^T = \boldsymbol{x}_{t+1}^T|C_t = i)$. Then
+
+\begin{align}
+\beta_t (i)
+&= \sum_{j} \gamma_{ij} \Pr(X_{t+1} = x_{t+1}|C_{t+1} = j) \Pr(\boldsymbol{X}_{t+2}^T = \boldsymbol{x}_{t+2}^T|C_{t+1} = j)
+\qquad{\text{by the above}}\\
+&= \sum_{j} Pr(C_{t+1} = j|C_t = i) \Pr(X_{t+1} = x_{t+1}|C_{t+1} = j) \Pr(\boldsymbol{X}_{t+2}^T = \boldsymbol{x}_{t+2}^T|C_{t+1} = j)\\
+&= \sum_{j} \Pr(C_{t+1} = j|C_t = i) \Pr(\boldsymbol{X}_{t+1}^T= \boldsymbol{x}_{t+1}^T|C_{t+1} = j)
+\qquad{\text{by Equation (5.5)}}\\
+&= \sum_{j} \Pr(C_{t+1} = j|C_t = i) \Pr(\boldsymbol{X}_{t+1}^T= \boldsymbol{x}_{t+1}^T|C_{t+1} = j, C_t = i)
+\qquad{\text{by Equation (5.6) }}\\
+&= \frac{1}{\Pr(C_t = i)} \sum_{j} \Pr((\boldsymbol{X}_{t+1}^T= \boldsymbol{x}_{t+1}^T, C_t = i, C_{t+1} = j)
+\qquad{\text{by Chain Rule}}\\
+&= \frac{1}{\Pr(C_t = i)} \sum_{j} \Pr((\boldsymbol{X}_{t+1}^T= \boldsymbol{x}_{t+1}^T, C_t = i)
+\qquad{\text{by LOTP}}\\
+&= \Pr(\boldsymbol{X}_{t+1}^T= \boldsymbol{x}_{t+1}^T|C_t = i)
+\qquad{\text{by Bayes Rule}}
+\end{align}
+
+
+::: {.proposition #link}
+For t = 1, 2, ..., T and i = 1, 2, ..., m,
+:::
+
+\begin{equation}
+\alpha_t (i) \beta_t (i) = \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}, C_t = i)
+(\#eq:ablikelihood)
+\end{equation}
+
+and consequently $\boldsymbol{\alpha}_t \boldsymbol{\beta'}_t = \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}) = L_T$, for each such $t$.
+
+*Proof*
+
+\begin{align}
+\alpha_t (i) \beta_t (i)
+&= \Pr(\boldsymbol{X}_1^t, C_t = i) \Pr(\boldsymbol{X}_{t+1}^T|C_t = i)\\
+&= \Pr(C_t = i) \Pr(\boldsymbol{X}_t^t|C_t = i) \Pr(\boldsymbol{X}_{t+1}^T|C_t = i)
+\qquad{\text{by Bayes Rule}}\\
+&= \Pr(C_t = i) \Pr(\boldsymbol{X}_1^t, \boldsymbol{X}_{t+1}^T|C_t = i)
+\qquad{\text{by Equation (5.7)} }\\
+&= \Pr(\boldsymbol{X}^{(T)}, C_t = i)
+\qquad{\text{by Bayes Rule}}
+\end{align}
+
+
+The second part follows by summing over $i$,
+
+\begin{align}
+\boldsymbol{\alpha}_t \boldsymbol{\beta}_t' 
+&= \sum_{i} \alpha_t (i) \beta_t (i)\\
+&= \sum_{i} \Pr(\boldsymbol{X}^T, C_T = i)
+\qquad{\text{by the above}}\\
+&= \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+\qquad{\text{by LOTP}}\\
+&= L_T
+\end{align}
+
+
+
+::: {.proposition #emprep}
+For t = 1, 2, ..., T, 
+:::
+
+\begin{equation}
+\Pr(C_t = j|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}) 
+= \frac{1}{L_T} \alpha_t (j) \beta_t (j) 
+(\#eq:emprepone)
+\end{equation}
+
+and for $t = 2, 3, ..., T$, 
+
+\begin{equation}
+\Pr(C_{t-1} = j, C_t = k|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+= \frac{1}{L_T} \alpha_{t-1} (j) \gamma_{jk} p_k (x_t) \beta_t (k)
+(\#eq:empreptwo)
+\end{equation}
+
+*Proof*
+
+For \@ref(eq:emprepone), it follows from Equation \@ref(eq:ablikelihood) that 
+
+\begin{align}
+\alpha_t (j) \beta_t (j) \frac{1}{L_T}
+&= \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}, C_t = j) \frac{1}{\Pr(\boldsymbol{X}^{(T)} = \Pr(\boldsymbol{x}^{(T)})}\\
+&= \Pr(C_t = j|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+\qquad{\text{by Bayes Rule}}\\
+\end{align}
+
+For \@ref(eq:empreptwo), 
+
+\begin{align}
+\Pr(C_{t-1} = j, C_t = k|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+&= \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}, C_{t-1} = j, C_t = k) \frac{1}{\Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})}
+\qquad{\text{by Bayes Rule}}\\
+&=  \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}, C_{t-1} = j, C_t = k) \frac{1}{L_T}
+&= \frac{1}{L_T} \Pr(\boldsymbol{X}^{(t-1)} = \boldsymbol{x}^{(t-1)}, C_{t-1} = j) \Pr(C_t = k|C_{t-1} = j) \Pr(boldsymbol{X}_t^T|C_t = k)\\
+&= \frac{1}{L_T} \alpha_{t-1} (j) \gamma_{ij} p_j (x_t) \beta_t (k)
+\end{align}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

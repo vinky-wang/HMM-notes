@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 7 Bayesian Inference for HMMs | Hidden Markov Model Notes</title>
+  <title>Chapter 4 The Forward and Backward Algorithm | Hidden Markov Model Notes</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 7 Bayesian Inference for HMMs | Hidden Markov Model Notes" />
+  <meta property="og:title" content="Chapter 4 The Forward and Backward Algorithm | Hidden Markov Model Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="vinky-wang/HMM-Notes" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 7 Bayesian Inference for HMMs | Hidden Markov Model Notes" />
+  <meta name="twitter:title" content="Chapter 4 The Forward and Backward Algorithm | Hidden Markov Model Notes" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,8 +36,8 @@ set in the _output.yml file.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="fdp.html"/>
-<link rel="next" href="eq.html"/>
+<link rel="prev" href="numerical.html"/>
+<link rel="next" href="em.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -284,99 +284,312 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="bayesian-inference-for-hmms" class="section level1 hasAnchor" number="7">
-<h1><span class="header-section-number">Chapter 7</span> Bayesian Inference for HMMs<a href="bayesian-inference-for-hmms.html#bayesian-inference-for-hmms" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>We apply Bayesian inference in the context of Poisson-HMMs with Gibbs sampling.</p>
-<p><strong>Note:</strong> We use STAN for Bayesian inference in the <a href="eq.html#eq">Earthquake Analysis</a> which uses Hamiltonian Monte Carlo sampling.</p>
-<div id="reparameterization-to-avoid-label-switching" class="section level2 hasAnchor" number="7.1">
-<h2><span class="header-section-number">7.1</span> Reparameterization to Avoid Label Switching<a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Consider each observed count <span class="math inline">\(x_t\)</span> as the sum <span class="math inline">\(\sum_j x_{jt}\)</span> of contributions from up to <span class="math inline">\(m\)</span> regimes. That is, if the MC is in state <span class="math inline">\(i\)</span> at a given time, then regimes <span class="math inline">\(1, \dots, i\)</span> are all “active” and regimes <span class="math inline">\(i+1, \dots, m\)</span> are all inactive at that time.</p>
-<p>Then parameterizing the model in terms of the non-negative increments <span class="math inline">\(\boldsymbol{\tau} = (\tau_1, \dots, \tau_m)\)</span> where <span class="math inline">\(\tau_j = \lambda_j - \lambda_{j-1}\)</span> (with <span class="math inline">\(\tau_0 \equiv 0\)</span>), or equivalently, <span class="math inline">\(\lambda_i = \sum_{j=1}^i \tau_j\)</span>, the random variable <span class="math inline">\(\tau_j\)</span> can be thought of as the mean contribution of regime <span class="math inline">\(j\)</span> to the count observed at a give time, if regime <span class="math inline">\(j\)</span> is active.</p>
-<p>This parameterization has the effect of placing the <span class="math inline">\(\lambda_j\)</span> in increasing order, which is useful to prevent label switching.</p>
-</div>
-<div id="gibbs-sampling-procedure" class="section level2 hasAnchor" number="7.2">
-<h2><span class="header-section-number">7.2</span> Gibbs Sampling Procedure<a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="fbalg" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> The Forward and Backward Algorithm<a href="fbalg.html#fbalg" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The forward and backward probabilities are used for obtaining MLEs by the EM algorithm, state decoding, and state predictions. We cover several properties of the HMMs used to show that</p>
 <ol style="list-style-type: decimal">
-<li><p>Given the observed counts <span class="math inline">\(\boldsymbol{x}^{(T)}\)</span> and current values of the parameters <span class="math inline">\(\boldsymbol{\Gamma}, \boldsymbol{\lambda}\)</span>, generate a sample path of the MC.</p></li>
-<li><p>Use this sample path to decompose the observed counts into (simulated) regime contributions.</p></li>
-<li><p>With the MC sample path available and regime contributions, update <span class="math inline">\(\boldsymbol{\Gamma}, \boldsymbol{\tau}\)</span>.</p></li>
-<li><p>Repeat steps 1-3 for a large number of times, called a “burn-in period”. Then repeat steps 1-3 to obtain the posterior estimates.</p></li>
+<li><p>forward probabilities are the joint probability of <span class="math inline">\(\boldsymbol{X}^{(t)}\)</span> and <span class="math inline">\(\boldsymbol{C}^{(t)}\)</span></p></li>
+<li><p>backward probabilities are the conditional probability of <span class="math inline">\(\boldsymbol{X}^{(t)}\)</span> and <span class="math inline">\(\boldsymbol{C}^{(t)}\)</span></p></li>
+<li><p>their product is the likelihood <span class="math inline">\(L_T = \Pr(\boldsymbol{X}^{(T)}, \boldsymbol{C}^{(T)})\)</span></p></li>
 </ol>
-<div id="gen" class="section level3 hasAnchor" number="7.2.1">
-<h3><span class="header-section-number">7.2.1</span> Generating Sample Paths of the MC<a href="bayesian-inference-for-hmms.html#gen" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Given the observations <span class="math inline">\(\boldsymbol{x}^{(T)}\)</span> and current values of the parameters <span class="math inline">\(\boldsymbol{\theta} = (\boldsymbol{\Gamma}, \boldsymbol{\lambda})\)</span>, simulate a sample path <span class="math inline">\(\boldsymbol{C}^{(T)}\)</span> of the MC.</p>
-<p>First, draw the state of the MC at the last time point <span class="math inline">\(C_T\)</span> from <span class="math inline">\(\Pr(C_T|x^{(T)}, \boldsymbol{\theta}) \propto \alpha_T (C_T)\)</span>.</p>
-<p>This follows from</p>
-<p><span class="math display">\[\Pr(C_t|\boldsymbol{x}^{(t)}, \boldsymbol{\theta}) = \frac{\Pr(C_t, \boldsymbol{x}^{(t)}|\boldsymbol{\theta})}{\Pr(\boldsymbol{x}^{(t)}|\boldsymbol{\theta})} = \frac{\alpha_t(C_t)}{L_t} \propto \alpha_t(C_t) \qquad{\text{for } t=1, \dots, T}\]</span></p>
-<p>Next, draw the remaining states of MC from descending time points <span class="math inline">\(C_{T-1}, C_{T-2}, \dots, C_{1}\)</span>, by the following</p>
-</div>
-<div id="decom" class="section level3 hasAnchor" number="7.2.2">
-<h3><span class="header-section-number">7.2.2</span> Decomposing the Observed Counts into Regime Contributions<a href="bayesian-inference-for-hmms.html#decom" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Given the sample path <span class="math inline">\(\boldsymbol{C}^{(T)}\)</span> of the MC (from step 1), suppose that <span class="math inline">\(C_t = i\)</span> so that regimes <span class="math inline">\(1, \dots, i\)</span> are active at time <span class="math inline">\(t\)</span>. Decompose each observation <span class="math inline">\(x_t (t=1, 2, \dots, T)\)</span> into regime contributions <span class="math inline">\(x_{1t}, \dots, x_{it}\)</span> such that <span class="math inline">\(\sum_{j=1}^i x_{jt} = x_t\)</span> by</p>
-<p><span class="math display">\[f(x_{1t}, \dots, x_{it}|C_t = i, X_t = x_t) = \frac{x_t}{x_{1t}! \cdots x_{it}!} \tau_1^{x_{1t}} \cdots \tau_i^{x_{it}}\]</span></p>
-</div>
-<div id="updating-the-parameters" class="section level3 hasAnchor" number="7.2.3">
-<h3><span class="header-section-number">7.2.3</span> Updating the Parameters<a href="bayesian-inference-for-hmms.html#updating-the-parameters" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Suppose we assign the following priors,</p>
-<p><span class="math display">\[\boldsymbol{\Gamma}_r \sim Dirichlet(\boldsymbol{\nu_r})\]</span></p>
-<p><span class="math display">\[\tau_j = \lambda_j - \lambda_{j-1} \sim Gamma(\text{shape} = a_j, \text{rate} = b_j)\]</span></p>
-<p>That is,</p>
-<p>the rows <span class="math inline">\(\boldsymbol{\Gamma}_1, \boldsymbol{\Gamma}_2, \dots, \boldsymbol{\Gamma}_m\)</span> have a Dirichlet distribution with parameters <span class="math inline">\(\nu_1, \nu_2, \dots, \nu_m\)</span> respectively. Hence, <span class="math inline">\(f(\boldsymbol{\Gamma}_1, \boldsymbol{\Gamma}_2, \dots, \boldsymbol{\Gamma}_m) \propto \boldsymbol{\Gamma}_1^{\nu_1 -1} \cdots \boldsymbol{\Gamma}_m^{\nu_m -1}\)</span> where <span class="math inline">\(\sum_{i=1}^m \boldsymbol{\Gamma}_i = 1, \boldsymbol{\Gamma}_i \geq 0\)</span>.</p>
-<p>and the increment <span class="math inline">\(\tau_j\)</span> is such that <span class="math inline">\(f(\tau_j) = \frac{b^a}{\Gamma(a)} x^{a-1} e^{-bx}\)</span>. Hence, <span class="math inline">\(\tau_j\)</span> have mean <span class="math inline">\(\frac{a}{b}\)</span>, variance <span class="math inline">\(\frac{a}{b^2}\)</span>, and coefficient of variation <span class="math inline">\(\frac{1}{\sqrt{a}}\)</span>.</p>
-<p>Update <span class="math inline">\(\boldsymbol{\Gamma}\)</span> and <span class="math inline">\(\boldsymbol{\tau}\)</span> using the <a href="bayesian-inference-for-hmms.html#gen">MC path</a> and <a href="bayesian-inference-for-hmms.html#decom">regime contributions</a> by drawing</p>
-<p><span class="math display">\[\boldsymbol{\Gamma}_r \sim Dirichlet(\boldsymbol{\nu_r} + \boldsymbol{T}_r)\]</span> where <span class="math inline">\(\boldsymbol{T}_r\)</span> is the <span class="math inline">\(r\)</span>-th row of the (simulated) matrix of transition counts</p>
+<div id="forward-and-backward-probabilities" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Forward and Backward Probabilities<a href="fbalg.html#forward-and-backward-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>For <span class="math inline">\(t = 1, 2, \dots, T\)</span></p>
+<p><span class="math display">\[\begin{align}
+\boldsymbol{\alpha}_t
+&amp;= \boldsymbol{\delta P} (x_1) \boldsymbol{\Gamma P} (x_2) \boldsymbol{\Gamma} \cdots \boldsymbol{\Gamma P} (x_T)\\
+&amp;= \boldsymbol{\delta P} (x_1) \prod_{s=2}^t \boldsymbol{\Gamma P} (x_s)
+\end{align}\]</span></p>
 <p>and</p>
-<p><span class="math display">\[\tau_j \sim Gamma(a_j + \sum_{t=1}^T x_{jt}, b_j + N_j)\]</span> where <span class="math inline">\(N_j\)</span> denotes the number of times regime <span class="math inline">\(j\)</span> was active in the simulated sample path of the MC and <span class="math inline">\(x_{jt}\)</span> is the contribution of regime <span class="math inline">\(j\)</span> to <span class="math inline">\(x_t\)</span>.</p>
-<p><strong>Note:</strong> The posterior distributions for the above follow from the fact that observations of regime contributions <span class="math inline">\(x_{i1}, \dots, x_{it}\)</span> where the variables <span class="math inline">\(x_{jt} \sim Poisson(\tau_j)\)</span> and <span class="math inline">\(x=\sum_j x_{jt}\)</span>, <span class="math inline">\(f(x_{1t}, \dots, x_{it}|C_t = i, X_t = x_t) = \frac{x_t}{x_{1t}! \cdots x_{it}!} \tau_1^{x_{1t}} \cdots \tau_i^{x_{it}}\)</span>, <span class="math inline">\(\boldsymbol{T}_r \sim Dirichlet(\boldsymbol{\nu}_r)\)</span>, and <span class="math inline">\(\tau_j \sim Gamma(a, b)\)</span>.</p>
-</div>
-<div id="repeat-the-above" class="section level3 hasAnchor" number="7.2.4">
-<h3><span class="header-section-number">7.2.4</span> Repeat the Above<a href="bayesian-inference-for-hmms.html#repeat-the-above" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Repeat steps 1 to 3 for a large number of samples, called the “burn-in period”. Now repeat steps 1 to 3 for the posterior estimates.</p>
-</div>
-</div>
-<div id="exercises-5" class="section level2 hasAnchor" number="7.3">
-<h2><span class="header-section-number">7.3</span> Exercises<a href="bayesian-inference-for-hmms.html#exercises-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<ol style="list-style-type: decimal">
-<li><p>Consider <span class="math inline">\(u\)</span> defined by <span class="math inline">\(u=\sum_{j=1}^i u_j\)</span>, where the variables <span class="math inline">\(u_j\)</span> are independent Poisson random variables with means <span class="math inline">\(\tau_j\)</span>. Show that, conditional on <span class="math inline">\(u\)</span>, the joint distribution <span class="math inline">\(u_1, u_2, \dots, u_i\)</span> is a multinomial with total <span class="math inline">\(u\)</span> and probability vector <span class="math inline">\(\frac{(\tau_1, \dots, \tau_i)}{\sum_{j=1}^i \tau_j}\)</span>.</p></li>
-<li><p>Let <span class="math inline">\(\boldsymbol{w}=(w_1, \dots, w_m)\)</span> be an observation from a multinomial distribution with probability vector <span class="math inline">\(\boldsymbol{y}\)</span>, which has a Dirichlet distribution with parameter vector <span class="math inline">\(\boldsymbol{d} = (d_1, \dots, d_m)\)</span>. Show that the posterior distribution <span class="math inline">\(\boldsymbol{y}\)</span> is the Dirichlet distribution with parameters <span class="math inline">\(\boldsymbol{d} + \boldsymbol{w}\)</span>.</p></li>
-<li><p>Let <span class="math inline">\(y_1, y_2, \dots, y_n\)</span> be a random sample from the Poisson distribution with mean <span class="math inline">\(\tau\)</span>, which is gamma distributed with parameters <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>. Show that the posterior distribution of <span class="math inline">\(\tau\)</span>, is the gamma distribution with parameters <span class="math inline">\(a+\sum_{i=1}^n y_i\)</span> and <span class="math inline">\(b+n\)</span>.</p></li>
-</ol>
-<p><strong>Question 1</strong></p>
-<p>Since <span class="math inline">\(u= \sum_{j=1}^i u_j\)</span>, <span class="math inline">\(u_j \sim Poisson(\tau_j)\)</span>, and the <span class="math inline">\(u_j\)</span>’s are independent, it follows that <span class="math inline">\(u \sim Poisson(\sum_{j=1}^i \tau_j)\)</span>, hence <span class="math inline">\(f(u) = \frac{\sum_{j=1}^i \tau_j^u e^{- \sum_{j=1}^i \tau_j}}{u!}\)</span>.</p>
-<p>Then</p>
 <p><span class="math display">\[\begin{align}
-f(u_1, \dots, u_i|u)
-&amp;= \frac{f(u_1, \dots, u_i, u)}{f(u)}\\
-&amp;= \frac{\left(\frac{\tau_1^{u_1} e^{- \tau_1}}{u_1 !}\right) \cdots \left(\frac{\tau_j^{u_i} e^{- \tau_j}}{u_i !}\right)}{\frac{\sum_{j=1}^i \tau_j^u e^{- \sum_{j=1}^i \tau_j}}{u!}}\\
-&amp;= \frac{1}{u_1! \cdots u_i!} \left(\tau_1^{u_1}\right) \cdots \left(\tau_j^{u_i}\right) \left(e^{-\sum_{j=1}^i \tau_j}\right) \left(\frac{u!}{\sum_{j=1}^i \tau_j^u e^{- \sum_{j=1}^i \tau_j}}\right)\\
-&amp;= \frac{u!}{u_1! \cdots u_i!} \left( \tau_1^{u_1} \right) \cdots \left( \tau_j^{u_i} \right) \frac{1}{\sum_{j=1}^i \tau_j^{u_1 + \dots + u_i}}\\
-&amp;= \frac{u!}{u_1! \cdots u_i!} \left( \frac{\tau_1}{\sum_{j=1}^i \tau_j} \right)^{u_1} \cdots \left( \frac{\tau_j}{\sum_{j=1}^i \tau_j} \right)^{u_i}
+\boldsymbol{\beta&#39;}_t
+&amp;= \boldsymbol{\Gamma P} (x_{t+1}) \boldsymbol{\Gamma P} (x_{t+2}) \cdots \boldsymbol{\Gamma P} (x_T) \boldsymbol{1&#39;}\\
+&amp;= \left(\prod_{s=t+1}^T \boldsymbol{\Gamma P} (x_s) \right) \boldsymbol{1&#39;}
 \end{align}\]</span></p>
-<p>Thus, <span class="math inline">\(u_1, \dots, u_i|u \sim Multinomial \left(\frac{\tau_1, \dots, \tau_i}{\sum_{j=1}^i \tau_j}; u \right)\)</span>.</p>
-<p><strong>Question 2</strong></p>
-<p>The posterior distribution of <span class="math inline">\(\boldsymbol{y}\)</span> is</p>
+<p>with the convention that an empty product is the identity matrix.</p>
+<p>In recursive form,</p>
+<p>for <span class="math inline">\(t = 1, 2, \dots, T-1\)</span>,</p>
+<p><span class="math display" id="eq:reforward">\[\begin{align}
+\boldsymbol{\alpha}_{t+1} = \boldsymbol{\alpha}_t \boldsymbol{\Gamma P} (x_{t+1})
+\tag{4.1}
+\end{align}\]</span></p>
+<p>and</p>
+<p><span class="math display" id="eq:rebackward">\[\begin{align}
+\boldsymbol{\beta}_t&#39; = \boldsymbol{\Gamma P} (x_{t+1}) \boldsymbol{\beta&#39;}_{t+1}
+\tag{4.2}
+\end{align}\]</span></p>
+</div>
+<div id="properties-of-hmms" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Properties of HMMs<a href="fbalg.html#properties-of-hmms" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="property" class="section level3 hasAnchor" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Property<a href="fbalg.html#property" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For positive integers t,</p>
+<p><span class="math display" id="eq:factorize">\[\begin{equation}
+\Pr(\boldsymbol{X}^{(t+1)}, C_t, C_{t+1}) = \Pr(\boldsymbol{X}^{(t)}, C_t) \Pr(C_{t+1}|C_t) \Pr(X_{t+1}|C_{t+1})
+\tag{4.3}
+\end{equation}\]</span></p>
+<p><em>Proof</em></p>
+<p>By Equation <a href="#eq:joint">(<strong>??</strong>)</a>, for <span class="math inline">\(\Pr(\boldsymbol{X}^{(t+1)}, \boldsymbol{C}^{(t+1)})\)</span>, it follows that</p>
+<p><span class="math display">\[\Pr(\boldsymbol{X}^{(t+1)}, \boldsymbol{C}^{(t+1)}) = \Pr(\boldsymbol{X}^{(t)}, \boldsymbol{C}^{(t)}) \Pr(C_{t+1}|C_t) \Pr(X_{t+1}|C_{t+1})\]</span></p>
+<p>Then summing over <span class="math inline">\(\boldsymbol{C}^{(t+1)}\)</span>, it follows that</p>
 <p><span class="math display">\[\begin{align}
-\Pr(\boldsymbol{y}|\boldsymbol{w})
-&amp;= \frac{\Pr(\boldsymbol{y}, \boldsymbol{w})}{\Pr(\boldsymbol{w})}\\
-&amp;= \frac{\Pr(\boldsymbol{w}|\boldsymbol{y})\Pr(\boldsymbol{y})}{\Pr(\boldsymbol{w})}\\
-&amp; \propto \Pr(\boldsymbol{w}|\boldsymbol{y}) \Pr(\boldsymbol{y})\\
-&amp; \propto \frac{n!}{w_1! \cdots w_m!} y_1^{w_1} \cdots y_2^{w_2} \cdots y_m^{w_m} \cdot y_1^{d_1 -1} \cdot y_2^{d_2-1} \cdots y_m^{d_m-1}\\
-&amp; \propto y_1^{(w_1 + d_1)-1} y_2^{(w_2+d_2)-1} \cdots y_m^{(w_m + d_m)-1}
+\sum_{\boldsymbol{C}^{(t-1)}} \Pr(\boldsymbol{X}^{(t+1)}, \boldsymbol{C}^{(t+1)})
+&amp;= \sum_{\boldsymbol{C}^{(t-1)}} \Pr(\boldsymbol{X}^{(t)}, \boldsymbol{C}^{(t)}) \Pr(C_{t+1}|C_t) \Pr(X_{t+1}|C_{t+1})\\
+\stackrel{\text{by LOTP}}{\Rightarrow} \Pr(\boldsymbol{X}^{(t+1)}, C_t, C_{t+1})
+&amp;= \Pr(\boldsymbol{X}^{(t)}, C_t) \Pr(C_{t+1}|C_t) \Pr(X_{t+1}|C_{t+1})
 \end{align}\]</span></p>
-<p>Thus, <span class="math inline">\(\boldsymbol{y}|\boldsymbol{w} \sim Dir(\boldsymbol{w}+\boldsymbol{d})\)</span>.</p>
-<p><strong>Question 3</strong></p>
-<p>The posterior distribution of <span class="math inline">\(\tau\)</span> is</p>
+</div>
+<div id="property-1" class="section level3 hasAnchor" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> Property<a href="fbalg.html#property-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A generalization of <a href="fbalg.html#eq:factorize">(4.3)</a> is the following:</p>
+<p>For any integer <span class="math inline">\(T \geq t+1\)</span>,</p>
+<p><span class="math display" id="eq:genfactorize">\[\begin{equation}
+\Pr(\boldsymbol{X}_1^{(T)}, C_t, C_{t+1}) = \Pr(\boldsymbol{X}_1^{(t)}, C_t) \Pr(C_{t+1}|C_t) \Pr(\boldsymbol{X}_{t+1}^T|C_{t+1})
+\tag{4.4}
+\end{equation}\]</span></p>
+<p><em>Proof</em></p>
+<p>By <a href="#eq:joint">(<strong>??</strong>)</a>, <span class="math inline">\(\Pr(\boldsymbol{X}_1^T, \boldsymbol{C}_1^T) = \Pr(C_1) \prod_{k=2}^T \Pr(C_k|C_{k-1}) \prod_{k=1}^T \Pr(X_k|C_k)\)</span>, which can be rewritten as</p>
+<p><span class="math display">\[\Pr(\boldsymbol{X}_1^T, \boldsymbol{C}_1^T) = \Pr(C_1) \prod_{k=2}^t  \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(C_k|C_{k-1}) \prod_{k=1}^t \Pr(X_k|C_k) \prod_{k=t+1}^T \Pr(X_k|C_k)\]</span></p>
+<p>Then summing over <span class="math inline">\(\boldsymbol{C}_{t+2}^T\)</span> and <span class="math inline">\(\boldsymbol{C}_1^{t-1}\)</span>, it follows that</p>
 <p><span class="math display">\[\begin{align}
-\Pr(\tau|y_1, \dots, y_n)
-&amp;= \frac{\Pr(\tau_1, y_1, \dots, y_n)}{\Pr(y_1, \dots, y_n)}\\
-&amp;= \frac{\Pr(y_1, \dots, y_n|\tau) \Pr(\tau)}{\Pr(y_1, \dots, y_n)}\\
-&amp; \propto \Pr(y_1, \dots, y_n|\tau) \Pr(\tau)\\
-&amp;= \prod_{i=1}^n \frac{\tau^{y_i} e^{-\tau}}{y_i !} \frac{b^a}{\Gamma(a)} \tau^{a-1} e^{-b \tau}\\
-&amp; \propto \prod_{i=1}^n \tau^{y_i} e^{- \tau} \tau^{a-1} e^{-b \tau}\\
-&amp;= \tau^{\sum_{i=1}^n y_i} e^{-n \tau} \tau^{a-1} e^{-b \tau}\\
-&amp;= \tau^{a+\sum_{i=1}^n y_i - 1} e^{-(b+n)\tau}
+\Pr(\boldsymbol{X}_1^T, C_t, C_{t+1})
+&amp;= \sum_{\boldsymbol{C}_{t+2}^T} \sum_{\boldsymbol{C}_{1}^{t-1}} \Pr(\boldsymbol{X}_1^T, \boldsymbol{C}_1^T)
+\qquad{\text{by LOTP}}\\
+&amp;= \sum_{\boldsymbol{C}_{t+2}^T} \sum_{\boldsymbol{C}_{1}^{t-1}} \Pr(C_1) \prod_{k=2}^t  \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(C_k|C_{k-1}) \prod_{k=1}^t \Pr(X_k|C_k) \prod_{k=t+1}^T \Pr(X_k|C_k)\\
+&amp;= \sum_{\boldsymbol{C}_1^{t-1}} \Pr(C_1) \prod_{k=2}^t \Pr(C_k|C_{k-1}) \prod_{k=1}^t \Pr(X_k|C_k) \sum_{\boldsymbol{C}_{t+2}^T} \prod_{k=t+1}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)\\
+&amp;= \sum_{\boldsymbol{C}_1^{t-1}} \Pr(\boldsymbol{X}_1^t, \boldsymbol{C}_1^t) \Pr(C_{t+1}|C_t) \sum_{\boldsymbol{C}_{t+2}^{T}} \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\qquad{\text{by LOTP}}\\
+&amp;= \Pr(\boldsymbol{X}_1^t, C_t) \Pr(C_{t+1}|C_t) \Pr(\boldsymbol{X}_{t+1}^T|C_{t+1})
 \end{align}\]</span></p>
-<p>Thus, <span class="math inline">\(\tau|y_1, \dots, y_n \sim Gamma(a+\sum_{i=1}^n y_i, b+n)\)</span>.</p>
+</div>
+<div id="property-2" class="section level3 hasAnchor" number="4.2.3">
+<h3><span class="header-section-number">4.2.3</span> Property<a href="fbalg.html#property-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For <span class="math inline">\(t=0, 1, \dots, T-1\)</span>,</p>
+<p><span class="math display" id="eq:back">\[\begin{equation}
+\Pr(\boldsymbol{X}_{t+1}^T|C_{t+1}) = \Pr(X_{t+1}|C_{t+1}) \Pr(\boldsymbol{X}_{t+2}^T|C_{t+1})
+\tag{4.5}
+\end{equation}\]</span></p>
+<p><em>Proof</em></p>
+<p>From <a href="#eq:joint">(<strong>??</strong>)</a>, it follows that</p>
+<p><span class="math display">\[\begin{align}
+\Pr(\boldsymbol{X}_{t+1}^T|\boldsymbol{C}_{t+1})
+&amp;= \Pr(C_{t+1}) \Pr(X_{t+1}|C_{t+1}) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+2}^T \Pr(X_k|C_k)\\
+&amp;= \Pr(X_{t+1}|C_{t+1}) \left( \Pr(C_{t+1}) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+2}^T \Pr(X_k|C_k) \right)\\
+&amp;= \Pr(X_{t+1}|C_{t+1}) \Pr(\boldsymbol{X}_{t+2}^T, \boldsymbol{C}_{t+1}^T)
+\end{align}\]</span></p>
+<p>Summing over <span class="math inline">\(\boldsymbol{C}_{t+2}^T\)</span>,</p>
+<p><span class="math display">\[\begin{align}
+\sum_{\boldsymbol{C}_{t+2}^T} \Pr(\boldsymbol{X}_{t+1}^T|\boldsymbol{C}_{t+1})
+&amp;= \sum_{\boldsymbol{C}_{t+2}^T} \Pr(X_{t+1}|C_{t+1})  \Pr(\boldsymbol{X}_{t+2}^T, \boldsymbol{C}_{t+1}^T) \\
+\stackrel{\text{by LOTP}}{\Rightarrow}
+\Pr(\boldsymbol{X}_{t+1}^T, C_{t+1})
+&amp;= \Pr(X_{t+1}|C_{t+1}) \Pr(\boldsymbol{X}_{t+2}^T, C_{t+1})
+\end{align}\]</span></p>
+<p>Dividing both sides by <span class="math inline">\(\Pr(C_{t+1})\)</span>,</p>
+<p><span class="math display">\[\begin{align}
+\frac{1}{\Pr(C_{t+1})} \Pr(\boldsymbol{X}_{t+1}^T, C_{t+1})
+&amp;= \frac{1}{\Pr(C_{t+1})} \Pr(X_{t+1}|C_{t+1}) \Pr(\boldsymbol{X}_{t+2}^T, C_{t+1})\\
+\stackrel{\text{by Bayes Rule}}{\Rightarrow}
+\Pr(\boldsymbol{X}_{t+1}^T|C_{t+1})
+&amp;= \Pr(X_{t+1}|C_{t+1}) \Pr(\boldsymbol{X}_{t+2}^T|C_{t+1})
+\end{align}\]</span></p>
+</div>
+<div id="property-3" class="section level3 hasAnchor" number="4.2.4">
+<h3><span class="header-section-number">4.2.4</span> Property<a href="fbalg.html#property-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For <span class="math inline">\(t = 1, 2, \dots, T-1\)</span>,</p>
+<p><span class="math display" id="eq:back2">\[\begin{equation}
+\Pr(\boldsymbol{X}_{t+1}^T|C_{t+1}) = \Pr(\boldsymbol{X}_{t+1}^T|C_t, C_{t+1})
+\tag{4.6}
+\end{equation}\]</span></p>
+<p><em>Proof</em></p>
+<p>On the left-hand side:</p>
+<p><span class="math display">\[\begin{align}
+\Pr(\boldsymbol{X}_{t+1}^T|C_{t+1})
+&amp;= \frac{1}{\Pr(C_{t+1})} \Pr(\boldsymbol{X}_{t+1}^T,C_{t+1})
+\qquad{\text{by Bayes Rule}}\\
+&amp;= \frac{1}{\Pr(C_{t+1})} \sum_{\boldsymbol{C}_{t+2}^T} \Pr(\boldsymbol{X}_{t+1}^T,C_{t+1})
+\qquad{\text{by LOTP}}\\
+&amp;= \frac{1}{\Pr(C_{t+1})} \sum_{\boldsymbol{C}_{t+2}^T} \Pr(C_{t+1}) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\qquad{\text{by Equation (10.2)}} \\
+&amp;= \sum_{\boldsymbol{C}_{t+2}^T} \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\end{align}\]</span></p>
+<p>On the right-hand side:</p>
+<p><span class="math display">\[\begin{align}
+\Pr(\boldsymbol{X}_{t+1}^T|C_t, C_{t+1})
+&amp;= \frac{1}{\Pr(C_t, C_{t+1})} \Pr(\boldsymbol{X}_{t+1}^T|C_t, C_{t+1})
+\qquad{\text{by Bayes Rule}}\\
+&amp;= \frac{1}{\Pr(C_t, C_{t+1})} \sum_{\boldsymbol{C}_{t+2}^T} \Pr(\boldsymbol{X}_{t+1}^T, \boldsymbol{C}_t^T)
+\qquad{\text{by LOTP}}\\
+&amp;= \frac{1}{\Pr(C_t, C_{t+1})} \sum_{\boldsymbol{C}_{t+2}^T} \Pr(C_t) \Pr(C_{t+1}|C_t) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\qquad{\text{by Equation (10.2)}}\\
+&amp;= \frac{1}{ \Pr(C_t) \Pr(C_{t+1}|C_t)} \sum_{\boldsymbol{C}_{t+2}^T} \Pr(C_t) \Pr(C_{t+1}|C_t) \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\qquad{\text{by Bayes Rule}}\\
+&amp;= \sum_{\boldsymbol{C}_{t+2}^T} \prod_{k=t+2}^T \Pr(C_k|C_{k-1}) \prod_{k=t+1}^T \Pr(X_k|C_k)
+\end{align}\]</span></p>
+</div>
+<div id="property-4" class="section level3 hasAnchor" number="4.2.5">
+<h3><span class="header-section-number">4.2.5</span> Property<a href="fbalg.html#property-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The following shows the conditional independence of <span class="math inline">\(\boldsymbol{X}_1^t\)</span> and <span class="math inline">\(\boldsymbol{X}_{t+1}^T\)</span> given <span class="math inline">\(C_t\)</span>.</p>
+<p>For <span class="math inline">\(t = 1, 2 \dots, T-1\)</span>,</p>
+<p><span class="math display" id="eq:link">\[\begin{equation}
+\Pr(\boldsymbol{X}_1^T|C_t) = \Pr(\boldsymbol{X}_1^t|C_t) \Pr(\boldsymbol{X}_{t+1}^T|C_t)
+\tag{4.7}
+\end{equation}\]</span></p>
+<p><em>Proof</em></p>
+<p><span class="math display">\[\begin{align}
+\Pr(\boldsymbol{X_1}^T, \boldsymbol{C_1}^T)
+&amp;= \Pr(\boldsymbol{X_1}^t, \boldsymbol{C_1}^t) \frac{1}{\Pr(C_t)} \Pr(\boldsymbol{X_{t+1}}^T, \boldsymbol{C_t}^T)
+\end{align}\]</span></p>
+<p>Then summing over <span class="math inline">\(\boldsymbol{C}_1^{t-1}\)</span> and <span class="math inline">\(\boldsymbol{C}_{t+1}^{T}\)</span>,</p>
+<p><span class="math display">\[\begin{align}
+\sum_{\boldsymbol{C}_1^{t-1}} \sum_{\boldsymbol{C}_{t+1}^{T}}
+\Pr(\boldsymbol{X_1}^T, \boldsymbol{C_1}^T)
+&amp;= \sum_{\boldsymbol{C}_1^{t-1}} \sum_{\boldsymbol{C}_{t+1}^{T}} \Pr(\boldsymbol{X_1}^t, \boldsymbol{C_1}^t) \frac{1}{\Pr(C_t)} \Pr(\boldsymbol{X_{t+1}}^T, \boldsymbol{C_t}^T)\\
+\stackrel{\text{by LOTP}}{\Rightarrow}
+\Pr(\boldsymbol{X}_1^T, C_t)
+&amp;= \Pr(\boldsymbol{X}_1^t, C_t) \frac{1}{\Pr(C_t)} \Pr(\boldsymbol{X}_{t+1}^T, C_t)\\
+&amp;= \Pr(\boldsymbol{X}_1^t, C_t) \Pr(\boldsymbol{X}_{t+1}^T|C_t)
+\end{align}\]</span></p>
+</div>
+</div>
+<div id="forward-probabilities-as-joint-probabilities" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Forward Probabilities as Joint Probabilities<a href="fbalg.html#forward-probabilities-as-joint-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="proposition">
+<p><span id="prp:forward" class="proposition"><strong>Proposition 4.1  </strong></span>For t = 1, 2, …, T and j = 1, 2, …, m,</p>
+</div>
+<p><span class="math display" id="eq:ajoint">\[\begin{align}
+\alpha_t (j) = \Pr(\boldsymbol{X}^{(t)} = \boldsymbol{x}^{(t)}, C_t = j)
+\tag{4.8}
+\end{align}\]</span></p>
+<p><em>Proof</em></p>
+<p>We prove the above by induction on <span class="math inline">\(t\)</span>.</p>
+<p>Recall from Equation <a href="introhmm.html#eq:ascalar">(2.6)</a> , <span class="math inline">\(\alpha_{t+1}(j) = \left(\sum_{i=1}^m \alpha_t (i) \gamma_{ij} \right) p_j (x_{t+1})\)</span></p>
+<p>Base Case:</p>
+<p>If <span class="math inline">\(t = 1\)</span>, it follows from Equation <a href="fbalg.html#eq:reforward">(4.1)</a> that</p>
+<p><span class="math display">\[\begin{align}
+\alpha_1 (j)
+&amp;= \delta_j p(x_1)\\
+&amp;= \Pr(C_1 = j) \Pr(X_1 = x_1|C_1=j)\\
+&amp;= \Pr(X_1 = x_1, C_1 = j)
+\end{align}\]</span></p>
+<p>Inductive Step:</p>
+<p>Let <span class="math inline">\(t \in \{1, 2, \dots, T\}\)</span>. Suppose <span class="math inline">\(\alpha_t (j) = \Pr(\boldsymbol{X}^{(t)} = \boldsymbol{x}^{(t)}, C_t = j)\)</span>. Then</p>
+<p><span class="math display">\[\begin{align}
+\alpha_{t+1} (j)
+&amp;= \sum_{i=1}^m \alpha_t (i) \gamma_{ij} p (x_{t+1})
+\qquad{\text{by the above}}\\
+&amp;= \sum_{i=1}^m \Pr(\boldsymbol{X}^{(t)} = \boldsymbol{x}^{(t)}, C_t = i) \Pr(C_{t+1}=j|C_t = i) \Pr(X_{t+1} = x_{t+1}|C_{t+1} = j)\\
+&amp;= \sum_{i = 1}^m \Pr(\boldsymbol{X}^{(t+1)} = \boldsymbol{x}^{(t+1)}, C_t = i, C_{t+1} = j)
+\qquad{\text{by Equation (5.3)}}\\
+&amp;= \Pr(\boldsymbol{X}^{(t+1)} = \boldsymbol{x}^{(t+1)}, C_{t+1} = j)
+\qquad{\text{by LOTP}}
+\end{align}\]</span></p>
+</div>
+<div id="backward-probabilities-as-conditional-probabilities" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> Backward Probabilities as Conditional Probabilities<a href="fbalg.html#backward-probabilities-as-conditional-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="proposition">
+<p><span id="prp:backward" class="proposition"><strong>Proposition 4.2  </strong></span>For t = 1, 2, …, T and i = 1, 2, …, m,</p>
+</div>
+<p><span class="math display" id="eq:bconditional">\[\begin{align}
+\beta_t (i) = \Pr(\boldsymbol{X}_{t+1}^T = \boldsymbol{x}_{t+1}^T|C_t = i)
+\tag{4.9}
+\end{align}\]</span></p>
+<p>provided that <span class="math inline">\(\Pr(C_t = i) &gt; 0\)</span>.</p>
+<p><em>Proof</em></p>
+<p>We prove the above by induction on <span class="math inline">\(t\)</span>.</p>
+<p>Base Case:</p>
+<p>If <span class="math inline">\(t = T-1\)</span>, it follows from Equation <a href="fbalg.html#eq:rebackward">(4.2)</a> that</p>
+<p><span class="math display">\[\begin{align}
+\beta_{T-1} (i)
+&amp;= \sum_{j} \Pr(C_T = j|C_{T-1} = i) \Pr(X_T=x_T|C_T=j)\\
+&amp;= \sum_{j} \Pr(C_T = j|C_{T-1} = i) \Pr(X_T = x_T|C_T = j, C_{T-1} = i)
+\qquad{\text{by Equation (5.7)}}\\
+&amp;= \sum_{j} \frac{1}{\Pr(C_{T-1} = i)} \Pr(X_T = x_T, C_T = j, C_{T-1} = i)
+\qquad{\text{by Chain Rule}}\\
+&amp;= \frac{1}{\Pr(C_{T-1} = i)} \sum_{j}  \Pr(X_T = x_T, C_T = j, C_{T-1} = i)\\
+&amp;= \frac{1}{\Pr(C_{T-1} = i)} \Pr(X_T = x_T, C_{T-1} = i)
+\qquad{\text{by LOTP}}\\
+&amp;= \Pr(X_T = x_T|C_{T-1} = i)
+\qquad{\text{by Bayes Rule}}
+\end{align}\]</span></p>
+<p>Inductive Step:</p>
+<p>Let <span class="math inline">\(t \in \{1, 2, \dots, T-1\}\)</span>. Suppose <span class="math inline">\(\beta_t (i) = \Pr(\boldsymbol{X}_{t+1}^T = \boldsymbol{x}_{t+1}^T|C_t = i)\)</span>. Then</p>
+<p><span class="math display">\[\begin{align}
+\beta_t (i)
+&amp;= \sum_{j} \gamma_{ij} \Pr(X_{t+1} = x_{t+1}|C_{t+1} = j) \Pr(\boldsymbol{X}_{t+2}^T = \boldsymbol{x}_{t+2}^T|C_{t+1} = j)
+\qquad{\text{by the above}}\\
+&amp;= \sum_{j} Pr(C_{t+1} = j|C_t = i) \Pr(X_{t+1} = x_{t+1}|C_{t+1} = j) \Pr(\boldsymbol{X}_{t+2}^T = \boldsymbol{x}_{t+2}^T|C_{t+1} = j)\\
+&amp;= \sum_{j} \Pr(C_{t+1} = j|C_t = i) \Pr(\boldsymbol{X}_{t+1}^T= \boldsymbol{x}_{t+1}^T|C_{t+1} = j)
+\qquad{\text{by Equation (5.5)}}\\
+&amp;= \sum_{j} \Pr(C_{t+1} = j|C_t = i) \Pr(\boldsymbol{X}_{t+1}^T= \boldsymbol{x}_{t+1}^T|C_{t+1} = j, C_t = i)
+\qquad{\text{by Equation (5.6) }}\\
+&amp;= \frac{1}{\Pr(C_t = i)} \sum_{j} \Pr((\boldsymbol{X}_{t+1}^T= \boldsymbol{x}_{t+1}^T, C_t = i, C_{t+1} = j)
+\qquad{\text{by Chain Rule}}\\
+&amp;= \frac{1}{\Pr(C_t = i)} \sum_{j} \Pr((\boldsymbol{X}_{t+1}^T= \boldsymbol{x}_{t+1}^T, C_t = i)
+\qquad{\text{by LOTP}}\\
+&amp;= \Pr(\boldsymbol{X}_{t+1}^T= \boldsymbol{x}_{t+1}^T|C_t = i)
+\qquad{\text{by Bayes Rule}}
+\end{align}\]</span></p>
+<div class="proposition">
+<p><span id="prp:link" class="proposition"><strong>Proposition 4.3  </strong></span>For t = 1, 2, …, T and i = 1, 2, …, m,</p>
+</div>
+<p><span class="math display" id="eq:ablikelihood">\[\begin{equation}
+\alpha_t (i) \beta_t (i) = \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}, C_t = i)
+\tag{4.10}
+\end{equation}\]</span></p>
+<p>and consequently <span class="math inline">\(\boldsymbol{\alpha}_t \boldsymbol{\beta&#39;}_t = \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}) = L_T\)</span>, for each such <span class="math inline">\(t\)</span>.</p>
+<p><em>Proof</em></p>
+<p><span class="math display">\[\begin{align}
+\alpha_t (i) \beta_t (i)
+&amp;= \Pr(\boldsymbol{X}_1^t, C_t = i) \Pr(\boldsymbol{X}_{t+1}^T|C_t = i)\\
+&amp;= \Pr(C_t = i) \Pr(\boldsymbol{X}_t^t|C_t = i) \Pr(\boldsymbol{X}_{t+1}^T|C_t = i)
+\qquad{\text{by Bayes Rule}}\\
+&amp;= \Pr(C_t = i) \Pr(\boldsymbol{X}_1^t, \boldsymbol{X}_{t+1}^T|C_t = i)
+\qquad{\text{by Equation (5.7)} }\\
+&amp;= \Pr(\boldsymbol{X}^{(T)}, C_t = i)
+\qquad{\text{by Bayes Rule}}
+\end{align}\]</span></p>
+<p>The second part follows by summing over <span class="math inline">\(i\)</span>,</p>
+<p><span class="math display">\[\begin{align}
+\boldsymbol{\alpha}_t \boldsymbol{\beta}_t&#39;
+&amp;= \sum_{i} \alpha_t (i) \beta_t (i)\\
+&amp;= \sum_{i} \Pr(\boldsymbol{X}^T, C_T = i)
+\qquad{\text{by the above}}\\
+&amp;= \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+\qquad{\text{by LOTP}}\\
+&amp;= L_T
+\end{align}\]</span></p>
+<div class="proposition">
+<p><span id="prp:emprep" class="proposition"><strong>Proposition 4.4  </strong></span>For t = 1, 2, …, T,</p>
+</div>
+<p><span class="math display" id="eq:emprepone">\[\begin{equation}
+\Pr(C_t = j|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+= \frac{1}{L_T} \alpha_t (j) \beta_t (j)
+\tag{4.11}
+\end{equation}\]</span></p>
+<p>and for <span class="math inline">\(t = 2, 3, ..., T\)</span>,</p>
+<p><span class="math display" id="eq:empreptwo">\[\begin{equation}
+\Pr(C_{t-1} = j, C_t = k|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+= \frac{1}{L_T} \alpha_{t-1} (j) \gamma_{jk} p_k (x_t) \beta_t (k)
+\tag{4.12}
+\end{equation}\]</span></p>
+<p><em>Proof</em></p>
+<p>For <a href="fbalg.html#eq:emprepone">(4.11)</a>, it follows from Equation <a href="fbalg.html#eq:ablikelihood">(4.10)</a> that</p>
+<p><span class="math display">\[\begin{align}
+\alpha_t (j) \beta_t (j) \frac{1}{L_T}
+&amp;= \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}, C_t = j) \frac{1}{\Pr(\boldsymbol{X}^{(T)} = \Pr(\boldsymbol{x}^{(T)})}\\
+&amp;= \Pr(C_t = j|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+\qquad{\text{by Bayes Rule}}\\
+\end{align}\]</span></p>
+<p>For <a href="fbalg.html#eq:empreptwo">(4.12)</a>,</p>
+<p><span class="math display">\[\begin{align}
+\Pr(C_{t-1} = j, C_t = k|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+&amp;= \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}, C_{t-1} = j, C_t = k) \frac{1}{\Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})}
+\qquad{\text{by Bayes Rule}}\\
+&amp;=  \Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}, C_{t-1} = j, C_t = k) \frac{1}{L_T}
+&amp;= \frac{1}{L_T} \Pr(\boldsymbol{X}^{(t-1)} = \boldsymbol{x}^{(t-1)}, C_{t-1} = j) \Pr(C_t = k|C_{t-1} = j) \Pr(boldsymbol{X}_t^T|C_t = k)\\
+&amp;= \frac{1}{L_T} \alpha_{t-1} (j) \gamma_{ij} p_j (x_t) \beta_t (k)
+\end{align}\]</span></p>
 
 </div>
 </div>
@@ -385,8 +598,8 @@ f(u_1, \dots, u_i|u)
           </div>
         </div>
       </div>
-<a href="fdp.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="eq.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="numerical.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="em.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -417,7 +630,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/vinky-wang/HMM-Notes/edit/BRANCH/07-bayesian-inference.Rmd",
+"link": "https://github.com/vinky-wang/HMM-Notes/edit/BRANCH/04-hmm-properties.Rmd",
 "text": "Suggest an edit"
 },
 "history": {
@@ -428,7 +641,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "https://github.com/vinky-wang/HMM-Notes/raw/BRANCH/07-bayesian-inference.Rmd"],
+"download": ["_main.pdf", "https://github.com/vinky-wang/HMM-Notes/raw/BRANCH/04-hmm-properties.Rmd"],
 "search": {
 "engine": "fuse",
 "options": null

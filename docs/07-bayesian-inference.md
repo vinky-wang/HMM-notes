@@ -124,7 +124,7 @@ The posterior distribution of $\tau$ is
 \Pr(\tau|y_1, \dots, y_n)
 &= \frac{\Pr(\tau_1, y_1, \dots, y_n)}{\Pr(y_1, \dots, y_n)}\\
 &= \frac{\Pr(y_1, \dots, y_n|\tau) \Pr(\tau)}{\Pr(y_1, \dots, y_n)}\\
-& \propto \Pr(y_1, \dots, y_n|tau) \Pr(\tau)\\
+& \propto \Pr(y_1, \dots, y_n|\tau) \Pr(\tau)\\
 &= \prod_{i=1}^n \frac{\tau^{y_i} e^{-\tau}}{y_i !} \frac{b^a}{\Gamma(a)} \tau^{a-1} e^{-b \tau}\\
 & \propto \prod_{i=1}^n \tau^{y_i} e^{- \tau} \tau^{a-1} e^{-b \tau}\\
 &= \tau^{\sum_{i=1}^n y_i} e^{-n \tau} \tau^{a-1} e^{-b \tau}\\
