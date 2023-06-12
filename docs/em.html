@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Expectation-Maximization Algorithm (Baum-Welch) | Hidden Markov Model Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Expectation-Maximization Algorithm (Baum-Welch) | Hidden Markov Model Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="vinky-wang/HMM-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Expectation-Maximization Algorithm (Baum-Welch) | Hidden Markov Model Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Vinky Wang" />
+
+
+<meta name="date" content="2023-06-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="footnotes-and-citations.html"/>
+<link rel="next" href="fdp.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">HMM Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> url: your book url like https://bookdown.org/yihui/bookdown</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#render-book"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#preview-book"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="hello-bookdown.html"><a href="hello-bookdown.html"><i class="fa fa-check"></i><b>2</b> Hello bookdown</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="hello-bookdown.html"><a href="hello-bookdown.html#a-section"><i class="fa fa-check"></i><b>2.1</b> A section</a>
+<ul>
+<li class="chapter" data-level="" data-path="hello-bookdown.html"><a href="hello-bookdown.html#an-unnumbered-section"><i class="fa fa-check"></i>An unnumbered section</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="cross.html"><a href="cross.html"><i class="fa fa-check"></i><b>3</b> Cross-references</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="cross.html"><a href="cross.html#chapters-and-sub-chapters"><i class="fa fa-check"></i><b>3.1</b> Chapters and sub-chapters</a></li>
+<li class="chapter" data-level="3.2" data-path="cross.html"><a href="cross.html#captioned-figures-and-tables"><i class="fa fa-check"></i><b>3.2</b> Captioned figures and tables</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="parts.html"><a href="parts.html"><i class="fa fa-check"></i><b>4</b> Parts</a></li>
+<li class="chapter" data-level="5" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html"><i class="fa fa-check"></i><b>5</b> Footnotes and citations</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html#footnotes"><i class="fa fa-check"></i><b>5.1</b> Footnotes</a></li>
+<li class="chapter" data-level="5.2" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html#citations"><i class="fa fa-check"></i><b>5.2</b> Citations</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="em.html"><a href="em.html"><i class="fa fa-check"></i><b>6</b> Expectation-Maximization Algorithm (Baum-Welch)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="em.html"><a href="em.html#em-algorithm-general"><i class="fa fa-check"></i><b>6.1</b> EM Algorithm (General)</a></li>
+<li class="chapter" data-level="6.2" data-path="em.html"><a href="em.html#em-algorithm-for-hmms"><i class="fa fa-check"></i><b>6.2</b> EM Algorithm (for HMMs)</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="em.html"><a href="em.html#stationary-markov-chain"><i class="fa fa-check"></i><b>6.2.1</b> Stationary Markov Chain</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="em.html"><a href="em.html#exercises"><i class="fa fa-check"></i><b>6.3</b> Exercises</a></li>
+<li class="chapter" data-level="6.4" data-path="em.html"><a href="em.html#solutions"><i class="fa fa-check"></i><b>6.4</b> Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="fdp.html"><a href="fdp.html"><i class="fa fa-check"></i><b>7</b> Forecasting, Decoding, and State Prediction</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="fdp.html"><a href="fdp.html#conditional-distribution"><i class="fa fa-check"></i><b>7.1</b> Conditional Distribution</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities"><i class="fa fa-check"></i><b>7.1.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="fdp.html"><a href="fdp.html#forecast-distributions"><i class="fa fa-check"></i><b>7.2</b> Forecast Distributions</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities-1"><i class="fa fa-check"></i><b>7.2.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+<li class="chapter" data-level="7.2.2" data-path="fdp.html"><a href="fdp.html#forecast-distribution-in-the-limit"><i class="fa fa-check"></i><b>7.2.2</b> Forecast Distribution in the Limit</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="fdp.html"><a href="fdp.html#decoding"><i class="fa fa-check"></i><b>7.3</b> Decoding</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="fdp.html"><a href="fdp.html#local-decoding"><i class="fa fa-check"></i><b>7.3.1</b> Local Decoding</a></li>
+<li class="chapter" data-level="7.3.2" data-path="fdp.html"><a href="fdp.html#global-decoding"><i class="fa fa-check"></i><b>7.3.2</b> Global Decoding</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="fdp.html"><a href="fdp.html#state-prediction"><i class="fa fa-check"></i><b>7.4</b> State Prediction</a></li>
+<li class="chapter" data-level="7.5" data-path="fdp.html"><a href="fdp.html#exercises-1"><i class="fa fa-check"></i><b>7.5</b> Exercises</a></li>
+<li class="chapter" data-level="7.6" data-path="fdp.html"><a href="fdp.html#solutions-1"><i class="fa fa-check"></i><b>7.6</b> Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html"><i class="fa fa-check"></i><b>8</b> Bayesian Inference for HMMs</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching"><i class="fa fa-check"></i><b>8.1</b> Reparameterization to Avoid Label Switching</a></li>
+<li class="chapter" data-level="8.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure"><i class="fa fa-check"></i><b>8.2</b> Gibbs Sampling Procedure</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gen"><i class="fa fa-check"></i><b>8.2.1</b> Generating Sample Paths of the MC</a></li>
+<li class="chapter" data-level="8.2.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#decom"><i class="fa fa-check"></i><b>8.2.2</b> Decomposing the Observed Counts into Regime Contributions</a></li>
+<li class="chapter" data-level="8.2.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#update-the-parameters"><i class="fa fa-check"></i><b>8.2.3</b> Update the Parameters</a></li>
+<li class="chapter" data-level="8.2.4" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#repeat-the-above"><i class="fa fa-check"></i><b>8.2.4</b> Repeat the Above</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#exercises-2"><i class="fa fa-check"></i><b>8.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="earthquake.html"><a href="earthquake.html"><i class="fa fa-check"></i><b>9</b> Earthquake</a></li>
+<li class="chapter" data-level="10" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>10</b> Appendix</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hidden Markov Model Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="em" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Expectation-Maximization Algorithm (Baum-Welch)<a href="em.html#em" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The EM algorithm is an alternative to <a href="#numerical">direct numerical maximization of the likelihood</a> to obtain MLEs. In the context of HMMs, the EM algorithm is known as the Baum-Welch algorithm, which uses <a href="#fbalg">forward and backward probabilities</a>. See Section 4.4 of the textbook for a discussion of the advantages and disadvantages of the EM algorithm versus direct numerical maximization.</p>
+<div id="em-algorithm-general" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> EM Algorithm (General)<a href="em.html#em-algorithm-general" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The EM algorithm is an iterative method for performing maximum likelihood estimation when there are missing data. It repeats the following steps until some convergence criterion has been satisfied:</p>
+<ul>
+<li><p><strong>E step</strong>: Compute the <strong>conditional expectations</strong> of the “missing” data given the observations and given the current estimate of the parameters of interest <span class="math inline">\(\boldsymbol{\theta}\)</span></p></li>
+<li><p><strong>M step</strong>: Replace functions of the missing data with their conditional expectations in the complete-data log-likelihood (CDLL) (i.e. log-likelihood of the observations and the missing data). <strong>Maximize</strong> the CDLL with respect to the parameters of interest <span class="math inline">\(\boldsymbol{\theta}\)</span>.</p></li>
+</ul>
+</div>
+<div id="em-algorithm-for-hmms" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> EM Algorithm (for HMMs)<a href="em.html#em-algorithm-for-hmms" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>For HMMs, the sequence of states <span class="math inline">\(c_1, c_2, \dots, c_T\)</span> occupied by the MC is treated as the missing data. For convenience, we represent this by the zero-one random variables defined as follows:</p>
+<p><span class="math display">\[u_j (t) = 1 \qquad{\text{if and only if }} \qquad{} c_t = j \qquad{t=1, 2, \dots, T}\]</span></p>
+<p><span class="math display">\[v_{jk} (t) = 1 \qquad{\text{if and only if }} \qquad{} c_{t-1} = j \text{ and } c_t=k\qquad{t=2, 3, \dots, T}\]</span></p>
+<p>Then the CDLL of an HMM is given by</p>
+<p><span class="math display" id="eq:cdll">\[\begin{align}
+\log \left(\Pr(\boldsymbol{x}^{(T)}, \boldsymbol{c}^{(T)}) \right)
+&amp;= \log \left(\delta_{c_1} \prod_{t=2}^T \gamma_{c_{t-1}, c_t} \prod_{t=1}^T p_{c_t} (x_t) \right)\\
+&amp;= \log \delta_{c_1} + \sum_{t=2}^T \log \gamma_{c_{t-1}, c_t} + \sum_{t=1}^T \log p_{c_t} (x_t)\\
+&amp;= \sum_{j=1}^m u_j (1) \log \delta_j + \sum_{j=1}^m \sum_{k=1}^m \left(\sum_{t=2}^T v_{jk} (t) \right) \log \gamma_{jk} + \sum_{j=1}^m \sum_{t=1}^T u_j (t) \log p_j (x_t) \tag{6.1} \\
+&amp;= (1)  \qquad{} \qquad{} \qquad{} + (2)  \qquad{}  \qquad{} \qquad{} \qquad{} + 3
+\end{align}\]</span></p>
+<p><strong>Note:</strong></p>
+<ul>
+<li><p>Term 1 follows from <span class="math inline">\(u_j(1) = \begin{cases} 1 &amp; c_1 = j\\ 0 &amp; c_1 \neq j\end{cases}\)</span>, so <span class="math inline">\(\sum_j u_j (1) = 1\)</span> and it follows that <span class="math inline">\(\log \delta_{c_1} = \sum_j u_j(1) \log \delta_j\)</span></p></li>
+<li><p>Term 2 follows from <span class="math inline">\(v_{jk} = \begin{cases} 1 &amp; c_{t-1} = j, c_t=k\\ 0 &amp; c_{t-1} \neq j, c_t \neq k \end{cases}\)</span>, so <span class="math inline">\(\sum_j \sum_k v_{jk} (t) = 1\)</span> and it follows that <span class="math inline">\(\sum_{t=2}^T \log \gamma_{c_{t-1}, c_t} = \sum_j \sum_k v_{jk} (t) \sum_{t=2}^T \log \gamma_{jk}\)</span></p></li>
+<li><p>Term 3 follows from <span class="math inline">\(u_j(1) = \begin{cases} 1 &amp; c_1 = j\\ 0 &amp; c_1 \neq j\end{cases}\)</span>, so <span class="math inline">\(\sum_j u_j (1) = 1\)</span>, so <span class="math inline">\(\sum_j u_j (t) = 1\)</span> and it follows that <span class="math inline">\(\sum_{t=1}^T \log p_{c_t} (x_t) = \sum_j u_j(t) \sum_{t=1}^T \log p_j (x_t)\)</span></p></li>
+</ul>
+<p><strong>E-Step</strong>:</p>
+<p>Compute the <strong>conditional expectations</strong> of the hidden states <span class="math inline">\(c_1, c_2, \dots, c_T\)</span> given the observations <span class="math inline">\(x_1, x_2, \dots, x_T\)</span>. That is, replace all quantities <span class="math inline">\(v_{jk} (t)\)</span> and <span class="math inline">\(u_j (t)\)</span> by their conditional expectations given the observations <span class="math inline">\(\boldsymbol{x}^{(T)}\)</span> and current estimate of <span class="math inline">\(\boldsymbol{\theta} = (\boldsymbol{\delta}, \boldsymbol{\Gamma}, \boldsymbol{\lambda})\)</span>.</p>
+<p><span class="math display" id="eq:uj">\[\begin{equation}
+\hat{u}_j (t) = \Pr(C_t = j|\boldsymbol{x}^{(T)}) = \frac{1}{L_T} \alpha_t (j) \beta_t (j)
+\tag{6.2}
+\end{equation}\]</span></p>
+<p><span class="math display" id="eq:vjk">\[\begin{equation}
+\hat{v}_{jk} (t) = \Pr(C_{t-1} = j, C_t = k|\boldsymbol{x}^{(T)}) = \frac{1}{L_T} \alpha_{t-1} (j) \gamma_{jk} p_k (x_t)  \beta_t (k)
+\tag{6.3}
+\end{equation}\]</span></p>
+<p><strong>Note:</strong> See Equations <a href="#eq:emprepone">(<strong>??</strong>)</a> and <a href="#eq:empreptwo">(<strong>??</strong>)</a> .</p>
+<p><strong>M-Step</strong>:</p>
+<p>Replace <span class="math inline">\(v_{jk} (t)\)</span> and <span class="math inline">\(u_j (t)\)</span> by <span class="math inline">\(\hat{v}_{jk} (t)\)</span> and <span class="math inline">\(\hat{u}_j (t)\)</span>, then maximize Equation <a href="em.html#eq:cdll">(6.1)</a> with respect to the parameters of interest <span class="math inline">\(\boldsymbol{\theta}\)</span>.</p>
+<p>That is, maximize</p>
+<p><span class="math display">\[\begin{align}
+\log \left( \Pr(\boldsymbol{x}^{(T)}, \boldsymbol{c}^{(T)}) \right)
+&amp;= \sum_{j=1}^m \hat{u}_j (1) \log \delta_j + \sum_{j=1}^m \sum_{k=1}^m \left( \sum_{t=2}^T \hat{v}_{jk} (t) \right) \log \gamma_{jk} + \sum_{j=1}^m \sum_{t=1}^T \hat{u}_j (t) \log p_j (x_t)
+\end{align}\]</span></p>
+<p>with respect to <span class="math inline">\(\boldsymbol{\delta}\)</span>, <span class="math inline">\(\boldsymbol{\lambda}\)</span>, and <span class="math inline">\(\boldsymbol{\Gamma}\)</span>.</p>
+<p>Notice, term <span class="math inline">\((1)\)</span>, <span class="math inline">\((2)\)</span>, and <span class="math inline">\((3)\)</span> depend only on <span class="math inline">\(\boldsymbol{\delta}\)</span>, <span class="math inline">\(\boldsymbol{\Gamma}\)</span>, and <span class="math inline">\(\boldsymbol{\lambda}\)</span>, respectively. Effectively, we are performing the three maximizations</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(\sum_{j=1}^m \hat{u}_j (1) \log \delta_j \qquad{\text{wrt} \qquad{}} \boldsymbol{\delta}\)</span></p></li>
+<li><p><span class="math inline">\(\sum_{j=1}^m \sum_{k=1}^m \left(\sum_{t=2}^T \hat{v}_{jk} (t) \right) \log \gamma_{jk} \qquad{\text{wrt} \qquad{}} \boldsymbol{\Gamma}\)</span></p></li>
+<li><p><span class="math inline">\(\sum_{j=1}^m \sum_{t=1}^T \hat{u}_j (t) \log p_j (x_t) \qquad{\text{wrt} \qquad{}} \boldsymbol{\lambda}\)</span></p></li>
+</ol>
+<p>The solutions are</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(\delta_j = \frac{\hat{u}_j (1)}{\sum_{j=1}^m \hat{u}_j (1)} = \hat{u}_j (1)\)</span></p></li>
+<li><p><span class="math inline">\(\gamma_{jk} = \frac{f_{jk}}{\sum_{k=1}^m f_{jk}}\)</span> where <span class="math inline">\(f_{jk} = \sum_{t=2}^T \hat{v}_{jk} (t)\)</span></p></li>
+<li><p>The maximization may be easy or difficult, depending on the nature of the state-dependent distributions assumed. Closed form solutions exist for the Poisson and Normal distributions, but not for the Gamma and Negative Binomial distributions. When no closed-form solutions exist, numerical maximization will be necessary.</p></li>
+</ol>
+<p><strong>Note</strong>: The solutions can be derived using Lagrange multipliers.</p>
+<p>For Term 1, the new objective function is</p>
+<p><span class="math display">\[F(\delta_i) = \sum_{j=1}^m \hat{u_j} (1) \log \delta_j - \lambda \left(\sum_{j=1}^m \delta_j - 1\right)\]</span></p>
+<p>Then differentiating with respect to <span class="math inline">\(\delta_i\)</span> and setting to zero</p>
+<p><span class="math display">\[\frac{\hat{u_j} (1)}{\delta_j} - \lambda = 0\]</span></p>
+<p>it follows that</p>
+<p><span class="math inline">\(\frac{\hat{u}_j (1)}{\delta_j} = \lambda\)</span> and <span class="math inline">\(\delta_j = \frac{\hat{u}_j (1)}{\lambda}\)</span></p>
+<p>so <span class="math inline">\(\sum_{j=1}^m \frac{\hat{u}_j (1)}{\lambda = 1} \Rightarrow \lambda = \sum_{j=1}^m \hat{u}_j (1)\)</span>.</p>
+<p>Thus, <span class="math inline">\(\delta_j = \frac{\hat{u}_j (1)}{\sum_{j=1}^m \hat{u}_j (1)} = \hat{u}_j (1)\)</span></p>
+<p>For Term 2, the new objective function is</p>
+<p><span class="math display">\[F (\gamma_{ij}) = \sum_{j=1}^m \sum_{k=1}^m \sum_{t=2}^T \hat{v}_{jk} (t) \log \gamma_{jk} - \sum_{k=1}^m \lambda_k \left(\sum_{k=1}^m \gamma_{jk} - 1\right)\]</span></p>
+<p>Then differentiating with respect to <span class="math inline">\(\gamma_{jk}\)</span> and setting to zero</p>
+<p><span class="math display">\[\frac{\sum_{t=2}^T \hat{v}_{jk} (t)}{\gamma_{jk}} - \lambda_k = 0\]</span></p>
+<p>it follows that <span class="math inline">\(\frac{\sum_{t=2}^T \hat{v}_{jk} (t)}{\gamma_{jk}} = \lambda_k\)</span> and <span class="math inline">\(\gamma_{jk} = \frac{\sum_{t=2}^T \hat{v}_{jk} (t)}{\lambda_k}\)</span></p>
+<p>and since <span class="math inline">\(\sum_{k=1}^m \gamma_{jk} = 1\)</span>, it follows that <span class="math inline">\(\sum_{k=1}^m \frac{\sum_{t=2}^T \hat{v}_{jk} (t)}{\lambda_k} = 1 \Rightarrow \lambda_k = \sum_{k=1}^m \sum_{t=2}^T \hat{v}_{jk} (t)\)</span></p>
+<p>Thus, <span class="math inline">\(\gamma_{jk} = \frac{\sum_{t=2}^T \hat{v}_{jk}(t)}{\sum_{k=1}^m \sum_{t=2}^T \hat{v}_{jk}(t)} = \frac{f_{jk}}{\sum_{k=1}^m f_{jk}}\)</span> where <span class="math inline">\(f_{jk} = \sum_{t=2}^T \hat{v}_{jk} (t)\)</span>.</p>
+<p>For Term 3,</p>
+<p>if the state-dependent distribution is Poisson then <span class="math inline">\(p_j(x_t) = \frac{e^{- \lambda_j} \lambda_j^{x_t}}{x!}\)</span></p>
+<p>so,</p>
+<p><span class="math display">\[\sum_{j=1}^m \sum_{t=1}^T \hat{u}_j (t) \log \left(\frac{e^{- \lambda_j} \lambda_j^{x_t}}{x!}\right)\]</span> where</p>
+<p>Then differentiating with respect to <span class="math inline">\(\lambda_j\)</span> and setting to zero,</p>
+<p><span class="math display">\[\begin{align}
+0
+&amp;= \sum_{t=1}^T \hat{u}_j (t) (-1 + \frac{x_t}{\lambda_j})\\
+\Rightarrow \sum_{t=1}^T \hat{u}_j (t)
+&amp;= \sum_{t=1}^T \hat{u}_j (t) x_t \frac{1}{\lambda_j}\\
+\Rightarrow \hat{\lambda}_j &amp;= \frac{\sum_{t=1}^T \hat{u}_j (t) x_t}{\sum_{t=1}^t \hat{u}_j (t)}
+\end{align}\]</span></p>
+<div id="stationary-markov-chain" class="section level3 hasAnchor" number="6.2.1">
+<h3><span class="header-section-number">6.2.1</span> Stationary Markov Chain<a href="em.html#stationary-markov-chain" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>If we assume in addition that the MC is stationary with stationary distribution <span class="math inline">\(\boldsymbol{\delta}\)</span>, then the M-Step simplifies to maximizing</p>
+<p><span class="math display">\[\begin{align}
+\sum_{j=1}^m \hat{u}_j (1) \log \delta_j + \sum_{j=1}^m \sum_{k=1}^m \left(\sum_{t=2}^T \hat{v}_{jk} (t) \right) \log \gamma_{jk} + \sum_{j=1}^m \sum_{t=1}^T \hat{u}_j (t) \log p_j (x_t)
+\end{align}\]</span></p>
+<p><strong>Note</strong>: Even in the case of only two states, analytic maximization would require the solution of a pair of equations quadratic in two variables (See Exercise 2). Often, numerical optimization is needed for this part of the M step if stationarity is assumed, or else some modification of the EM designed to circumvent such numerical optimization.</p>
+</div>
+</div>
+<div id="exercises" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> Exercises<a href="em.html#exercises" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ol style="list-style-type: decimal">
+<li><ol style="list-style-type: lower-alpha">
+<li><p>Suppose <span class="math inline">\(L_i &gt; 0\)</span> for <span class="math inline">\(i = 1, 2, \dots, m\)</span>. Maximize <span class="math inline">\(L = \sum_{i=1}^m a_i L_i\)</span> over the region <span class="math inline">\(a_i \geq 0\)</span>, <span class="math inline">\(\sum_{i=1}^m a_i = 1\)</span>.</p></li>
+<li><p>Consider an HMM with initial distribution <span class="math inline">\(\boldsymbol{\delta}\)</span>, and consider the (observed-data) likelihood as a function of <span class="math inline">\(\boldsymbol{\delta}\)</span>. Show that, at a maximum of the likelihood, <span class="math inline">\(\boldsymbol{\delta}\)</span> is a unit vector.</p></li>
+</ol></li>
+<li>Consider the example of Visser, Raijmakers and Molenaar (2002, pp. 186–187). There a series of length 1000 is simulated from an HMM with states S1 and S2 and the three observation symbols 1, 2 and 3. The transition probability matrix is <span class="math inline">\(\boldsymbol{A} = \begin{pmatrix} 0.9 &amp; 0.1\\ 0.3 &amp; 0.7 \end{pmatrix}\)</span>, the initial probabilities are <span class="math inline">\(\boldsymbol{\pi} = (0.5, 0.5)\)</span>, and the state-dependent distribution in state <span class="math inline">\(i\)</span> is row <span class="math inline">\(i\)</span> of the matrix <span class="math inline">\(\boldsymbol{B} = \begin{pmatrix} 0.7 &amp; 0.0 &amp; 0.3\\ 0.0 &amp; 0.4 &amp; 0.6 \end{pmatrix}\)</span></li>
+</ol>
+<p>The parameters <span class="math inline">\(\boldsymbol{A}\)</span>, <span class="math inline">\(\boldsymbol{B}\)</span>, and <span class="math inline">\(\boldsymbol{\pi}\)</span> are then estimated by EM; the estimates of <span class="math inline">\(\boldsymbol{A}\)</span> and <span class="math inline">\(\boldsymbol{B}\)</span> are close to <span class="math inline">\(\boldsymbol{A}\)</span> and <span class="math inline">\(\boldsymbol{B}\)</span>, but that of <span class="math inline">\(\boldsymbol{\pi}\)</span> is <span class="math inline">\((1, 0)\)</span>. This estimate of <span class="math inline">\(\boldsymbol{\pi}\)</span> is explained as follows: ‘The reason for this is that the sequence of symbols that was generated actually starts with the symbol 1 which can only be produced from state S1.’</p>
+<p>Do you agree with the above statement? What if the probability of symbol 1 in state S2 had been (say) 0.1 rather than 0.0?</p>
+<ol start="3" style="list-style-type: decimal">
+<li><p>Consider the fitting by EM of a two-state HMM based on a stationary Markov chain. In the M step, the sum of terms 1 and 2 must be maximized with respect to <span class="math inline">\(\boldsymbol{\Gamma}\)</span>. Write term 1 + term 2 as a function of <span class="math inline">\(\gamma_{12}\)</span> and <span class="math inline">\(\gamma_{21}\)</span>, the off-diagonal transition probabilities, and differentiate to find the equations satisfied by these probabilities at a stationary point.</p></li>
+<li><p>Let <span class="math inline">\(\{X_t\}\)</span> be an HMM on <span class="math inline">\(m\)</span> states. Suppose the state-dependent distributions are binomial. More precisely, assume that <span class="math display">\[\Pr(X_t = x|C_t = j) = \binom{n_t}{x} p_j^x (1 - p_j)^{n_t - x}\]</span></p></li>
+</ol>
+<p>Find the value for <span class="math inline">\(p_j\)</span> that will maximize the third term of equation <a href="em.html#eq:cdll">(6.1)</a>.</p>
+</div>
+<div id="solutions" class="section level2 hasAnchor" number="6.4">
+<h2><span class="header-section-number">6.4</span> Solutions<a href="em.html#solutions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Question 1</strong></p>
+<p><strong>Part a</strong></p>
+<p>Let <span class="math inline">\(L_j = \max \{L_1, \dots, L_m\}\)</span>.</p>
+<p>We will show that <span class="math inline">\(L_j\)</span> is the maximum of <span class="math inline">\(L\)</span>.</p>
+<p>Let <span class="math inline">\(a_i \in \{a_1, \dots, a_m\}\)</span>. Since <span class="math inline">\(L_j\)</span> is defined as the maximum of <span class="math inline">\(\{L_1, \dots, L_m\}\)</span>, <span class="math inline">\(L_i \leq L_j\)</span> for any <span class="math inline">\(i\)</span>.</p>
+<p>Then <span class="math inline">\(a_i L_i \leq a_i L_j\)</span> since <span class="math inline">\(a_i \geq 0\)</span>, and summing over <span class="math inline">\(i\)</span>,
+<span class="math inline">\(L = \sum_{i=1}^m a_i L_i \leq \sum_{i=}^m a_i L_j = L_j\)</span> since <span class="math inline">\(\sum_{i=1}^m a_i = 1\)</span>.</p>
+<p>Thus <span class="math inline">\(L\)</span> is bounded by <span class="math inline">\(L_j\)</span>.</p>
+<p>Now we will show that there exists a choice of <span class="math inline">\(a_i\)</span> such that <span class="math inline">\(L = L_j\)</span>.</p>
+<p>Take <span class="math inline">\(a_i\)</span> to be the <span class="math inline">\(j\)</span>-th unit vector. Then <span class="math inline">\(a_i \geq 0\)</span> and <span class="math inline">\(\sum_{i=1}^m a_i = 1\)</span>, and <span class="math inline">\(L = \sum_{i=1}^m a_i L_j = L_j\)</span>.</p>
+<p>Thus, <span class="math inline">\(L = L_j\)</span> when <span class="math inline">\(a_i\)</span> is the <span class="math inline">\(j\)</span>-th unit vector.</p>
+<p>Therefore, <span class="math inline">\(L_j\)</span> is the maximum of <span class="math inline">\(L\)</span>.</p>
+<p><strong>Part b</strong></p>
+<p>Maximize <span class="math inline">\(\sum_{j=1}^m u_j (1) \log \delta_j\)</span> subject to <span class="math inline">\(\delta_i \geq 0\)</span> and <span class="math inline">\(\sum_j \delta_j = 1\)</span>.</p>
+<p>Using Lagrange multipliers, the new objective function is</p>
+<p><span class="math display">\[F (\delta_j) = \sum_{j=1}^m u_j (1) \log \delta_j - \lambda \left(\sum_{j=1}^m \delta_j - 1 \right)\]</span></p>
+<p>Then differentiating with respect to <span class="math inline">\(\delta_j\)</span> and setting to zero,</p>
+<p><span class="math display">\[\frac{u_j (1)}{\delta_j} - \lambda = 0\]</span></p>
+<p><span class="math inline">\(\Rightarrow \frac{u_j (1)}{\hat{\delta}_j} = \lambda\)</span> and <span class="math inline">\(\hat{\delta}_j = \frac{u_j (1)}{\lambda}\)</span></p>
+<p>so <span class="math inline">\(\sum_{j=1}^m \frac{u_j(1)}{\lambda} \Rightarrow \lambda = \sum_{j=1}^m \hat{u}_j (1)\)</span></p>
+<p>Thus, <span class="math inline">\(\delta_j = \frac{u_j (1)}{\sum_{j=1}^m u_j (1)} = u_j (1)\)</span> and <span class="math inline">\(\boldsymbol{\delta}\)</span> is the <span class="math inline">\(j\)</span>-th unit vector corresponding to <span class="math inline">\(c_1 = j\)</span>.</p>
+<p><strong>Question 2</strong></p>
+<p>The statement is correct since <span class="math inline">\(\Pr(X_t = 1|C_t = S_1) = 0.7\)</span> whereas <span class="math inline">\(\Pr(X_t = 1|C_t = S_2) = 0.0\)</span>.</p>
+<p>If <span class="math inline">\(\Pr(X_t = 1|C_t = S_2) = 0.1\)</span>, then we would still expect <span class="math inline">\(\boldsymbol{\pi} = (1, 0)\)</span> since it is more likely that at <span class="math inline">\(t=1\)</span>, <span class="math inline">\(\Pr(X_t=1|C_t = S_1)\)</span> and for a large number of simulations, <span class="math inline">\(\boldsymbol{\pi} \rightarrow (1, 0)\)</span>. That is, the initial distribution converges to the <span class="math inline">\(j\)</span>-th unit vector corresponding to <span class="math inline">\(c_1 = j\)</span>.</p>
+<p><strong>Question 3</strong></p>
+<p><span class="math display" id="eq:q3">\[\begin{align}
+&amp; \log \left(\Pr\left(\boldsymbol{x}^{(T)}, \boldsymbol{c}^{(T)}\right)\right) \\
+&amp; = \hat{u}_1(1) \log \left(\frac{\gamma_{21}}{\gamma_{12}+\gamma_{21}}\right)+\hat{u}_{2} (1) \log \left(\frac{\gamma_{21}}{\gamma_{12}+\gamma_{21}}\right) \\
+&amp; +\hat{v}_{11}(1) \log \left(1-\gamma_{12}\right)+\hat{v}_{12}(1) \log \left(\gamma_{12}\right) \\
+&amp; +\hat{v}_{21}(1) \log \left(\gamma_{21}\right)+\hat{v}_{22}(1) \log \left(1-\gamma_{21}\right) \\
+&amp; +\hat{v}_{11}(2) \log \left(1-\gamma_{12}\right)+\hat{v}_{12}(2) \log \left(\gamma_{12}\right) \\
+&amp; +\hat{v}_{21}(2) \log \left(\gamma_{21}\right)+\hat{v}_{22}(2) \log \left(1-\gamma_{21}\right) \\
+&amp; = \hat{u}_1(1)\left[\log \left(\gamma_{21}\right)-\log \left(\gamma_{12}+\gamma_{21}\right)\right] +\hat{u}_2(1)\left[\log \left(\gamma_{21}\right)-\log \left(\gamma_{12}+\gamma_{21}\right)\right] \\
+&amp; +\hat{v}_{11}(1) \log \left(1-\gamma_{12}\right)+\hat{v}_{12}(1) \log \left(\gamma_{12}\right) \\
+&amp; +\hat{v}_{21}(1) \log \left(\gamma_{21}\right)+\hat{v}_{22}(1) \log \left(1-\gamma_{21}\right) \\
+&amp; +\hat{v}_{11}(2) \log \left(1-\gamma_{12}\right)+\hat{v}_{12}(2) \log \left(\gamma_{12}\right) \\
+&amp; +\hat{v}_{21}(2) \log \left(\gamma_{21}\right)+\hat{v}_{22}(2) \log \left(1-\gamma_{21}\right) \\
+\tag{6.4}
+\end{align}\]</span></p>
+<p>Then differentiating Equation <a href="em.html#eq:q3">(6.4)</a> with respect to <span class="math inline">\(\gamma_{12}\)</span> and setting to zero, it follows that</p>
+<p><span class="math display">\[\frac{- \hat{u}_1 (1)}{\gamma_{12} + \gamma_{21}} - \frac{\hat{u}_2 (1)}{\gamma_{12} + \gamma_{21}} - \frac{\hat{v}_{11} (1)}{1 - \gamma_{12}} + \frac{\hat{v}_{12} (1)}{\gamma_{12}} - \frac{\hat{v}_{11} (2)}{1 - \gamma_{12}} + \frac{\hat{v}_{12} (2)}{\gamma_{12}} = 0\]</span></p>
+<p>and multiplying each term by <span class="math inline">\((\gamma_{12} + \gamma_{21})(1-\gamma_{12})(\gamma_{12})\)</span>,</p>
+<p><span class="math display">\[\begin{align}
+&amp; -\hat{u}_1 (1) (1 - \gamma_{12}) (\gamma_{12}) - \hat{u}_2 (1) (1 - \gamma_{12}) (\gamma_{12}) \\
+&amp; - \hat{v}_{11} (1) (\gamma_{12} + \gamma_{21}) (\gamma_{12}) + \hat{v}_{12} (1) (\gamma_{12} + \gamma_{21}) (1 - \gamma_{12}) \\
+&amp; - \hat{v}_{11} (2) (\gamma_{12} + \gamma_{21}) (\gamma_{12}) + \hat{v}_{12} (2) (\gamma_{12} + \gamma_{21}) (1 - \gamma_{12}) \\
+&amp; = 0 \\
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+&amp; \Rightarrow - \hat{u}_1 (1) \gamma_{12} + \hat{u}_1 (1) \gamma_{12}^2 - \hat{u}_2 (1) \gamma_{12} + \hat{u}_2 (1) \gamma_{12}^2 \\
+&amp; - \hat{v}_{11} (1) \gamma_{12}^2 - \hat{v}_{11} (1) \gamma_{12} \gamma_{21} + \hat{v}_{12} (1) \gamma_{12} + \hat{v}_{12} (1) \gamma_{21} - \hat{v}_{12} (1) \gamma_{12}^2 - \hat{v}_{12} (1) \gamma_{12}^2 \\
+&amp; - \hat{v}_{11} (2) \gamma_{12}^2 - \hat{v}_{11} (2) \gamma_{12} \gamma_{21} + \hat{v}_{12} (2) \gamma_{12} + \hat{v}_{12} (2) \gamma_{21} - \hat{v}_{12} (2) \gamma_{12}^2 - \hat{v}_{12} (2) \gamma_{12}^2\\
+&amp;= 0\\
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+&amp; \Rightarrow \gamma_{12}^2 [\hat{u}_1 (1) + \hat{u}_2 (1) - \hat{v}_{11} (1) - \hat{v}_{12} (1) - \hat{v}_{12} (1) - \hat{v}_{11} (2) - \hat{v}_{12} (2) - \hat{v}_{12} (2)]\\
+&amp; + \gamma_{12} [- \hat{u}_{1} (1) - \hat{u}_2 (1) - \hat{v}_{11} (1) \gamma_{21} + \hat{v}_{12} (1) - \hat{v}_{11} (2) \gamma_{21} + \hat{v}_{12} (2)]\\
+&amp; + \hat{v}_{12} (1) \gamma_{21} + \hat{v}_{12} (2) \gamma_{21}\\
+&amp;= 0
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+&amp; \Rightarrow \gamma_{12}^2 [\hat{u}_1 (1) + \hat{u}_2 (1) - \hat{v}_{11} (1) - 2 \hat{v}_{12} (1) - \hat{v}_{11} (2) - 2 \hat{v}_{12} (2)]\\
+&amp; + \gamma_{12} [- \hat{u}_{1} (1) - \hat{u}_2 (1) - \hat{v}_{11} (1) \gamma_{21} + \hat{v}_{12} (1) - \hat{v}_{11} (2) \gamma_{21} + \hat{v}_{12} (2)]\\
+&amp; + \hat{v}_{12} (1) \gamma_{21} + \hat{v}_{12} (2) \gamma_{21}\\
+&amp;= 0
+\end{align}\]</span></p>
+<p>And differentiating Equation <a href="em.html#eq:q3">(6.4)</a> with respect to <span class="math inline">\(\gamma_{21}\)</span> and setting to zero, it follows that</p>
+<p><span class="math display">\[\frac{\hat{u}_1 (1)}{\gamma_{21}} - \frac{\hat{u}_1 (1)}{\gamma_{12} + \gamma_{21}} + \frac{\hat{u}_2 (1)}{\gamma_{21}} - \frac{\hat{u}_2 (1)}{\gamma_{12} + \gamma_{21}} + \frac{\hat{v}_{21} (1)}{\gamma_{21}} - \frac{\hat{v}_{22} (1)}{1 - \gamma_{21}} + \frac{\hat{v}_{21} (2)}{\gamma_{21}} - \frac{\hat{v}_{22} (2)}{1 - \gamma_{21}} =0\]</span></p>
+<p>and multiplying each term by <span class="math inline">\((\gamma_{12} + \gamma_{21})(1 - \gamma_{21})(\gamma_{21})\)</span></p>
+<p><span class="math display">\[\begin{align}
+&amp; \hat{u}_1 (1) (\gamma_{12} + \gamma_{21}) (1 - \gamma_{21}) - \hat{u}_1 (1) (1 - \gamma_{21}) (\gamma_{21}) + \hat{u}_2 (1) (\gamma_{12} + \gamma_{21}) (1 - \gamma_{21})\\
+&amp; - \hat{u}_2 (1) (1 - \gamma_{21}) (\gamma_{21}) + \hat{v}_{21} (1) (\gamma_{12} + \gamma_{21}) (1 - \gamma_{21})\\
+&amp; - \hat{v}_{22} (1) (\gamma_{12} + \gamma_{21}) (\gamma_{21}) + \hat{v}_{21} (2) (\gamma_{12} + \gamma_{21}) (1 - \gamma_{21})\\
+&amp; - \hat{v}_{22} (2) (\gamma_{12} + \gamma_{21}) (\gamma_{21})\\
+&amp;=0
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+&amp; \Rightarrow \hat{u}_1 (1) \gamma_{12} + \hat{u}_1 (1) \gamma_{21} - \hat{u}_1 (1) \gamma_{12} \gamma_{21} - \hat{u}_1 (1) \gamma_{21}^2\\
+&amp;- \hat{u}_1 (1) \gamma_{21} + \hat{u}_1 (1) \gamma_{21}^2 \\
+&amp;+ \hat{u}_2 (1) \gamma_{12} + \hat{u}_2 (1) \gamma_{21} - \hat{u}_2 (1) \gamma_{12} \gamma_{21} - \hat{u}_2 (1) \gamma_{21}^2\\
+&amp;- \hat{u}_2 (1) \gamma_{21} + \hat{u}_2 (1) \gamma_{21}^2\\
+&amp;+ \hat{v}_{21} (1) \gamma_{12} + \hat{v}_{21} (1) \gamma_{21} - \hat{v}_{21} (1) \gamma_{12} \gamma_{21} - \hat{v}_{21} (1) \gamma_{21}^2\\
+&amp;= - \hat{v}_{22} (2) \gamma_{12} \gamma_{21} - \hat{v}_{22}(2) \gamma_{21}^2\\
+&amp;=0\\
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+&amp;\Rightarrow \gamma_{21}^2 [-\hat{u}_1 (1) + \hat{u}_1 (1) - \hat{u}_2 (1) + \hat{u}_2 (1) - \hat{v}_{21} (1) - \hat{v}_{22} (1) - \hat{v}_{21} (1) - \hat{v}_{22} (2)]\\
+&amp; + \gamma_{21} [\hat{u}_1 (1) - \hat{u}_1 (1) \gamma_{21} - \hat{u}_1 (1) + \hat{u}_2 (1) - \hat{u}_2 (1) \gamma_{12} - \hat{u}_2 (1)\\
+&amp;+ \hat{v}_{21} (1) - \hat{v}_{21} (1) \gamma_{12} - \hat{v}_{22} (1) \gamma_{12} + \hat{v}_{21} (2) - \hat{v}_{21} (1) \gamma_{12} - \hat{v}_{22} (2) \gamma_{12}]\\
+&amp;+ \hat{u}_1 (1) \gamma_{12} + \hat{u}_2 (1) \gamma_{12} + \hat{v}_{21} \gamma_{12} + \hat{v}_{21} (2) \gamma_{12}\\
+&amp;=0\\
+\end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+&amp; \Rightarrow \gamma_{21}^2 [-2 \hat{v}_{21} (1) - \hat{v}_22 (1) - \hat{v}_{22} (2)]\\
+&amp;+ \gamma_{21} [- \hat{u}_1 (1) \gamma_{12} - \hat{u}_2 (1) \gamma_{12} + \hat{v}_{21} (1) - \hat{v}_{21} (1) \gamma_{12} - \hat{v}_{22} (1) \gamma_{12} + \hat{v}_{21} (2) - \hat{v}_{21} (1) \gamma_{12} - \hat{v}_{22} (2) \gamma_{12}]\\
+&amp;+ \hat{u}_1 (1) \gamma_{12} + \hat{u}_2 (1) \gamma_{12} + \hat{v}_{21} \gamma_{12} + \hat{v}_{21} (2) \gamma_{12}\\
+&amp;=0\\
+\end{align}\]</span></p>
+<p><strong>Question 4</strong></p>
+<p><span class="math display">\[\begin{align}
+&amp;\left[\sum_{j=1}^m \sum_{t=1}^T \hat{u}_j (t) \log \left( \binom{n_t}{x_t} p_j^{x_t} (1 - p_j)^{n_t - x_t} \right)\right] \frac{d}{d p_j}\\
+&amp;= \left[\sum_{j=1}^m \sum_{t=1}^T \hat{u}_j (t) [\log \binom{n_t}{x_t} + x_t \log p_j + (n_t - x_t) \log (1 - p_j)\right] \frac{d}{d p_j}\\
+&amp;= \sum_{t=1}^T \hat{u}_j (t) \left[\frac{x_t}{p_j} - \frac{n_t - x_t}{1 - p_j}\right]\\
+\end{align}\]</span></p>
+<p>Setting to zero and solving for <span class="math inline">\(p_j\)</span></p>
+<p><span class="math display">\[\begin{align}
+&amp; 0=\sum_{t=1}^T \hat{u}_j(t)\left[\frac{x_t}{p_j}-\frac{n_t-x_t}{1-p_j}\right] \\
+&amp; =\sum_{t=1}^T \hat{u}_j(t) \frac{x_t}{p_j}-\sum_{t=1}^{T} \hat{u}_j(t) \frac{n_t-x_t}{1-p_j} \\
+&amp; \sum_{t=1}^{T} \hat{u}_j(t) \frac{n_t-x_t}{1-p_j}=\sum_{t=1}^T \hat{u}_j(t) \frac{x_t}{p_j} \\
+&amp; \frac{\sum_{t=1}^T \hat{u}_j(t)\left(n_t-x_t\right)}{\sum_{t=1}^T \hat{u}_j(t) x_t}=\frac{1}{p_j}-1 \\
+&amp; \frac{\sum_{t=1}^T \hat{u}_j(t)\left(n_t-x_i\right)}{\sum_{i=1}^T \hat{u}_j(t) x_t}+1=\frac{1}{p_j} \\
+&amp; \frac{\sum_{t=1}^{T} \hat{u}_j(t)\left(n_t-x_t\right)+\sum_{t=1}^{T} \hat{u}_j(t) x_t}{\sum_{t=1}^{T} \hat{u}_j(t) x_t}=\frac{1}{p_j} \\
+&amp; \frac{\sum_{t=1}^T \hat{u}_j(t) x_t}{\sum_{t=1}^T \hat{u}_j(t)\left(n_t-x_i\right)+\sum_{t=1}^T \hat{u}_j(t) x_t}=p_j \\
+\end{align}\]</span></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="footnotes-and-citations.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="fdp.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/vinky-wang/HMM-Notes/edit/BRANCH/05-em-algorithm.Rmd",
+"text": "Suggest an edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "https://github.com/vinky-wang/HMM-Notes/raw/BRANCH/05-em-algorithm.Rmd"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

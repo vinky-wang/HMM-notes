@@ -15,7 +15,7 @@ link-citations: yes
 github-repo: vinky-wang/HMM-Notes
 ---
 
-# About
+# About{-}
 
 This is a _sample_ book written in **Markdown**. You can use anything that Pandoc's Markdown supports; for example, a math equation $a^2 + b^2 = c^2$.
 

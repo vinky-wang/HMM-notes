@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 8 Bayesian Inference for HMMs | Hidden Markov Model Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 8 Bayesian Inference for HMMs | Hidden Markov Model Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="vinky-wang/HMM-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 8 Bayesian Inference for HMMs | Hidden Markov Model Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Vinky Wang" />
+
+
+<meta name="date" content="2023-06-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="fdp.html"/>
+<link rel="next" href="earthquake.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">HMM Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> url: your book url like https://bookdown.org/yihui/bookdown</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#render-book"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#preview-book"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="hello-bookdown.html"><a href="hello-bookdown.html"><i class="fa fa-check"></i><b>2</b> Hello bookdown</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="hello-bookdown.html"><a href="hello-bookdown.html#a-section"><i class="fa fa-check"></i><b>2.1</b> A section</a>
+<ul>
+<li class="chapter" data-level="" data-path="hello-bookdown.html"><a href="hello-bookdown.html#an-unnumbered-section"><i class="fa fa-check"></i>An unnumbered section</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="cross.html"><a href="cross.html"><i class="fa fa-check"></i><b>3</b> Cross-references</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="cross.html"><a href="cross.html#chapters-and-sub-chapters"><i class="fa fa-check"></i><b>3.1</b> Chapters and sub-chapters</a></li>
+<li class="chapter" data-level="3.2" data-path="cross.html"><a href="cross.html#captioned-figures-and-tables"><i class="fa fa-check"></i><b>3.2</b> Captioned figures and tables</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="parts.html"><a href="parts.html"><i class="fa fa-check"></i><b>4</b> Parts</a></li>
+<li class="chapter" data-level="5" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html"><i class="fa fa-check"></i><b>5</b> Footnotes and citations</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html#footnotes"><i class="fa fa-check"></i><b>5.1</b> Footnotes</a></li>
+<li class="chapter" data-level="5.2" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html#citations"><i class="fa fa-check"></i><b>5.2</b> Citations</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="em.html"><a href="em.html"><i class="fa fa-check"></i><b>6</b> Expectation-Maximization Algorithm (Baum-Welch)</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="em.html"><a href="em.html#em-algorithm-general"><i class="fa fa-check"></i><b>6.1</b> EM Algorithm (General)</a></li>
+<li class="chapter" data-level="6.2" data-path="em.html"><a href="em.html#em-algorithm-for-hmms"><i class="fa fa-check"></i><b>6.2</b> EM Algorithm (for HMMs)</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="em.html"><a href="em.html#stationary-markov-chain"><i class="fa fa-check"></i><b>6.2.1</b> Stationary Markov Chain</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="em.html"><a href="em.html#exercises"><i class="fa fa-check"></i><b>6.3</b> Exercises</a></li>
+<li class="chapter" data-level="6.4" data-path="em.html"><a href="em.html#solutions"><i class="fa fa-check"></i><b>6.4</b> Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="fdp.html"><a href="fdp.html"><i class="fa fa-check"></i><b>7</b> Forecasting, Decoding, and State Prediction</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="fdp.html"><a href="fdp.html#conditional-distribution"><i class="fa fa-check"></i><b>7.1</b> Conditional Distribution</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities"><i class="fa fa-check"></i><b>7.1.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="fdp.html"><a href="fdp.html#forecast-distributions"><i class="fa fa-check"></i><b>7.2</b> Forecast Distributions</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities-1"><i class="fa fa-check"></i><b>7.2.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+<li class="chapter" data-level="7.2.2" data-path="fdp.html"><a href="fdp.html#forecast-distribution-in-the-limit"><i class="fa fa-check"></i><b>7.2.2</b> Forecast Distribution in the Limit</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="fdp.html"><a href="fdp.html#decoding"><i class="fa fa-check"></i><b>7.3</b> Decoding</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="fdp.html"><a href="fdp.html#local-decoding"><i class="fa fa-check"></i><b>7.3.1</b> Local Decoding</a></li>
+<li class="chapter" data-level="7.3.2" data-path="fdp.html"><a href="fdp.html#global-decoding"><i class="fa fa-check"></i><b>7.3.2</b> Global Decoding</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="fdp.html"><a href="fdp.html#state-prediction"><i class="fa fa-check"></i><b>7.4</b> State Prediction</a></li>
+<li class="chapter" data-level="7.5" data-path="fdp.html"><a href="fdp.html#exercises-1"><i class="fa fa-check"></i><b>7.5</b> Exercises</a></li>
+<li class="chapter" data-level="7.6" data-path="fdp.html"><a href="fdp.html#solutions-1"><i class="fa fa-check"></i><b>7.6</b> Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html"><i class="fa fa-check"></i><b>8</b> Bayesian Inference for HMMs</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching"><i class="fa fa-check"></i><b>8.1</b> Reparameterization to Avoid Label Switching</a></li>
+<li class="chapter" data-level="8.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure"><i class="fa fa-check"></i><b>8.2</b> Gibbs Sampling Procedure</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gen"><i class="fa fa-check"></i><b>8.2.1</b> Generating Sample Paths of the MC</a></li>
+<li class="chapter" data-level="8.2.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#decom"><i class="fa fa-check"></i><b>8.2.2</b> Decomposing the Observed Counts into Regime Contributions</a></li>
+<li class="chapter" data-level="8.2.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#updating-the-parameters"><i class="fa fa-check"></i><b>8.2.3</b> Updating the Parameters</a></li>
+<li class="chapter" data-level="8.2.4" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#repeat-the-above"><i class="fa fa-check"></i><b>8.2.4</b> Repeat the Above</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#exercises-2"><i class="fa fa-check"></i><b>8.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="earthquake.html"><a href="earthquake.html"><i class="fa fa-check"></i><b>9</b> Earthquake</a></li>
+<li class="chapter" data-level="10" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>10</b> Appendix</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hidden Markov Model Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="bayesian-inference-for-hmms" class="section level1 hasAnchor" number="8">
+<h1><span class="header-section-number">Chapter 8</span> Bayesian Inference for HMMs<a href="bayesian-inference-for-hmms.html#bayesian-inference-for-hmms" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>We apply Bayesian inference in the context of Poisson-HMMs with Gibbs sampling.</p>
+<p><strong>Note:</strong> We use STAN for Bayesian inference in the <a href="#eq">Earthquake Analysis</a> which uses Hamiltonian Monte Carlo sampling.</p>
+<div id="reparameterization-to-avoid-label-switching" class="section level2 hasAnchor" number="8.1">
+<h2><span class="header-section-number">8.1</span> Reparameterization to Avoid Label Switching<a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Consider each observed count <span class="math inline">\(x_t\)</span> as the sum <span class="math inline">\(\sum_j x_{jt}\)</span> of contributions from up to <span class="math inline">\(m\)</span> regimes. That is, if the MC is in state <span class="math inline">\(i\)</span> at a given time, then regimes <span class="math inline">\(1, \dots, i\)</span> are all “active” and regimes <span class="math inline">\(i+1, \dots, m\)</span> are all inactive at that time.</p>
+<p>Then parameterizing the model in terms of the non-negative increments <span class="math inline">\(\boldsymbol{\tau} = (\tau_1, \dots, \tau_m)\)</span> where <span class="math inline">\(\tau_j = \lambda_j - \lambda_{j-1}\)</span> (with <span class="math inline">\(\tau_0 \equiv 0\)</span>), or equivalently, <span class="math inline">\(\lambda_i = \sum_{j=1}^i \tau_j\)</span>, the random variable <span class="math inline">\(\tau_j\)</span> can be thought of as the mean contribution of regime <span class="math inline">\(j\)</span> to the count observed at a give time, if regime <span class="math inline">\(j\)</span> is active.</p>
+<p>This parameterization has the effect of placing the <span class="math inline">\(\lambda_j\)</span> in increasing order, which is useful to prevent label switching.</p>
+</div>
+<div id="gibbs-sampling-procedure" class="section level2 hasAnchor" number="8.2">
+<h2><span class="header-section-number">8.2</span> Gibbs Sampling Procedure<a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ol style="list-style-type: decimal">
+<li><p>Given the observed counts <span class="math inline">\(\boldsymbol{x}^{(T)}\)</span> and current values of the parameters <span class="math inline">\(\boldsymbol{\Gamma}, \boldsymbol{\lambda}\)</span>, generate a sample path of the MC.</p></li>
+<li><p>Use this sample path to decompose the observed counts into (simulated) regime contributions.</p></li>
+<li><p>With the MC sample path available and regime contributions, update <span class="math inline">\(\boldsymbol{\Gamma}, \boldsymbol{\tau}\)</span>.</p></li>
+<li><p>Repeat steps 1-3 for a large number of times, called a “burn-in period”. Then repeat steps 1-3 to obtain the posterior estimates.</p></li>
+</ol>
+<div id="gen" class="section level3 hasAnchor" number="8.2.1">
+<h3><span class="header-section-number">8.2.1</span> Generating Sample Paths of the MC<a href="bayesian-inference-for-hmms.html#gen" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Given the observations <span class="math inline">\(\boldsymbol{x}^{(T)}\)</span> and current values of the parameters <span class="math inline">\(\boldsymbol{\theta} = (\boldsymbol{\Gamma}, \boldsymbol{\lambda})\)</span>, simulate a sample path <span class="math inline">\(\boldsymbol{C}^{(T)}\)</span> of the MC.</p>
+<p>First, draw the state of the MC at the last time point <span class="math inline">\(C_T\)</span> from <span class="math inline">\(\Pr(C_T|x^{(T)}, \boldsymbol{\theta}) \propto \alpha_T (C_T)\)</span>.</p>
+<p>This follows from</p>
+<p><span class="math display">\[\Pr(C_t|\boldsymbol{x}^{(t)}, \boldsymbol{\theta}) = \frac{\Pr(C_t, \boldsymbol{x}^{(t)}|\boldsymbol{\theta})}{\Pr(\boldsymbol{x}^{(t)}|\boldsymbol{\theta})} = \frac{\alpha_t(C_t)}{L_t} \propto \alpha_t(C_t) \qquad{\text{for } t=1, \dots, T}\]</span></p>
+<p>Next, draw the remaining states of MC from descending time points <span class="math inline">\(C_{T-1}, C_{T-2}, \dots, C_{1}\)</span>, by the following</p>
+</div>
+<div id="decom" class="section level3 hasAnchor" number="8.2.2">
+<h3><span class="header-section-number">8.2.2</span> Decomposing the Observed Counts into Regime Contributions<a href="bayesian-inference-for-hmms.html#decom" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Given the sample path <span class="math inline">\(\boldsymbol{C}^{(T)}\)</span> of the MC (from step 1), suppose that <span class="math inline">\(C_t = i\)</span> so that regimes <span class="math inline">\(1, \dots, i\)</span> are active at time <span class="math inline">\(t\)</span>. Decompose each observation <span class="math inline">\(x_t (t=1, 2, \dots, T)\)</span> into regime contributions <span class="math inline">\(x_{1t}, \dots, x_{it}\)</span> such that <span class="math inline">\(\sum_{j=1}^i x_{jt} = x_t\)</span> by</p>
+<p><span class="math display">\[f(x_{1t}, \dots, x_{it}|C_t = i, X_t = x_t) = \frac{x_t}{x_{1t}! \cdots x_{it}!} \tau_1^{x_{1t}} \cdots \tau_i^{x_{it}}\]</span></p>
+</div>
+<div id="updating-the-parameters" class="section level3 hasAnchor" number="8.2.3">
+<h3><span class="header-section-number">8.2.3</span> Updating the Parameters<a href="bayesian-inference-for-hmms.html#updating-the-parameters" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Suppose we assign the following priors,</p>
+<p><span class="math display">\[\boldsymbol{\Gamma}_r \sim Dirichlet(\boldsymbol{\nu_r})\]</span></p>
+<p><span class="math display">\[\tau_j = \lambda_j - \lambda_{j-1} \sim Gamma(\text{shape} = a_j, \text{rate} = b_j)\]</span></p>
+<p>That is,</p>
+<p>the rows <span class="math inline">\(\boldsymbol{\Gamma}_1, \boldsymbol{\Gamma}_2, \dots, \boldsymbol{\Gamma}_m\)</span> have a Dirichlet distribution with parameters <span class="math inline">\(\nu_1, \nu_2, \dots, \nu_m\)</span> respectively. Hence, <span class="math inline">\(f(\boldsymbol{\Gamma}_1, \boldsymbol{\Gamma}_2, \dots, \boldsymbol{\Gamma}_m) \propto \boldsymbol{\Gamma}_1^{\nu_1 -1} \cdots \boldsymbol{\Gamma}_m^{\nu_m -1}\)</span> where <span class="math inline">\(\sum_{i=1}^m \boldsymbol{\Gamma}_i = 1, \boldsymbol{\Gamma}_i \geq 0\)</span>.</p>
+<p>and the increment <span class="math inline">\(\tau_j\)</span> is such that <span class="math inline">\(f(\tau_j) = \frac{b^a}{\Gamma(a)} x^{a-1} e^{-bx}\)</span>. Hence, <span class="math inline">\(\tau_j\)</span> have mean <span class="math inline">\(\frac{a}{b}\)</span>, variance <span class="math inline">\(\frac{a}{b^2}\)</span>, and coefficient of variation <span class="math inline">\(\frac{1}{\sqrt{a}}\)</span>.</p>
+<p>Update <span class="math inline">\(\boldsymbol{\Gamma}\)</span> and <span class="math inline">\(\boldsymbol{\tau}\)</span> using the <a href="bayesian-inference-for-hmms.html#gen">MC path</a> and <a href="bayesian-inference-for-hmms.html#decom">regime contributions</a> by drawing</p>
+<p><span class="math display">\[\boldsymbol{\Gamma}_r \sim Dirichlet(\boldsymbol{\nu_r} + \boldsymbol{T}_r)\]</span> where <span class="math inline">\(\boldsymbol{T}_r\)</span> is the <span class="math inline">\(r\)</span>-th row of the (simulated) matrix of transition counts</p>
+<p>and</p>
+<p><span class="math display">\[\tau_j \sim Gamma(a_j + \sum_{t=1}^T x_{jt}, b_j + N_j)\]</span> where <span class="math inline">\(N_j\)</span> denotes the number of times regime <span class="math inline">\(j\)</span> was active in the simulated sample path of the MC and <span class="math inline">\(x_{jt}\)</span> is the contribution of regime <span class="math inline">\(j\)</span> to <span class="math inline">\(x_t\)</span>.</p>
+<p><strong>Note:</strong> The posterior distributions for the above follow from the fact that observations of regime contributions <span class="math inline">\(x_{i1}, \dots, x_{it}\)</span> where the variables <span class="math inline">\(x_{jt} \sim Poisson(\tau_j)\)</span> and <span class="math inline">\(x=\sum_j x_{jt}\)</span>, <span class="math inline">\(f(x_{1t}, \dots, x_{it}|C_t = i, X_t = x_t) = \frac{x_t}{x_{1t}! \cdots x_{it}!} \tau_1^{x_{1t}} \cdots \tau_i^{x_{it}}\)</span>, <span class="math inline">\(\boldsymbol{T}_r \sim Dirichlet(\boldsymbol{\nu}_r)\)</span>, and <span class="math inline">\(\tau_j \sim Gamma(a, b)\)</span>.</p>
+</div>
+<div id="repeat-the-above" class="section level3 hasAnchor" number="8.2.4">
+<h3><span class="header-section-number">8.2.4</span> Repeat the Above<a href="bayesian-inference-for-hmms.html#repeat-the-above" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Repeat steps 1 to 3 for a large number of samples, called the “burn-in period”. Now repeat steps 1 to 3 for the posterior estimates.</p>
+</div>
+</div>
+<div id="exercises-2" class="section level2 hasAnchor" number="8.3">
+<h2><span class="header-section-number">8.3</span> Exercises<a href="bayesian-inference-for-hmms.html#exercises-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ol style="list-style-type: decimal">
+<li><p>Consider <span class="math inline">\(u\)</span> defined by <span class="math inline">\(u=\sum_{j=1}^i u_j\)</span>, where the variables <span class="math inline">\(u_j\)</span> are independent Poisson random variables with means <span class="math inline">\(\tau_j\)</span>. Show that, conditional on <span class="math inline">\(u\)</span>, the joint distribution <span class="math inline">\(u_1, u_2, \dots, u_i\)</span> is a multinomial with total <span class="math inline">\(u\)</span> and probability vector <span class="math inline">\(\frac{(\tau_1, \dots, \tau_i)}{\sum_{j=1}^i \tau_j}\)</span>.</p></li>
+<li><p>Let <span class="math inline">\(\boldsymbol{w}=(w_1, \dots, w_m)\)</span> be an observation from a multinomial distribution with probability vector <span class="math inline">\(\boldsymbol{y}\)</span>, which has a Dirichlet distribution with parameter vector <span class="math inline">\(\boldsymbol{d} = (d_1, \dots, d_m)\)</span>. Show that the posterior distribution <span class="math inline">\(\boldsymbol{y}\)</span> is the Dirichlet distribution with parameters <span class="math inline">\(\boldsymbol{d} + \boldsymbol{w}\)</span>.</p></li>
+<li><p>Let <span class="math inline">\(y_1, y_2, \dots, y_n\)</span> be a random sample from the Poisson distribution with mean <span class="math inline">\(\tau\)</span>, which is gamma distributed with parameters <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>. Show that the posterior distribution of <span class="math inline">\(\tau\)</span>, is the gamma distribution with parameters <span class="math inline">\(a+\sum_{i=1}^n y_i\)</span> and <span class="math inline">\(b+n\)</span>.</p></li>
+</ol>
+<p><strong>Question 1</strong></p>
+<p>Since <span class="math inline">\(u= \sum_{j=1}^i u_j\)</span>, <span class="math inline">\(u_j \sim Poisson(\tau_j)\)</span>, and the <span class="math inline">\(u_j\)</span>’s are independent, it follows that <span class="math inline">\(u \sim Poisson(\sum_{j=1}^i \tau_j)\)</span>, hence <span class="math inline">\(f(u) = \frac{\sum_{j=1}^i \tau_j^u e^{- \sum_{j=1}^i \tau_j}}{u!}\)</span>.</p>
+<p>Then</p>
+<p><span class="math display">\[\begin{align}
+f(u_1, \dots, u_i|u)
+&amp;= \frac{f(u_1, \dots, u_i, u)}{f(u)}\\
+&amp;= \frac{\left(\frac{\tau_1^{u_1} e^{- \tau_1}}{u_1 !}\right) \cdots \left(\frac{\tau_j^{u_i} e^{- \tau_j}}{u_i !}\right)}{\frac{\sum_{j=1}^i \tau_j^u e^{- \sum_{j=1}^i \tau_j}}{u!}}\\
+&amp;= \frac{1}{u_1! \cdots u_i!} \left(\tau_1^{u_1}\right) \cdots \left(\tau_j^{u_i}\right) \left(e^{-\sum_{j=1}^i \tau_j}\right) \left(\frac{u!}{\sum_{j=1}^i \tau_j^u e^{- \sum_{j=1}^i \tau_j}}\right)\\
+&amp;= \frac{u!}{u_1! \cdots u_i!} \left( \tau_1^{u_1} \right) \cdots \left( \tau_j^{u_i} \right) \frac{1}{\sum_{j=1}^i \tau_j^{u_1 + \dots + u_i}}\\
+&amp;= \frac{u!}{u_1! \cdots u_i!} \left( \frac{\tau_1}{\sum_{j=1}^i \tau_j} \right)^{u_1} \cdots \left( \frac{\tau_j}{\sum_{j=1}^i \tau_j} \right)^{u_i}
+\end{align}\]</span></p>
+<p>Thus, <span class="math inline">\(u_1, \dots, u_i|u \sim Multinomial \left(\frac{\tau_1, \dots, \tau_i}{\sum_{j=1}^i \tau_j}; u \right)\)</span>.</p>
+<p><strong>Question 2</strong></p>
+<p>The posterior distribution of <span class="math inline">\(\boldsymbol{y}\)</span> is</p>
+<p><span class="math display">\[\begin{align}
+\Pr(\boldsymbol{y}|\boldsymbol{w})
+&amp;= \frac{\Pr(\boldsymbol{y}, \boldsymbol{w})}{\Pr(\boldsymbol{w})}\\
+&amp;= \frac{\Pr(\boldsymbol{w}|\boldsymbol{y})\Pr(\boldsymbol{y})}{\Pr(\boldsymbol{w})}\\
+&amp; \propto \Pr(\boldsymbol{w}|\boldsymbol{y}) \Pr(\boldsymbol{y})\\
+&amp; \propto \frac{n!}{w_1! \cdots w_m!} y_1^{w_1} \cdots y_2^{w_2} \cdots y_m^{w_m} \cdot y_1^{d_1 -1} \cdot y_2^{d_2-1} \cdots y_m^{d_m-1}\\
+&amp; \propto y_1^{(w_1 + d_1)-1} y_2^{(w_2+d_2)-1} \cdots y_m^{(w_m + d_m)-1}
+\end{align}\]</span></p>
+<p>Thus, <span class="math inline">\(\boldsymbol{y}|\boldsymbol{w} \sim Dir(\boldsymbol{w}+\boldsymbol{d})\)</span>.</p>
+<p><strong>Question 3</strong></p>
+<p>The posterior distribution of <span class="math inline">\(\tau\)</span> is</p>
+<p><span class="math display">\[\begin{align}
+\Pr(\tau|y_1, \dots, y_n)
+&amp;= \frac{\Pr(\tau_1, y_1, \dots, y_n)}{\Pr(y_1, \dots, y_n)}\\
+&amp;= \frac{\Pr(y_1, \dots, y_n|\tau) \Pr(\tau)}{\Pr(y_1, \dots, y_n)}\\
+&amp; \propto \Pr(y_1, \dots, y_n|tau) \Pr(\tau)\\
+&amp;= \prod_{i=1}^n \frac{\tau^{y_i} e^{-\tau}}{y_i !} \frac{b^a}{\Gamma(a)} \tau^{a-1} e^{-b \tau}\\
+&amp; \propto \prod_{i=1}^n \tau^{y_i} e^{- \tau} \tau^{a-1} e^{-b \tau}\\
+&amp;= \tau^{\sum_{i=1}^n y_i} e^{-n \tau} \tau^{a-1} e^{-b \tau}\\
+&amp;= \tau^{a+\sum_{i=1}^n y_i - 1} e^{-(b+n)\tau}
+\end{align}\]</span></p>
+<p>Thus, <span class="math inline">\(\tau|y_1, \dots, y_n \sim Gamma(a+\sum_{i=1}^n y_i, b+n)\)</span>.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="fdp.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="earthquake.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/vinky-wang/HMM-Notes/edit/BRANCH/07-bayesian-inference.Rmd",
+"text": "Suggest an edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "https://github.com/vinky-wang/HMM-Notes/raw/BRANCH/07-bayesian-inference.Rmd"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

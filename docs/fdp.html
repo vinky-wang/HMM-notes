@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 7 Forecasting, Decoding, and State Prediction | Hidden Markov Model Notes</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 7 Forecasting, Decoding, and State Prediction | Hidden Markov Model Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="vinky-wang/HMM-Notes" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 7 Forecasting, Decoding, and State Prediction | Hidden Markov Model Notes" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Vinky Wang" />
+
+
+<meta name="date" content="2023-06-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="blocks.html"/>
+<link rel="next" href="bayesian-inference-for-hmms.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">HMM Notes</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> url: your book url like https://bookdown.org/yihui/bookdown</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#usage"><i class="fa fa-check"></i><b>1.1</b> Usage</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#render-book"><i class="fa fa-check"></i><b>1.2</b> Render book</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#preview-book"><i class="fa fa-check"></i><b>1.3</b> Preview book</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="hello-bookdown.html"><a href="hello-bookdown.html"><i class="fa fa-check"></i><b>2</b> Hello bookdown</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="hello-bookdown.html"><a href="hello-bookdown.html#a-section"><i class="fa fa-check"></i><b>2.1</b> A section</a>
+<ul>
+<li class="chapter" data-level="" data-path="hello-bookdown.html"><a href="hello-bookdown.html#an-unnumbered-section"><i class="fa fa-check"></i>An unnumbered section</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="cross.html"><a href="cross.html"><i class="fa fa-check"></i><b>3</b> Cross-references</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="cross.html"><a href="cross.html#chapters-and-sub-chapters"><i class="fa fa-check"></i><b>3.1</b> Chapters and sub-chapters</a></li>
+<li class="chapter" data-level="3.2" data-path="cross.html"><a href="cross.html#captioned-figures-and-tables"><i class="fa fa-check"></i><b>3.2</b> Captioned figures and tables</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="parts.html"><a href="parts.html"><i class="fa fa-check"></i><b>4</b> Parts</a></li>
+<li class="chapter" data-level="5" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html"><i class="fa fa-check"></i><b>5</b> Footnotes and citations</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html#footnotes"><i class="fa fa-check"></i><b>5.1</b> Footnotes</a></li>
+<li class="chapter" data-level="5.2" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html#citations"><i class="fa fa-check"></i><b>5.2</b> Citations</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="blocks.html"><a href="blocks.html"><i class="fa fa-check"></i><b>6</b> Blocks</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="blocks.html"><a href="blocks.html#equations"><i class="fa fa-check"></i><b>6.1</b> Equations</a></li>
+<li class="chapter" data-level="6.2" data-path="blocks.html"><a href="blocks.html#theorems-and-proofs"><i class="fa fa-check"></i><b>6.2</b> Theorems and proofs</a></li>
+<li class="chapter" data-level="6.3" data-path="blocks.html"><a href="blocks.html#callout-blocks"><i class="fa fa-check"></i><b>6.3</b> Callout blocks</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="fdp.html"><a href="fdp.html"><i class="fa fa-check"></i><b>7</b> Forecasting, Decoding, and State Prediction</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="fdp.html"><a href="fdp.html#conditional-distribution"><i class="fa fa-check"></i><b>7.1</b> Conditional Distribution</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities"><i class="fa fa-check"></i><b>7.1.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="fdp.html"><a href="fdp.html#forecast-distributions"><i class="fa fa-check"></i><b>7.2</b> Forecast Distributions</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="fdp.html"><a href="fdp.html#as-mixtures-of-state-dependent-probabilities-1"><i class="fa fa-check"></i><b>7.2.1</b> As Mixtures of State-Dependent Probabilities</a></li>
+<li class="chapter" data-level="7.2.2" data-path="fdp.html"><a href="fdp.html#forecast-distribution-in-the-limit"><i class="fa fa-check"></i><b>7.2.2</b> Forecast Distribution in the Limit</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="fdp.html"><a href="fdp.html#decoding"><i class="fa fa-check"></i><b>7.3</b> Decoding</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="fdp.html"><a href="fdp.html#local-decoding"><i class="fa fa-check"></i><b>7.3.1</b> Local Decoding</a></li>
+<li class="chapter" data-level="7.3.2" data-path="fdp.html"><a href="fdp.html#global-decoding"><i class="fa fa-check"></i><b>7.3.2</b> Global Decoding</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="fdp.html"><a href="fdp.html#state-prediction"><i class="fa fa-check"></i><b>7.4</b> State Prediction</a></li>
+<li class="chapter" data-level="7.5" data-path="fdp.html"><a href="fdp.html#exercises"><i class="fa fa-check"></i><b>7.5</b> Exercises</a></li>
+<li class="chapter" data-level="7.6" data-path="fdp.html"><a href="fdp.html#solutions"><i class="fa fa-check"></i><b>7.6</b> Solutions</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html"><i class="fa fa-check"></i><b>8</b> Bayesian Inference for HMMs</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#reparameterization-to-avoid-label-switching"><i class="fa fa-check"></i><b>8.1</b> Reparameterization to Avoid Label Switching</a></li>
+<li class="chapter" data-level="8.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gibbs-sampling-procedure"><i class="fa fa-check"></i><b>8.2</b> Gibbs Sampling Procedure</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#gen"><i class="fa fa-check"></i><b>8.2.1</b> Generating Sample Paths of the MC</a></li>
+<li class="chapter" data-level="8.2.2" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#decom"><i class="fa fa-check"></i><b>8.2.2</b> Decomposing the Observed Counts into Regime Contributions</a></li>
+<li class="chapter" data-level="8.2.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#update-the-parameters"><i class="fa fa-check"></i><b>8.2.3</b> Update the Parameters</a></li>
+<li class="chapter" data-level="8.2.4" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#repeat-the-above"><i class="fa fa-check"></i><b>8.2.4</b> Repeat the Above</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="bayesian-inference-for-hmms.html"><a href="bayesian-inference-for-hmms.html#exercises-1"><i class="fa fa-check"></i><b>8.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="earthquake.html"><a href="earthquake.html"><i class="fa fa-check"></i><b>9</b> Earthquake</a></li>
+<li class="chapter" data-level="10" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>10</b> Appendix</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hidden Markov Model Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="fdp" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">Chapter 7</span> Forecasting, Decoding, and State Prediction<a href="fdp.html#fdp" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="conditional-distribution" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Conditional Distribution<a href="fdp.html#conditional-distribution" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We derive the distribution of <span class="math inline">\(X_t\)</span> conditioned on all other observations.</p>
+<p>From Equation <a href="#eq:reforward">(<strong>??</strong>)</a> and <a href="#eq:rebackward">(<strong>??</strong>)</a>, it follows that for <span class="math inline">\(t=2, 3, \dots, T\)</span>, the conditional distribution is given by</p>
+<p><span class="math display" id="eq:conditionalone">\[\begin{align}
+\Pr(X_t = x|\boldsymbol{X}^{(-t)} = \boldsymbol{x}^{(-t)})
+&amp;= \frac{\Pr(\boldsymbol{X}^{(-t)} = \boldsymbol{x}^{(-t)}, X_t = x)}{\Pr(\boldsymbol{X}^{(-t)} = \boldsymbol{x}^{(-t)})} \\
+&amp;= \frac{\boldsymbol{\delta P}(x_1) \boldsymbol{B}_2 \cdots \boldsymbol{B}_{t-1} \boldsymbol{\Gamma P}(x) \boldsymbol{B}_{t+1} \cdots \boldsymbol{B}_T \boldsymbol{1&#39;}}{\boldsymbol{\delta P} (x_1) \boldsymbol{B}_2 \cdots \boldsymbol{B}_{t-1} \boldsymbol{\Gamma} \boldsymbol{B}_{t+1} \cdots \boldsymbol{B}_T \boldsymbol{1&#39;}}\\
+&amp; \propto \boldsymbol{\alpha}_{t-1} \boldsymbol{\Gamma P} (x) \boldsymbol{\beta&#39;}_t
+\tag{7.1}
+\end{align}\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{B}_t = \boldsymbol{\Gamma P} (x_t)\)</span></p>
+<p>And for <span class="math inline">\(t=1\)</span>,</p>
+<p><span class="math display" id="eq:conditionaltwo">\[\begin{align}
+\Pr (X_1 = x|\boldsymbol{X}^{(-1)} = \boldsymbol{x}^{(-1)})
+&amp;= \frac{\boldsymbol{\delta P} (x_2) \boldsymbol{B}_2 \cdots \boldsymbol{B}_T \boldsymbol{1&#39;}}{\boldsymbol{\delta I} \boldsymbol{B}_2 \cdots \boldsymbol{B}_T \boldsymbol{1&#39;}}\\
+&amp; \propto \boldsymbol{\delta P} (x) \boldsymbol{\beta&#39;}_1
+\tag{7.2}
+\end{align}\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{I}\)</span> is the identity matrix</p>
+<p><strong>Note:</strong> By definition of <span class="math inline">\(\boldsymbol{B}_t\)</span>, it follows that <span class="math inline">\(\boldsymbol{\alpha}_t = \boldsymbol{\delta P} (x_1) \boldsymbol{B}_2 \cdots \boldsymbol{B}_t\)</span> and <span class="math inline">\(\boldsymbol{\beta&#39;}_t = \boldsymbol{B}_{t+1} \cdots \boldsymbol{B}_T \boldsymbol{1&#39;}\)</span></p>
+<p>Notice that <span class="math inline">\(\Pr(X_t = x|\boldsymbol{X}^{(-t)} = \boldsymbol{x}^{(-t)})\)</span> is a ratio of the likelihoods of an HMM:</p>
+<ul>
+<li><p>numerator: likelihood of the observations except that of observation <span class="math inline">\(x_t\)</span> is replaced by <span class="math inline">\(x\)</span></p></li>
+<li><p>denominator: likelihood of observations except that of obsservation <span class="math inline">\(x_t\)</span> is treated as missing</p></li>
+</ul>
+<div id="as-mixtures-of-state-dependent-probabilities" class="section level3 hasAnchor" number="7.1.1">
+<h3><span class="header-section-number">7.1.1</span> As Mixtures of State-Dependent Probabilities<a href="fdp.html#as-mixtures-of-state-dependent-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The conditional probabilities can be expressed as mixtures of the <span class="math inline">\(m\)</span> state-dependent probability distributions.</p>
+<p><span class="math display">\[\begin{align}
+&amp; \Pr(X_t = x|\boldsymbol{X}^{(-t)} = \boldsymbol{x}^{(-t)})\\
+&amp; \propto \left(\alpha_{t-1} (1), \dots, \alpha_{t-1} (m) \right)
+\begin{pmatrix}
+\gamma_{11} &amp; \cdots &amp; \gamma_{1m}\\
+\vdots &amp; \ddots &amp; \vdots\\
+\gamma_{m1} &amp; \cdots &amp; \gamma_{mm}
+\end{pmatrix}
+\begin{pmatrix}
+p_1 (x) &amp; \cdots &amp; 0\\
+\vdots &amp; \ddots &amp; \vdots\\
+0 &amp; \cdots &amp; p_m (x)
+\end{pmatrix}
+\begin{pmatrix}
+\beta_t (1)\\
+\vdots\\
+\beta_t (m)
+\end{pmatrix}\\
+&amp;= \left(\gamma_{11} \alpha_{t-1} (1) + \cdots + \gamma_{m1} \alpha_{t-1} (m), \cdots, \gamma_{1m} \alpha_{t-1} (1) + \cdots \gamma_{mm} \alpha_{t-1} (m)  \right)\\
+&amp;\begin{pmatrix}
+p_1 (x) &amp; \cdots &amp; 0\\
+\vdots &amp; \ddots &amp; \vdots\\
+0 &amp; \cdots &amp; p_m (x)
+\end{pmatrix}
+\begin{pmatrix}
+\beta_t (1)\\
+\vdots\\
+\beta_t (m)
+\end{pmatrix}\\
+&amp;= \left(\gamma_{11} \alpha_{t-1} (1) + \cdots + \gamma_{m1} \alpha_{t-1} (m), \cdots, \gamma_{1m} \alpha_{t-1} (1) + \cdots \gamma_{mm} \alpha_{t-1} (m)  \right)
+\begin{pmatrix}
+p_1 (x) \beta_t (1)\\
+\vdots\\
+p_m (x) \beta_t (m)
+\end{pmatrix}\\
+&amp;= p_1 (x) \beta_t (1) \left(\gamma_{11} \alpha_{t-1} (1) + \cdots \gamma_{m1} (\alpha_{t-1} (m)) \right) + \cdots p_m (x) \beta_t (m) \left(\gamma_{1m} \alpha_{t-1} (1) + \cdots \gamma_{mm} (\alpha_{t-1} (m)) \right)\\
+&amp;= \sum_{i=1}^m p_i (x) \beta_t (i) \sum_{k=1}^m \gamma_{ki} \alpha_{t-1} (k)\\
+&amp; \equiv p_i (x) d_i (t)
+\end{align}\]</span></p>
+<p>where <span class="math inline">\(d_i (t)\)</span> is the product of the <span class="math inline">\(i\)</span>th entry of the vector <span class="math inline">\(\boldsymbol{\alpha}_{t-1} \boldsymbol{\Gamma}\)</span> and the <span class="math inline">\(i\)</span>th entry of the vector <span class="math inline">\(\boldsymbol{\beta}_t\)</span>. For <span class="math inline">\(t=1\)</span>, it is the product of the <span class="math inline">\(i\)</span>th entry of the vector <span class="math inline">\(\boldsymbol{\delta}\)</span> and the <span class="math inline">\(i\)</span>th entry of the vector <span class="math inline">\(\boldsymbol{\beta}_1\)</span>.</p>
+<p><strong>Note:</strong> It can be seen that <span class="math inline">\(d_i (t)\)</span> corresponds to the above as</p>
+<p><span class="math display">\[\begin{align}
+\beta_t (i) \sum_{k=1}^m \gamma_{ki} \alpha_{t-1} (k)
+&amp;= \sum_{k=1}^m \Pr (C_t = i|C_{t-1} = k) \Pr(\boldsymbol{X}^{(-t)} = \boldsymbol{x}^{(-t)}, C_t = k) \Pr(\boldsymbol{X}_{t+1}^{T} = \boldsymbol{x}_{t+1}^{T}|C_t = i)\\
+&amp;= \left(\boldsymbol{\alpha}_{t-1} \boldsymbol{\Gamma} \right)_{1i} \left(\boldsymbol{\beta&#39;}_t\right)_{i1}\\
+&amp; \equiv d_i (t)
+\end{align}\]</span></p>
+<p>Hence,</p>
+<p><span class="math display" id="eq:conditionalmix">\[\begin{equation}
+\Pr(X_t = x|\boldsymbol{X}^{(-t)} = \boldsymbol{x}^{(-t)}) = \sum_{i=1}^m w_i (t) p_i (x)
+\tag{7.3}
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(w_i (t) = \frac{d_i (t)}{\sum_{j=1}^m d_j (t)}\)</span></p>
+</div>
+</div>
+<div id="forecast-distributions" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Forecast Distributions<a href="fdp.html#forecast-distributions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We now derive the forecast distributions of an HMM.</p>
+<p>Let <span class="math inline">\(h\)</span> be the forecast horizon.</p>
+<p>The forecast distribution is given by</p>
+<p><span class="math display">\[\begin{align}
+\Pr(X_{T+h} = x|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+&amp;= \frac{\Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}, X_{T+h} = x)}{\Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})}\\
+&amp;= \frac{\boldsymbol{\delta P} (x_1) \boldsymbol{B}_2 \boldsymbol{B}_3 \cdots \boldsymbol{B}_T \boldsymbol{\Gamma}^h \boldsymbol{P} (x) \boldsymbol{1&#39;}}{\boldsymbol{\delta P} (x_1) \boldsymbol{B}_2 \boldsymbol{B}_3 \cdots \boldsymbol{B}_T \boldsymbol{1&#39;}}\\
+&amp;= \frac{\boldsymbol{\alpha}_T \boldsymbol{\Gamma}^h \boldsymbol{P} (x) \boldsymbol{1&#39;}}{\boldsymbol{\alpha}_T \boldsymbol{1&#39;}}
+\end{align}\]</span></p>
+<p>Then writing <span class="math inline">\(\phi_T = \frac{\boldsymbol{\alpha_T}}{\boldsymbol{\alpha}_T \boldsymbol{1&#39;}}\)</span>, it follows that</p>
+<p><span class="math display">\[\Pr (X_{T+h} = x|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}) = \phi_T \boldsymbol{\Gamma}^h \boldsymbol{P} (x) \boldsymbol{1&#39;}\]</span></p>
+<p>Notice, like Equation <a href="fdp.html#eq:conditionalone">(7.1)</a> and <a href="fdp.html#eq:conditionaltwo">(7.2)</a>, the forecast distribution is also a ratio of likelihoods where the numerator corresponds to the likelihood of all observations except that of future observation <span class="math inline">\(x_{T+h}\)</span> is replaced by <span class="math inline">\(x\)</span> and the denominator corresponds to the likelihood of all observations except that of future observation <span class="math inline">\(x_{T+h}\)</span> is treated as missing.</p>
+<div id="as-mixtures-of-state-dependent-probabilities-1" class="section level3 hasAnchor" number="7.2.1">
+<h3><span class="header-section-number">7.2.1</span> As Mixtures of State-Dependent Probabilities<a href="fdp.html#as-mixtures-of-state-dependent-probabilities-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The forecast distribution can be written as a mixture of the <span class="math inline">\(m\)</span> state-dependent probability distributions.</p>
+<p><span class="math display" id="eq:forecastweighted">\[\begin{equation}
+\Pr (X_{T+h} = x|\boldsymbol{X}^{(T) = \boldsymbol{x}^{(T)}}) = \sum_{i=1}^m \xi_i (h) p_i (x)
+\tag{7.4}
+\end{equation}\]</span></p>
+<p>where the weight <span class="math inline">\(\xi_i (h)\)</span> is the <span class="math inline">\(i\)</span>th entry of the vector <span class="math inline">\(\boldsymbol{\phi \Gamma}^h\)</span>.</p>
+</div>
+<div id="forecast-distribution-in-the-limit" class="section level3 hasAnchor" number="7.2.2">
+<h3><span class="header-section-number">7.2.2</span> Forecast Distribution in the Limit<a href="fdp.html#forecast-distribution-in-the-limit" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>As the forecast horizon <span class="math inline">\(h\)</span> increases, the forecast distribution converges to the marginal distribution of the stationary HMM</p>
+<p><span class="math display">\[\lim_{h \rightarrow \infty} \Pr(X_{T+h} = x|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}) = \lim_{h \rightarrow \infty} \boldsymbol{\phi}_T \boldsymbol{\Gamma}^h \boldsymbol{P} (x) \boldsymbol{1&#39;} = \boldsymbol{\delta^*} \boldsymbol{P} (x) \boldsymbol{1&#39;}\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{\delta^*}\)</span> (temporarily) denotes the stationary distribution of the MC.</p>
+<p>The limit follows from the observation that for any non-negative (row) vector <span class="math inline">\(\boldsymbol{\eta}\)</span>, whose entries add to 1, the vector <span class="math inline">\(\boldsymbol{\eta \Gamma}^h\)</span> approaches the stationary distribution of the MC as <span class="math inline">\(h \rightarrow \infty\)</span> provided that the MC is irreducible and aperiodic.</p>
+</div>
+</div>
+<div id="decoding" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> Decoding<a href="fdp.html#decoding" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="local-decoding" class="section level3 hasAnchor" number="7.3.1">
+<h3><span class="header-section-number">7.3.1</span> Local Decoding<a href="fdp.html#local-decoding" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Local decoding refers to determining at a particular time point <span class="math inline">\(t\)</span>, the most likely state is given the sequence of observations.</p>
+<p>By Equation <a href="#eq:emprepone">(<strong>??</strong>)</a> and <a href="#eq:empreptwo">(<strong>??</strong>)</a>,</p>
+<p><span class="math display" id="eq:local">\[\begin{align}
+\Pr(C_t = i|\boldsymbol{X}^{(T)}= \boldsymbol{x}^{(T)})
+&amp;= \frac{\Pr(C_t = i, \boldsymbol{X}^{(T)}= \boldsymbol{x}^{(T)})}{\boldsymbol{X}^{(T)}= \boldsymbol{x}^{(T)}}\\
+&amp;= \frac{\alpha_t (i) \beta_t (i)}{L_T}
+\tag{7.5}
+\end{align}\]</span></p>
+<p>Then for each <span class="math inline">\(t \in \{1, \dots, T\}\)</span>, the most probable state <span class="math inline">\(i_t^*\)</span> given the observations is defined as</p>
+<p><span class="math display">\[\begin{equation}
+i_t^* = \text{argmax}_{i=1, \dots, m} \Pr(C_t = i|\boldsymbol{X}^{(T)}= \boldsymbol{x}^{(T)})
+\end{equation}\]</span></p>
+<p>That is, the most likely state for each <span class="math inline">\(t\)</span> is determined by maximizing the conditional probability <span class="math inline">\(\Pr(C_t = i|\boldsymbol{X}^{(T)}= \boldsymbol{x}^{(T)})\)</span>.</p>
+</div>
+<div id="global-decoding" class="section level3 hasAnchor" number="7.3.2">
+<h3><span class="header-section-number">7.3.2</span> Global Decoding<a href="fdp.html#global-decoding" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Global decoding refers to determining the most likely sequence of states given the sequence of observations.</p>
+<p>That is, determining the sequence of states <span class="math inline">\(c_1, c_2, \dots, c_T\)</span> which maximizes the conditional probability</p>
+<p><span class="math display" id="eq:global">\[\begin{align}
+\Pr(\boldsymbol{C}^{(T)}=\boldsymbol{c}^{(T)}|\boldsymbol{X}^{(T)}=\boldsymbol{x}^{(T)})
+\tag{7.6}
+\end{align}\]</span></p>
+<p>or equivalently, maximizing</p>
+<p><span class="math display">\[\Pr(\boldsymbol{C}^{(T)}, \boldsymbol{X}^{(T)}) = \delta_{c_1} \prod_{t=2}^T \gamma_{c_{t-1}}, c_t \prod_{t=1}^T p_{c_t} (x_t)\]</span></p>
+<p>Instead of maximizing Equation <a href="fdp.html#eq:global">(7.6)</a> over all possible state sequences by brute force (<span class="math inline">\(m^T\)</span> computations), we can use the Viterbi algorithm (<span class="math inline">\(T \times m\)</span> computations)</p>
+<p>Define</p>
+<p><span class="math display">\[\xi_{1i} = \Pr(C_1 = i, X_1 = x_1) = \delta_i p_i (x_1)\]</span></p>
+<p>and, for <span class="math inline">\(t = 2, 3, \dots, T\)</span>,</p>
+<p><span class="math display">\[\xi_{ti} = \max_{c_1, c_2, \dots, c_{t-1}} \Pr (\boldsymbol{C}^{(t-1)} = \boldsymbol{c}^{(t-1)}, C_t = i, \boldsymbol{X}^{(t)} = \boldsymbol{x}^{(t)})\]</span></p>
+<p>Then the probabilities <span class="math inline">\(\xi_{tj}\)</span> satisfies the recursion, for <span class="math inline">\(t=2, 3, \dots, T\)</span> and <span class="math inline">\(j=1, 2, \dots, m\)</span>:</p>
+<p><span class="math display" id="eq:recursion">\[\begin{equation}
+\xi_{tj} = \left(\max_i (\xi_{t-1, i} \gamma_{ij} )\right) p_j (x_t)
+\tag{7.7}
+\end{equation}\]</span></p>
+<p>The required maximizing sequence of states <span class="math inline">\(i_1, i_2, \dots , i_T\)</span> can then be determined recursively from</p>
+<p><span class="math display" id="eq:viterbione">\[\begin{equation}
+i_T = \text{argmax}_{i=1, \dots, m} \xi_{Ti}
+\tag{7.8}
+\end{equation}\]</span></p>
+<p>and, for <span class="math inline">\(t=T-1, T-2, \dots, 1\)</span>, from</p>
+<p><span class="math display" id="eq:viterbitwo">\[\begin{equation}
+i_t = \text{argmax}_{i=1, \dots, m} \left(\xi_{ti} \gamma_{i, i_{t+1}} \right)
+\tag{7.9}
+\end{equation}\]</span></p>
+</div>
+</div>
+<div id="state-prediction" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> State Prediction<a href="fdp.html#state-prediction" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Given the observations <span class="math inline">\(x_1, \dots, x_T\)</span>, the following set of statements can be made about future, present, and past states (respectively):</p>
+<p><span class="math display">\[\begin{align}
+L_T \Pr(C_t = i|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})
+&amp;= \begin{cases}
+\boldsymbol{\alpha}_T \boldsymbol{\Gamma}^{t-T} \boldsymbol{e&#39;}_i
+&amp; \text{for t &gt; T} &amp; \qquad{\text{state prediction}}\\
+\alpha_T (i) &amp; \text{for t =T} &amp; \qquad{\text{filtering}}\\
+\alpha_t (i) \beta_t (i) &amp; \text{for 1 $\leq$ t $\leq T$} &amp; \qquad{\text{smoothing}}
+\end{cases}
+\end{align}\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{e}_i = (0, \dots, 0, 1, 0, \dots, 0)\)</span> has a one in the <span class="math inline">\(i\)</span>th position only.</p>
+<p>The state prediction can be restated as, for <span class="math inline">\(i=1, 2, \dots, m\)</span></p>
+<p><span class="math display">\[\begin{align}
+\Pr(C_{T+h} = i|\boldsymbol{X}^{(T)}) = \boldsymbol{x}^{(T)})
+&amp;= \frac{1}{L_T} \boldsymbol{\alpha}_T \boldsymbol{\Gamma}^h \boldsymbol{e&#39;}_i\\
+&amp;= \phi_T \boldsymbol{\Gamma}^h \boldsymbol{e&#39;}_i
+\end{align}\]</span></p>
+<p>where <span class="math inline">\(\phi_T = \frac{\boldsymbol{\alpha}_T}{{\boldsymbol{\alpha_T1&#39;}}}\)</span></p>
+<p>As <span class="math inline">\(h \rightarrow \infty\)</span>, <span class="math inline">\(\phi_T \boldsymbol{\Gamma}^h\)</span> converges to the stationary distribution of the MC and so <span class="math inline">\(\Pr(C_{T+h} = i|\boldsymbol{X}^{(T)})\)</span> converges to the <span class="math inline">\(i\)</span>th element.</p>
+</div>
+<div id="exercises" class="section level2 hasAnchor" number="7.5">
+<h2><span class="header-section-number">7.5</span> Exercises<a href="fdp.html#exercises" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ol style="list-style-type: decimal">
+<li><p>Prove the recursion <a href="fdp.html#eq:recursion">(7.7)</a> <span class="math display">\[\xi_{tj} = \left(\max_i (\xi_{t-1, i} \gamma_{ij} )\right) p_j (x_t)\]</span></p></li>
+<li><ol style="list-style-type: lower-alpha">
+<li>Using the same sequence of random numbers in each case, generate sequences of length 1000 from the Poisson-HMMs with</li>
+</ol></li>
+</ol>
+<p><span class="math display">\[\boldsymbol{\Gamma} = \begin{pmatrix}0.8 &amp; 0.1 &amp; 0.1\\0.1 &amp; 0.8 &amp; 0.1\\0.1 &amp; 0.1 &amp; 0.8\end{pmatrix}\]</span> and</p>
+<p><span class="math inline">\((i)\)</span> <span class="math inline">\(\boldsymbol{\lambda} = (10, 20, 30)\)</span> and <span class="math inline">\((ii)\)</span> <span class="math inline">\(\boldsymbol{\lambda} = (15, 20, 25)\)</span>. Keep a record of the sequence of states, which should be the same in <span class="math inline">\((i)\)</span> and <span class="math inline">\((ii)\)</span> .</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>Use the Viterbi algorithm to infer the most likely sequence of states in each case, and compare these two sequences to the ‘true’ underlying sequence, i.e. the generated one.</p></li>
+<li><p>What conclusions do you draw about the accuracy of the Viterbi algorithm in this model?</p></li>
+</ol>
+<!-- -->
+<ol start="3" style="list-style-type: decimal">
+<li>Find the joint distribution <span class="math inline">\(X_{T+1}\)</span> and <span class="math inline">\(X_{T+2}\)</span>, given <span class="math inline">\(\boldsymbol{X}^{(T)}\)</span>.</li>
+</ol>
+</div>
+<div id="solutions" class="section level2 hasAnchor" number="7.6">
+<h2><span class="header-section-number">7.6</span> Solutions<a href="fdp.html#solutions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Exercise 1</strong></p>
+<p>Let <span class="math inline">\(t=2, 3, \dots, T\)</span> and <span class="math inline">\(j = 1, 2, \dots, m\)</span>.</p>
+<p>Then</p>
+<p><span class="math display">\[\begin{align}
+\xi_{tj}
+&amp;= \max_{c_1, \dots, c_{t-1}} \{ \Pr (\boldsymbol{C}^{(t-1)} = \boldsymbol{c}^{(t-1)}, C_t = j, \boldsymbol{X}^{(t)} = \boldsymbol{x}^{(t)}) \}\\
+&amp;= \max_{c_1, \dots, c_{t-1}} \{\Pr(\boldsymbol{C}^{(t-1)} = \boldsymbol{c}^{(t-1)}, \boldsymbol{X}^{(t-1)} = \boldsymbol{x}^{(t-1)})\\
+&amp; \qquad{} \qquad{} \qquad{} \Pr(C_t=j|C_{t-1} = i) \Pr(X_t = x_t|C_t = j)\}
+\qquad{\text{by Equation 5.4}}\\
+&amp;= \max_{c_{t-1}}  \{ \{\max_{c_1, \dots, c_{t-2}} \{\Pr(\boldsymbol{C}^{(t-2)} =\boldsymbol{c}^{(t-2)}, C_{t-1} = c_{t-1} , \boldsymbol{X}^{(t-1)} =  \boldsymbol{x}^{(t-1)} ) \} \Pr(C_t = j|C_{t-1} = i) \}\\
+&amp; \qquad{} \qquad{} \Pr(X_t = x_t | C_t = j)
+\qquad{\text{by Markov property}}\\
+&amp;= \max_i \{  \max_{c_1, \dots, c_{t-2}} \{ Pr(\boldsymbol{C}^{(t-2)} = \boldsymbol{c}^{(t-2)}, C_{t-1} = i, \boldsymbol{X}^{(t-1)} = \boldsymbol{x}^{(t-1)} )\} \Pr (C_t = j|C_{t-1} = i) \}\\
+&amp; \qquad{} \Pr(X_t = x_t|C_t = j)\\
+&amp;= \max_i \{\xi_{ti} \gamma_{ij}\} p_j (x_t)
+\end{align}\]</span></p>
+<p><strong>Exercise 2</strong></p>
+<p>We can use <code>pois.HMM.generate_sample</code> (see <a href="#boot">Major Earthquake Analysis bootstrapping</a>) to generate the sequences.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="fdp.html#cb1-1" aria-hidden="true" tabindex="-1"></a>pois.HMM.generate_sample  <span class="ot">&lt;-</span> <span class="cf">function</span>(ns,mod)</span>
+<span id="cb1-2"><a href="fdp.html#cb1-2" aria-hidden="true" tabindex="-1"></a>{<span class="fu">set.seed</span>(<span class="dv">548</span>)</span>
+<span id="cb1-3"><a href="fdp.html#cb1-3" aria-hidden="true" tabindex="-1"></a> mvect                    <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>mod<span class="sc">$</span>m</span>
+<span id="cb1-4"><a href="fdp.html#cb1-4" aria-hidden="true" tabindex="-1"></a> state                    <span class="ot">&lt;-</span> <span class="fu">numeric</span>(ns)</span>
+<span id="cb1-5"><a href="fdp.html#cb1-5" aria-hidden="true" tabindex="-1"></a> state[<span class="dv">1</span>]                 <span class="ot">&lt;-</span> <span class="fu">sample</span>(mvect,<span class="dv">1</span>,<span class="at">prob=</span>mod<span class="sc">$</span>delta)</span>
+<span id="cb1-6"><a href="fdp.html#cb1-6" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>ns) state[i] <span class="ot">&lt;-</span> <span class="fu">sample</span>(mvect,<span class="dv">1</span>,<span class="at">prob=</span>mod<span class="sc">$</span>gamma[state[i<span class="dv">-1</span>],])</span>
+<span id="cb1-7"><a href="fdp.html#cb1-7" aria-hidden="true" tabindex="-1"></a> x                        <span class="ot">&lt;-</span> <span class="fu">rpois</span>(ns,<span class="at">lambda=</span>mod<span class="sc">$</span>lambda[state])</span>
+<span id="cb1-8"><a href="fdp.html#cb1-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">x =</span> x, <span class="at">state =</span> state))</span>
+<span id="cb1-9"><a href="fdp.html#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Note:</strong> We added <code>set.seed</code> in the function so that the sequence of states is the same for both parts <span class="math inline">\((i)\)</span> and <span class="math inline">\((ii)\)</span>.</p>
+<p>Now generating the samples</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="fdp.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initial values</span></span>
+<span id="cb2-2"><a href="fdp.html#cb2-2" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">m=</span><span class="dv">3</span>, </span>
+<span id="cb2-3"><a href="fdp.html#cb2-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda=</span><span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>), </span>
+<span id="cb2-4"><a href="fdp.html#cb2-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">gamma =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.8</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.8</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.8</span>),<span class="dv">3</span>,<span class="dv">3</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>),</span>
+<span id="cb2-5"><a href="fdp.html#cb2-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">delta=</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">3</span>)<span class="sc">/</span><span class="dv">3</span></span>
+<span id="cb2-6"><a href="fdp.html#cb2-6" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-7"><a href="fdp.html#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="fdp.html#cb2-8" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">m=</span><span class="dv">3</span>, </span>
+<span id="cb2-9"><a href="fdp.html#cb2-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda=</span><span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">25</span>), </span>
+<span id="cb2-10"><a href="fdp.html#cb2-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">gamma =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.8</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.8</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.8</span>),<span class="dv">3</span>,<span class="dv">3</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>),</span>
+<span id="cb2-11"><a href="fdp.html#cb2-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">delta=</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">3</span>)<span class="sc">/</span><span class="dv">3</span></span>
+<span id="cb2-12"><a href="fdp.html#cb2-12" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-13"><a href="fdp.html#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="fdp.html#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate sample </span></span>
+<span id="cb2-15"><a href="fdp.html#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="do">## (i)</span></span>
+<span id="cb2-16"><a href="fdp.html#cb2-16" aria-hidden="true" tabindex="-1"></a>poishmm_sample_i <span class="ot">=</span> <span class="fu">pois.HMM.generate_sample</span>(<span class="dv">1000</span>, mod1)</span>
+<span id="cb2-17"><a href="fdp.html#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="fdp.html#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="do">## (ii)</span></span>
+<span id="cb2-19"><a href="fdp.html#cb2-19" aria-hidden="true" tabindex="-1"></a>poishmm_sample_ii <span class="ot">=</span> <span class="fu">pois.HMM.generate_sample</span>(<span class="dv">1000</span>, mod2)</span></code></pre></div>
+<p>Now applying the Viterbi algorithm (see <a href="#eq">Major Earthquake Analysis bootstrapping</a>),</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="fdp.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Global decoding by the Viterbi algorithm</span></span>
+<span id="cb3-2"><a href="fdp.html#cb3-2" aria-hidden="true" tabindex="-1"></a>pois.HMM.viterbi<span class="ot">&lt;-</span><span class="cf">function</span>(x,mod)</span>
+<span id="cb3-3"><a href="fdp.html#cb3-3" aria-hidden="true" tabindex="-1"></a> {</span>
+<span id="cb3-4"><a href="fdp.html#cb3-4" aria-hidden="true" tabindex="-1"></a> n              <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb3-5"><a href="fdp.html#cb3-5" aria-hidden="true" tabindex="-1"></a> xi             <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>,n,mod<span class="sc">$</span>m)</span>
+<span id="cb3-6"><a href="fdp.html#cb3-6" aria-hidden="true" tabindex="-1"></a> foo            <span class="ot">&lt;-</span> mod<span class="sc">$</span>delta<span class="sc">*</span><span class="fu">dpois</span>(x[<span class="dv">1</span>],mod<span class="sc">$</span>lambda)</span>
+<span id="cb3-7"><a href="fdp.html#cb3-7" aria-hidden="true" tabindex="-1"></a> xi[<span class="dv">1</span>,]         <span class="ot">&lt;-</span> foo<span class="sc">/</span><span class="fu">sum</span>(foo)</span>
+<span id="cb3-8"><a href="fdp.html#cb3-8" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n)</span>
+<span id="cb3-9"><a href="fdp.html#cb3-9" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb3-10"><a href="fdp.html#cb3-10" aria-hidden="true" tabindex="-1"></a>  foo<span class="ot">&lt;-</span><span class="fu">apply</span>(xi[i<span class="dv">-1</span>,]<span class="sc">*</span>mod<span class="sc">$</span>gamma,<span class="dv">2</span>,max)<span class="sc">*</span><span class="fu">dpois</span>(x[i],mod<span class="sc">$</span>lambda)</span>
+<span id="cb3-11"><a href="fdp.html#cb3-11" aria-hidden="true" tabindex="-1"></a>  xi[i,] <span class="ot">&lt;-</span> foo<span class="sc">/</span><span class="fu">sum</span>(foo)</span>
+<span id="cb3-12"><a href="fdp.html#cb3-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-13"><a href="fdp.html#cb3-13" aria-hidden="true" tabindex="-1"></a> iv<span class="ot">&lt;-</span><span class="fu">numeric</span>(n)</span>
+<span id="cb3-14"><a href="fdp.html#cb3-14" aria-hidden="true" tabindex="-1"></a> iv[n]     <span class="ot">&lt;-</span><span class="fu">which.max</span>(xi[n,])</span>
+<span id="cb3-15"><a href="fdp.html#cb3-15" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (i <span class="cf">in</span> (n<span class="dv">-1</span>)<span class="sc">:</span><span class="dv">1</span>)</span>
+<span id="cb3-16"><a href="fdp.html#cb3-16" aria-hidden="true" tabindex="-1"></a>   iv[i] <span class="ot">&lt;-</span> <span class="fu">which.max</span>(mod<span class="sc">$</span>gamma[,iv[i<span class="sc">+</span><span class="dv">1</span>]]<span class="sc">*</span>xi[i,])</span>
+<span id="cb3-17"><a href="fdp.html#cb3-17" aria-hidden="true" tabindex="-1"></a> <span class="fu">return</span>(iv)</span>
+<span id="cb3-18"><a href="fdp.html#cb3-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="fdp.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Viterbi algorithm</span></span>
+<span id="cb4-2"><a href="fdp.html#cb4-2" aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> <span class="fu">pois.HMM.viterbi</span>(poishmm_sample_i<span class="sc">$</span>x, mod1)</span>
+<span id="cb4-3"><a href="fdp.html#cb4-3" aria-hidden="true" tabindex="-1"></a>v2 <span class="ot">&lt;-</span> <span class="fu">pois.HMM.viterbi</span>(poishmm_sample_ii<span class="sc">$</span>x, mod2)</span>
+<span id="cb4-4"><a href="fdp.html#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="fdp.html#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the differences</span></span>
+<span id="cb4-6"><a href="fdp.html#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-7"><a href="fdp.html#cb4-7" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(v1, v2, <span class="at">true_state =</span> poishmm_sample_i<span class="sc">$</span>state, <span class="at">t =</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">1000</span>))</span>
+<span id="cb4-8"><a href="fdp.html#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="fdp.html#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df) <span class="sc">+</span></span>
+<span id="cb4-10"><a href="fdp.html#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> v1, <span class="at">color =</span> <span class="st">&quot;Variable 1&quot;</span>), <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">height =</span> <span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="fdp.html#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> v2, <span class="at">color =</span> <span class="st">&quot;Variable 2&quot;</span>), <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">height =</span> <span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb4-12"><a href="fdp.html#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> true_state, <span class="at">color =</span> <span class="st">&quot;Variable 3&quot;</span>), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb4-13"><a href="fdp.html#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;black&quot;</span>), </span>
+<span id="cb4-14"><a href="fdp.html#cb4-14" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;(10, 20, 30)&quot;</span>, <span class="st">&quot;(15, 20, 25)&quot;</span>, <span class="st">&quot;True State&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb4-15"><a href="fdp.html#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)) <span class="sc">+</span></span>
+<span id="cb4-16"><a href="fdp.html#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb4-17"><a href="fdp.html#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Time&quot;</span>, <span class="at">y =</span> <span class="st">&quot;States&quot;</span>)</span></code></pre></div>
+<p><img src="06-forecast-decode-predict_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><strong>Note:</strong> Jitter was added to the generated sequences to separate the overlap in points and better see how they compare to the true state.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>Applying the Viterbi algorithm to the generated Poisson-HMM with <span class="math inline">\(\boldsymbol{\lambda} = (10, 20, 30)\)</span> is more similar to the true sequence than <span class="math inline">\(\boldsymbol{\lambda} = (15, 20, 25)\)</span>. The decoded sequence for <span class="math inline">\(\boldsymbol{\lambda} = (15, 20, 25)\)</span> tends to be in state 2, with few transitions to the other states.</p></li>
+<li><p>The Viterbi algorithm is more accurate when the states are more separated. Part <span class="math inline">\((i)\)</span> resulted in <span class="math inline">\(89.8\%\)</span> correctly decoded states whereas part <span class="math inline">\((ii)\)</span> resulted in <span class="math inline">\(73.2\%\)</span>.</p></li>
+</ol>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="fdp.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare </span></span>
+<span id="cb5-2"><a href="fdp.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">which</span>(v1 <span class="sc">==</span> poishmm_sample_i<span class="sc">$</span>state))</span></code></pre></div>
+<pre><code>## [1] 898</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="fdp.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">which</span>(v2 <span class="sc">==</span> poishmm_sample_ii<span class="sc">$</span>state))</span></code></pre></div>
+<pre><code>## [1] 732</code></pre>
+<p><strong>Question 3</strong></p>
+<p><span class="math display">\[\begin{align}
+\Pr(X_{T+1} = v, X_{T+2} = w|\boldsymbol{X}^{(T)}
+&amp;= \boldsymbol{x}^{(T)})\\
+&amp;= \frac{\Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)},X_{T+1} = v, X_{T+2} = w)}{\Pr(\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}}\\
+&amp;= \frac{\boldsymbol{\delta P} (x_1) \boldsymbol{B}_2 \boldsymbol{B}_3 \cdots \boldsymbol{B}_T \boldsymbol{\Gamma P} (v) \boldsymbol{\Gamma P} (w) \boldsymbol{1&#39;}}{\boldsymbol{\delta P} (x_1) \boldsymbol{B}_2 \boldsymbol{B}_3 \cdots \boldsymbol{B}_T \boldsymbol{1&#39;}}\\
+&amp;= \frac{\boldsymbol{\alpha}_T \boldsymbol{\Gamma P} (v) \boldsymbol{\Gamma P} (w) \boldsymbol{1&#39;}}{\boldsymbol{\alpha}_T \boldsymbol{1&#39;}}
+\end{align}\]</span></p>
+<p>Then writing <span class="math inline">\(\phi_T = \frac{\boldsymbol{\alpha}_T}{\boldsymbol{\alpha}_T \boldsymbol{1&#39;}}\)</span></p>
+<p><span class="math display">\[\Pr(X_{T+1} = v, X_{T+2} = w|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)}) = \phi_T \boldsymbol{\Gamma P} (v) \boldsymbol{\Gamma P} (w) \boldsymbol{1&#39;}\]</span></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="blocks.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="bayesian-inference-for-hmms.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/vinky-wang/HMM-Notes/edit/BRANCH/06-forecast-decode-predict.Rmd",
+"text": "Suggest an edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "https://github.com/vinky-wang/HMM-Notes/raw/BRANCH/06-forecast-decode-predict.Rmd"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
