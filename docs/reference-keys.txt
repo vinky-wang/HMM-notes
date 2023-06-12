@@ -65,7 +65,6 @@ fig:postd-2
 fig:postd-3
 eq:directed
 eq:joint
-about
 prelim
 mix
 properties
