@@ -24,5 +24,4 @@ Then the joint distribution of $\boldsymbol{X}^{(t)}$ and $\boldsymbol{C}^{(t)}$
 (\#eq:joint)
 \end{equation}
 
-## References {-}
 

@@ -1,7 +1,7 @@
 --- 
 title: "Hidden Markov Model Notes"
 author: "Vinky Wang"
-date: "2023-06-12"
+date: "2023-06-16"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib, packages.bib]

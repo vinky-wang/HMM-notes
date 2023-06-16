@@ -1,4 +1,4 @@
-# Bayesian Inference for HMMs
+# Bayesian Inference for HMMs {#bayesian}
 
 We apply Bayesian inference in the context of Poisson-HMMs with Gibbs sampling. 
 

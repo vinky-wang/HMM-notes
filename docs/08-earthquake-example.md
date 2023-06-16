@@ -1,6 +1,6 @@
 # Major Earthquake Analysis {#eq}
 
-We apply the concepts in the earlier chapters to the series of annual counts of major earthquakes (i.e. magnitude 7 and above) dataset from the textbook. 
+We apply the concepts in the previous chapters to the series of annual counts of major earthquakes (i.e. magnitude 7 and above) from the textbook. 
 
 The data can be read into **R** 
 
@@ -9,6 +9,18 @@ The data can be read into **R**
 eq_dat <- read.table("http://www.hmms-for-time-series.de/second/data/earthquakes.txt")
 ```
 
+
+We use the following packages for the analysis
+
+
+```r
+# Load packages
+library(kableExtra)
+library(tidyverse)
+library(gridExtra)
+library(momentuHMM)
+library(rstan)
+```
 
 
 
@@ -40,7 +52,7 @@ eq_dat <- read.table("http://www.hmms-for-time-series.de/second/data/earthquakes
 </table>
 
 
-### Fitting a Poisson Mixture Distribution
+## Fitting a Poisson Mixture Distribution {-}
 
 **Note:** See [Preliminaries](#prelim)
 
@@ -54,7 +66,7 @@ The likelihood is given by
 
 $$L(\lambda_1, \lambda_2, \lambda_3, \delta_1, \delta_2|x_1, \dots, x_n) = \prod_{i=1}^n \left( \delta_1 \frac{\lambda_1^{x_i} e^{-\lambda_1}}{x_i!} + \delta_2 \frac{\lambda_2^{x_i} e^{-\lambda_2}}{x_i!} + (1 - \delta_1 - \delta_2) \frac{\lambda_3^{x_i} e^{-\lambda_3}}{x_i!} \right)$$
 
-The log-likelihood can be maximized using an unconstrained optimizer `nlm` (in **R**) on reparameterized parameters by the following:
+The log-likelihood can be maximized using the unconstrained optimizer `nlm` on reparameterized parameters by the following:
 
 **Step 1**:  Reparameterize the "natural parameters" $\boldsymbol{\delta}$ and $\boldsymbol{\lambda}$ into "working parameters" $\eta_i = \log \lambda_i \qquad{(i = 1, \dots, m)}$ and $\tau_i = \log \left(\frac{\delta_i}{1 - \sum_{j=2}^m \delta_j}\right) (i = 2, \dots, m)$ 
 
@@ -87,19 +99,18 @@ Hence, for a Poisson mixture distribution with means $\lambda_1, = 10, \lambda_2
 
 
 ```r
-x <- eq_dat$V2
 wpar <- n2w(c(10, 20, 25), c(1,1,1)/3)
 ```
 
 
 ```r
-w2n(nlm(mllk, wpar, x)$estimate)
+w2n(nlm(mllk, wpar, eq_dat$Count)$estimate)
 ```
 
 we obtain the following parameter estimates
 
 <table class=" lightable-minimal" style='font-family: "Trebuchet MS", verdana, sans-serif; margin-left: auto; margin-right: auto;'>
-<caption>(\#tab:unnamed-chunk-8)Parameter estimates for the fitted three component Poisson independent mixture model.</caption>
+<caption>(\#tab:unnamed-chunk-9)Parameter estimates for the fitted three component Poisson independent mixture model.</caption>
  <thead>
   <tr>
    <th style="text-align:right;"> lambda </th>
@@ -126,7 +137,7 @@ and the negative log likelihood
 
 
 ```r
-nlm(mllk, wpar, x)$minimum
+nlm(mllk, wpar, eq_dat$Count)$minimum
 ```
 
 ```
@@ -139,7 +150,7 @@ nlm(mllk, wpar, x)$minimum
 **Note:** See Table 1.2 and Figure 1.4 of the textbook for a comparison of fitted mixture models with varying number of components. 
 
 
-### Fitting a Poisson-HMM by Numerical Maximization
+## Fitting a Poisson-HMM by Numerical Maximization {-}
 
 **Note:** See [Introduction to Hidden Markov Models](#introhmm) and Appendix A of the textbook. 
 
@@ -206,7 +217,7 @@ l &\leftarrow l + \log u\\
 \end{align}
 
 
-See [Scaling the Likelihood Computation](#likscale) and Note (4).
+See [Scaling the Likelihood Computation](#likscale) and Note (4). 
 
 
 ```r
@@ -295,7 +306,7 @@ pois.HMM.pw2pn <- function(m,parvect,stationary=TRUE){
 **Note:** `pois.HMM.pw2pn` takes in arguments `m` number of states, `parvect` working parameters (vector), and `stationary` (`TRUE/FALSE`). By default, the MC is assumed to be stationary with the initial distribution equal to the stationary distribution. The function returns a list containing the natural parameters. 
 
 
-Then putting everything together 
+We can combine the parts above into the `pois.HMM.mle` function.
 
 
 ```r
@@ -312,19 +323,29 @@ pois.HMM.mle <- function(x,m,lambda0,gamma0,delta0=NULL,stationary=TRUE,...){
 }
 ```
 
-Hence, for a three-state Poisson-HMM with parameters $\boldsymbol{\lambda} = (10, 20, 25)$, $\boldsymbol{\Gamma} = \begin{pmatrix} 0.8 & 0.1 & 0.1\\ 0.1 & 0.8 & 0.1\\ 0.1 & 0.1 & 0.8 \end{pmatrix}$,
+Hence, for a three-state Poisson-HMM with the following parameters 
+
+$$\boldsymbol{\lambda} = (10, 20, 25)$$
+
+$$\boldsymbol{\Gamma} = \begin{pmatrix} 0.8 & 0.1 & 0.1\\ 0.1 & 0.8 & 0.1\\ 0.1 & 0.1 & 0.8 \end{pmatrix}$$
+
+
+
+```r
+m = 3
+lambda = c(10, 20, 25)
+gamma = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow=TRUE)
+```
 
 if we assume that the MC is stationary 
 
 
 ```r
-eq_init <- list(m=3, 
-            lambda=c(10, 20, 25), 
-            gamma = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow=TRUE),
-            delta=c(1, 1, 1)/3
-            )
+eq_init_s <- list(m=m,
+            lambda=lambda,
+            gamma = gamma)
 
-(mod3s<-pois.HMM.mle(x,eq_init$m,eq_init$lambda,eq_init$gamma,stationary=TRUE))
+(mod3s<-pois.HMM.mle(eq_dat$Count, eq_init_s$m,eq_init_s$lambda,eq_init_s$gamma,stationary=TRUE))
 ```
 
 ```
@@ -356,11 +377,20 @@ eq_init <- list(m=3,
 ## [1] 700.976
 ```
 
-if we do not assume stationary and that $\boldsymbol{\delta} = (\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$ 
+and if we do not assume stationary and that $\boldsymbol{\delta} = (\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$ and that the initial distribution is $\boldsymbol{\delta} = (\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$
 
 
 ```r
-(mod3h <- pois.HMM.mle(x,eq_init$m,eq_init$lambda,eq_init$gamma,delta=c(1,1,1)/3,stationary=FALSE))
+eq_init_ns <- list(m=m,
+            lambda=lambda,
+            gamma = gamma,
+            delta = rep(1, m)/m)
+```
+
+
+
+```r
+(mod3h <- pois.HMM.mle(eq_dat$Count,eq_init_ns$m,eq_init_ns$lambda,eq_init_ns$gamma,delta=eq_init_ns$delta,stationary=FALSE))
 ```
 
 ```
@@ -392,7 +422,9 @@ if we do not assume stationary and that $\boldsymbol{\delta} = (\frac{1}{3}, \fr
 ## [1] 708.4561
 ```
 
-We can also perform parameteric bootstrapping to obtain confidence intervals. 
+### Parametric Bootstrapping for Confidence Intervals {-}
+
+We can also perform parameteric bootstrapping to obtain confidence intervals of the above estimates.
 
 **Note:** See [Obtaining Standard Errors and Confidence Intervals](#boot). 
 
@@ -400,28 +432,28 @@ We can also perform parameteric bootstrapping to obtain confidence intervals.
 
 
 ```r
-eq_mle <- pois.HMM.mle(x,eq_init$m,eq_init$lambda,eq_init$gamma,delta=c(1,1,1)/3,stationary=FALSE)
+eq_mle <- pois.HMM.mle(eq_dat$Count,eq_init_ns$m,eq_init_ns$lambda,eq_init_ns$gamma,delta=eq_init_ns$delta,stationary=FALSE)
 ```
 
 **Step 2**: Generate a bootstrap sample from the fitted model.
 
-The following function generates a sample from a Poisson-HMM of length `ns` from starting values `m` number of states, `lambda` means for the Poisson state-dependent distribution, and `delta` initial probabilities which are stored as `mod` (list).  
+The following function generates a sample from a Poisson-HMM of length `ny` from starting values `m` number of states, `lambda` means for the Poisson state-dependent distribution, and `delta` initial probabilities which are stored as `mod` (list).  
 
 
 ```r
-pois.HMM.generate_sample  <- function(ns,mod){
+pois.HMM.generate_sample  <- function(ny,mod){
  mvect                    <- 1:mod$m
- state                    <- numeric(ns)
+ state                    <- numeric(ny)
  state[1]                 <- sample(mvect,1,prob=mod$delta)
- for (i in 2:ns) state[i] <- sample(mvect,1,prob=mod$gamma[state[i-1],])
- x                        <- rpois(ns,lambda=mod$lambda[state])
+ for (i in 2:ny) state[i] <- sample(mvect,1,prob=mod$gamma[state[i-1],])
+ x                        <- rpois(ny,lambda=mod$lambda[state])
  return(x)
 }
 ```
 
 
 ```r
-boot_sample <- pois.HMM.generate_sample(length(x), eq_mle)
+boot_sample <- pois.HMM.generate_sample(length(eq_dat$Count), eq_mle)
 ```
 
 
@@ -433,9 +465,14 @@ boot_sample <- pois.HMM.generate_sample(length(x), eq_mle)
 boot_mle <- pois.HMM.mle(boot_sample, eq_mle$m, eq_mle$lambda, eq_mle$gamma)
 ```
 
+```
+## Warning in nlm(pois.HMM.mllk, parvect0, x = x, m = m, stationary = stationary):
+## NA/Inf replaced by maximum positive value
+```
+
 **Step 4**: Repeat (for a large) B times. 
 
-Then putting everything together
+We can combine the parts above into the `pois.HMM.boot` function.
 
 
 ```r
@@ -469,11 +506,17 @@ pois.HMM.boot <- function(B, x, m, lambda0, gamma0, delta0=NULL, stationary=TRUE
 
 **Note:** Some errors would occasionally arise from solving the stationary distribution of bootstrap samples that may not have had a unique stationary distribution. To overcome this, the `tryCatch` function was used to throw out these problematic samples and regenerate a new sample. As there were at most two samples that resulted in the error, the generated bootstrap samples should still be representative of the dataset. 
 
-Hence, 
+Hence, for the three-state Poisson-HMM with parameters 
+
+$$\boldsymbol{\lambda} = (10, 20, 25)$$
+
+$$\boldsymbol{\Gamma} = \begin{pmatrix} 0.8 & 0.1 & 0.1\\ 0.1 & 0.8 & 0.1\\ 0.1 & 0.1 & 0.8 \end{pmatrix}$$
+
+$$\boldsymbol{\delta} = (\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$$
 
 
 ```r
-eq_boot <- pois.HMM.boot(500, x, eq_init$m, eq_init$lambda, eq_init$gamma)
+eq_boot <- pois.HMM.boot(500, eq_dat$Count, eq_init_ns$m, eq_init_ns$lambda, eq_init_ns$gamma, delta=eq_init_ns$delta)
 ```
 
 and the $90\%$ confidence interval using the "percentile method"
@@ -513,7 +556,7 @@ eq_boot_df %>%
 ```
 
 <table class=" lightable-minimal" style='font-family: "Trebuchet MS", verdana, sans-serif; margin-left: auto; margin-right: auto;'>
-<caption>(\#tab:unnamed-chunk-23)Bootstrap 90% Confidence Intervals for the parameters of the three-state HMM.</caption>
+<caption>(\#tab:unnamed-chunk-26)Bootstrap 90% Confidence Intervals for the parameters of the three-state HMM.</caption>
  <thead>
   <tr>
    <th style="text-align:left;">   </th>
@@ -615,44 +658,56 @@ eq_boot_df %>%
 <p class="caption">(\#fig:boot2)500 Bootstrap samples for the transition probabilities of the fitted three-state Poisson-HMM. The area within the red dotted lines correspond to the 90% confidence interval.</p>
 </div>
 
-We can also fit the three-state Poisson-HMM from the above using the `momentuHMM` package.
+### Using `momentuHMM` {-}
+
+We can also fit the three-state Poisson-HMM from the above using `momentuHMM`, which is a popular package for the maximum likelihood analysis of animal movement behaviour using multivariate Hidden Markov Models.  @momentuhmm
+
+First, convert the data into the `prepData` object and set the names of the states. Since 
 
 
 ```r
-library(momentuHMM)
-colnames(eq_dat) <- c("year", "count")
-```
-
-The data must be converted into the `prepData` object to use `fitHMM`. 
-
-
-```r
-# Convert dataframe into prepData object
+# prepData
 eq_prepped <- prepData(eq_dat,
                        coordNames = NULL,
-                       covNames =  c("count"))
+                       covNames =  c("Count"))
 
 # Name the states
 stateNames <- c("state1", "state2", "state3")
+```
 
+Next, specify the state-dependent model. In our case, we fit the intercept only model.
+
+
+```r
 # Fit intercept only model
 formula = ~ 1
+```
 
-eq_fit1 <- fitHMM(eq_prepped, 
+Now, fit the model using `fitHMM`
+
+
+```r
+mod3h_momentuHMM <- fitHMM(eq_prepped, 
                nbStates=3, 
-               dist=list(count="pois"),
-               Par0 = list(count = eq_init$lambda, delta=rep(1, 3)/3),
+               dist=list(Count="pois"),
+               Par0 = list(Count = eq_init_ns$lambda, delta=eq_init_ns$delta),
                formula = formula,
                stateNames = stateNames,
                stationary = FALSE)
-eq_fit1
+```
+
+The resulting MLEs are very similar to that obtained from running the functions from above. 
+
+
+```r
+mod3h_momentuHMM 
 ```
 
 ```
 ## Value of the maximum log-likelihood: -328.5884 
 ## 
 ## 
-## count parameters:
+## Count parameters:
 ## -----------------
 ##          state1   state2   state3
 ## lambda 13.13513 19.70822 29.70794
@@ -675,45 +730,103 @@ eq_fit1
 ## 1.000000e+00 1.833456e-08 1.427794e-08
 ```
 
-The resulting MLEs are very similar to that obtained from running the functions from above. 
 
-A plot of the decoded states is shown below.
+
+
+The corresponding $95 \%$ confidence intervals are
 
 
 ```r
-plot(eq_fit1)
+CIreal(mod3h_momentuHMM)
 ```
 
 ```
-## Decoding state sequence... DONE
+## $Count
+## $Count$est
+##          state1   state2   state3
+## lambda 13.13513 19.70822 29.70794
+## 
+## $Count$se
+##           state1    state2   state3
+## lambda 0.6600995 0.8708107 1.679509
+## 
+## $Count$lower
+##          state1   state2   state3
+## lambda 11.84136 18.00146 26.41616
+## 
+## $Count$upper
+##         state1   state2   state3
+## lambda 14.4289 21.41497 32.99972
+## 
+## 
+## $gamma
+## $gamma$est
+##              state1     state2     state3
+## state1 9.414330e-01 0.03072828 0.02783867
+## state2 4.007763e-02 0.90674107 0.05318130
+## state3 3.052488e-13 0.19027062 0.80972938
+## 
+## $gamma$se
+##              state1     state2     state3
+## state1 4.445528e-02 0.04082282 0.03293175
+## state2 3.190339e-02 0.05399426 0.04414623
+## state3 4.291928e-14 0.11385140 0.11385140
+## 
+## $gamma$lower
+##              state1      state2      state3
+## state1 7.679853e-01 0.002155143 0.002630290
+## state2 8.151374e-03 0.735557101 0.009973817
+## state3 2.317242e-13 0.052321545 0.499974591
+## 
+## $gamma$upper
+##              state1    state2    state3
+## state1 9.873516e-01 0.3175655 0.2371871
+## state2 1.749874e-01 0.9714172 0.2384795
+## state3 4.021022e-13 0.5000254 0.9476785
+## 
+## 
+## $delta
+## $delta$est
+##            state1       state2       state3
+## ID:Animal1      1 1.833456e-08 1.427794e-08
+## 
+## $delta$se
+##                  state1       state2       state3
+## ID:Animal1 1.046115e-13 1.046128e-13 1.493643e-21
+## 
+## $delta$lower
+##            state1       state2       state3
+## ID:Animal1      1 1.833436e-08 1.427794e-08
+## 
+## $delta$upper
+##            state1       state2       state3
+## ID:Animal1      1 1.833477e-08 1.427794e-08
 ```
 
-<img src="08-earthquake-example_files/figure-html/unnamed-chunk-26-1.png" width="672" />
 
-### Fitting a Poisson-HMM by the EM Algorithm 
+## Fitting a Poisson-HMM by the EM Algorithm {-}
 
 **Note:** See [EM Algorithm (Baum-Welch)](#em)
 
 Alternatively, we may obtain MLEs of the three-state Poisson HMM by the EM algorithm. 
 
-**E-Step** Replace all quantities $v_jk (t)$, $u_j (t)$ by their conditional expectations given the observations $\boldsymbol{x}^(T)$ and current parameter estimates:
+**E-Step** Replace all quantities $v_jk (t)$, $u_j (t)$ by their conditional expectations given the observations $\boldsymbol{x}^{(T)}$ and current parameter estimates:
 
 $$\hat{u}_j = \Pr (C_t = j|\boldsymbol{x}^{(T)}) = \frac{\alpha_t (j) \beta_t (j)}{L_T}$$
 
 $${\hat{v}}_{jk} (t) = \Pr (C_{t-1} = j, C_t = k| \boldsymbol{x}^{(T)}) \frac{\alpha_{t-1} (j) \gamma_{jk} p_k (x_t) \beta_t (k)}{L_T}$$
 
+This can be broken down into 
 
 **Step 1**: Compute the forward and backward probabilities.
 
-We use the same forward algorithm from the above and apply the backward algorithm `pois.HMM.lbackward`. 
+We can use the same forward algorithm from the above and apply the backward algorithm `pois.HMM.lbackward`. 
 
 The general algorithm is:
 
-$\boldsymbol{\phi}_T \leftarrow \frac{\boldsymbol{1}}{w_T}$; $l \leftarrow \log w_T$
-
-for $t = T-1, \dots, 1$
-
 \begin{align}
+\boldsymbol{\phi}_T \leftarrow \frac{\boldsymbol{1}}{w_T}$; $l \leftarrow \log w_T\\
+\text{for } t = T-1, \dots, 1\\
 \boldsymbol{v} &\leftarrow \boldsymbol{\Gamma P} (x_{t+1}) \boldsymbol{\phi_{t+1}}\\
 l &\leftarrow l + \log \boldsymbol{v}\\
 u &\leftarrow \boldsymbol{v 1'}\\
@@ -853,8 +966,7 @@ E_pois_lambda <- function(x,mod,uhat){
 }
 ```
 
-
-The `BaumWelch` function performs the EM algorithm by taking initial model parameters as inputs, then repeatedly fitting until convergence or the maximum number of iterations is reached (by default `maxit=50`). 
+We can combine the parts above into the `BaumWelch` function. `BaumWelch` performs the EM algorithm by taking initial model parameters as inputs, then repeatedly fitting until convergence or the maximum number of iterations is reached (by default `maxit=50`). 
 
 
 ```r
@@ -880,12 +992,18 @@ BaumWelch <- function(x, m, lambda0, gamma0, delta0, maxit = 50){
 }
 ```
 
-Hence, for the three-state Poisson-HMM 
+Hence, for the three-state Poisson-HMM with parameters 
+
+$$\boldsymbol{\lambda} = (10, 20, 25)$$
+
+$$\boldsymbol{\Gamma} = \begin{pmatrix} 0.8 & 0.1 & 0.1\\ 0.1 & 0.8 & 0.1\\ 0.1 & 0.1 & 0.8 \end{pmatrix}$$
+
+$$\boldsymbol{\delta} = (\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$$
 
 
 ```r
 # Fitting a three-state HMM
-BaumWelch(x, eq_init$m, eq_init$lambda, eq_init$gamma, delta = rep(1, eq_init$m)/eq_init$m)
+BaumWelch(eq_dat$Count, eq_init_ns$m, eq_init_ns$lambda, eq_init_ns$gamma, delta = eq_init_ns$delta)
 ```
 
 ```
@@ -905,11 +1023,11 @@ BaumWelch(x, eq_init$m, eq_init$lambda, eq_init$gamma, delta = rep(1, eq_init$m)
 ## [1]  1.000000e+00  3.977303e-84 2.817232e-235
 ```
 
-### Forecasting, Decoding, and State Prediction
+## Forecasting, Decoding, and State Prediction {-}
 
-**Note:** See [Forecasting, Decoding, and State Prediction](#fdp).
+**Note:** See [Forecasting, Decoding, and State Prediction](#fdp) and Appendix A of the textbook.
 
-#### Forecasting
+### Forecasting {-}
 
 The forecast probabilities $\Pr(X_{T+h} = x|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})$ can be computed by 
 
@@ -942,18 +1060,83 @@ pois.HMM.forecast <- function(xf,h=1,x,mod)
 
 **Note:** `pois.HMM.forecast` takes in arguments `xf` the range of $x$-values for the forecast probabilities, `h` the forecast horizon, `x` data, and  `mod` list consisting of `m` states, `lambda` means for the Poisson state-dependent distribution, and `delta` initial probabilities. 
 
-For example, the forecast distributions for 1 to 4 years ahead with possible values up to 45 earthquakes is
+For example, the forecast distributions for 1 to 4 years ahead with possible values up to 45 earthquakes for the three-state Poisson-HMM (non-stationary) is
 
 <div class="figure">
-<img src="08-earthquake-example_files/figure-html/forecastfour-1.png" alt="Forecast probabilities for the fitted three-state Poisson-HMM for 1 to 4 years ahead." width="672" />
-<p class="caption">(\#fig:forecastfour)Forecast probabilities for the fitted three-state Poisson-HMM for 1 to 4 years ahead.</p>
+<img src="08-earthquake-example_files/figure-html/forecastfour-1.png" alt="Forecast probabilities for the fitted three-state Poisson-HMM (non-stationary) for 1 to 4 years ahead." width="672" />
+<p class="caption">(\#fig:forecastfour)Forecast probabilities for the fitted three-state Poisson-HMM (non-stationary) for 1 to 4 years ahead.</p>
 </div>
 
+The function from above can be modified to compute the bivariate forecast distribution. 
+
+
+```r
+pois.HMM.forecast_bivariate <- function(xf1, xf2, x, mod){
+  n <- length(x)
+  nxf1 <- length(xf1)
+  nxf2 <- length(xf2)
+  dxf <- matrix(0, nrow=nxf1, ncol=nxf2)
+  foo <- mod$delta*dpois(x[1], mod$lambda)
+  sumfoo <- sum(foo)
+  lscale <- log(sumfoo)
+  foo <- foo/sumfoo
+
+  for(t in 2:n){
+    foo <- foo%*%mod$gamma*dpois(x[t], mod$lambda)
+    sumfoo <- sum(foo)
+    lscale <- lscale + log(sumfoo)
+    foo <- foo/sumfoo
+  }
+
+  for (i in 1:nxf1){
+    for(j in 1:nxf2){
+      for(s in 1:mod$m){
+        dxf[i, j] <- dxf[i, j] + foo[s]*dpois(xf1[i], mod$lambda[s]) + foo[s]*dpois(xf2[j], mod$lambda[s])
+      }
+    }
+  }
+
+ return(foo)
+}
+```
+
+For example, $\Pr(X_{T+1} \leq 10, X_{T+2} \leq 10|\boldsymbol{X}^{(T)})$ is 
+
+
+```r
+eq_forecast <- data.frame(pois.HMM.forecast_bivariate(1:10, 1:10,eq_dat$Count, eq_init_ns))
+
+eq_forecast %>%
+  kbl(caption="Bivariate Forecast Distribution of $X_{T+1}$ (rows) and $X_{T+2}$ (columns).") %>%
+  kable_minimal(full_width=T) %>%
+  kable_styling()
+```
+
+<table class=" lightable-minimal table" style='font-family: "Trebuchet MS", verdana, sans-serif; margin-left: auto; margin-right: auto; margin-left: auto; margin-right: auto;'>
+<caption>(\#tab:unnamed-chunk-39)Bivariate Forecast Distribution of $X_{T+1}$ (rows) and $X_{T+2}$ (columns).</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> X1 </th>
+   <th style="text-align:right;"> X2 </th>
+   <th style="text-align:right;"> X3 </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 0.961864 </td>
+   <td style="text-align:right;"> 0.0370039 </td>
+   <td style="text-align:right;"> 0.0011321 </td>
+  </tr>
+</tbody>
+</table>
 
 
 
 
-#### Decoding
+
+
+
+### Decoding {-}
 
 Local decoding can be computed using the forward and backward algorithms from above. Similar to computing $\hat{u}$ in the **E step** of the EM algorithm, the `pois.HMM.state_probs` computes the state probabilities then `pois.HMM.local_decoding` determines the most likely state at each time. 
 
@@ -981,12 +1164,12 @@ pois.HMM.local_decoding <- function(x,mod)
 }
 ```
 
-For example, local decoding for the three state Poisson-HMM is
+For example, local decoding for the three state Poisson-HMM (non-stationary) is
 
 
 ```r
 # Local decoding
-(earthquake_local <- pois.HMM.local_decoding(x, eq_init))
+(earthquake_local <- pois.HMM.local_decoding(eq_dat$Count, eq_init_ns))
 ```
 
 ```
@@ -996,8 +1179,8 @@ For example, local decoding for the three state Poisson-HMM is
 ```
 
 <div class="figure">
-<img src="08-earthquake-example_files/figure-html/local-1.png" alt="Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time." width="672" />
-<p class="caption">(\#fig:local)Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time.</p>
+<img src="08-earthquake-example_files/figure-html/local-1.png" alt="Local decoding for the three-state Poisson-HMM (non-stationary). The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time." width="672" />
+<p class="caption">(\#fig:local)Local decoding for the three-state Poisson-HMM (non-stationary). The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time.</p>
 </div>
 
 We can also perform local decoding using `momentuHMM`
@@ -1006,11 +1189,11 @@ We can also perform local decoding using `momentuHMM`
 ```r
 # Local decoding
 ## Compute state probabilities for each time step
-state_probs <- stateProbs(eq_fit1)
+state_probs <- stateProbs(mod3h_momentuHMM)
 
 ## Select state that maximizes probability
-local_vec        <- rep(NA,length(x))
-for(i in 1:length(x)) local_vec[i] <- which.max(state_probs[i,])
+local_vec        <- rep(NA,length(eq_dat$Count))
+for(i in 1:length(eq_dat$Count)) local_vec[i] <- which.max(state_probs[i,])
 local_vec
 ```
 
@@ -1021,8 +1204,8 @@ local_vec
 ```
 
 <div class="figure">
-<img src="08-earthquake-example_files/figure-html/comparelocal-1.png" alt="Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time using  pois.HMM.local_decoding (purple) and momentuHMM (orange)." width="672" />
-<p class="caption">(\#fig:comparelocal)Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time using  pois.HMM.local_decoding (purple) and momentuHMM (orange).</p>
+<img src="08-earthquake-example_files/figure-html/comparelocal-1.png" alt="Local decoding for the three-state Poisson-HMM (non-stationary). The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time using  pois.HMM.local_decoding (purple) and momentuHMM (orange)." width="672" />
+<p class="caption">(\#fig:comparelocal)Local decoding for the three-state Poisson-HMM (non-stationary). The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time using  pois.HMM.local_decoding (purple) and momentuHMM (orange).</p>
 </div>
 
 Global decoding can be computed using the Viterbi algorithm 
@@ -1048,11 +1231,11 @@ pois.HMM.viterbi<-function(x,mod)
 }
 ```
 
-For example, global decoding for the three state Poisson-HMM is 
+For example, global decoding for the three state Poisson-HMM (non-stationary) is 
 
 
 ```r
-(earthquake_global <- pois.HMM.viterbi(x, eq_init))
+(earthquake_global <- pois.HMM.viterbi(eq_dat$Count, eq_init_ns))
 ```
 
 ```
@@ -1062,13 +1245,13 @@ For example, global decoding for the three state Poisson-HMM is
 ```
 
 <div class="figure">
-<img src="08-earthquake-example_files/figure-html/global-1.png" alt="Global decoding for the three-state Poisson-HMM." width="672" />
-<p class="caption">(\#fig:global)Global decoding for the three-state Poisson-HMM.</p>
+<img src="08-earthquake-example_files/figure-html/global-1.png" alt="Global decoding for the three-state Poisson-HMM (non-stationary)." width="672" />
+<p class="caption">(\#fig:global)Global decoding for the three-state Poisson-HMM (non-stationary).</p>
 </div>
 
 <div class="figure">
-<img src="08-earthquake-example_files/figure-html/comparelg-1.png" alt="Global (green) and local (brown) decoding for the three-state Poisson-HMM." width="672" />
-<p class="caption">(\#fig:comparelg)Global (green) and local (brown) decoding for the three-state Poisson-HMM.</p>
+<img src="08-earthquake-example_files/figure-html/comparelg-1.png" alt="Global (green) and local (brown) decoding for the three-state Poisson-HMM (non-stationary)." width="672" />
+<p class="caption">(\#fig:comparelg)Global (green) and local (brown) decoding for the three-state Poisson-HMM (non-stationary).</p>
 </div>
 
 The result of local and global decoding are very similar but not identical. 
@@ -1077,7 +1260,7 @@ Similarly, we can perform global decoding using `momentuHMM`
 
 
 ```r
-(global_vec <- viterbi(eq_fit1))
+(global_vec <- viterbi(mod3h_momentuHMM))
 ```
 
 ```
@@ -1087,7 +1270,7 @@ Similarly, we can perform global decoding using `momentuHMM`
 ```
 
 ```r
-plotStates(eq_fit1)
+plotStates(mod3h_momentuHMM)
 ```
 
 ```
@@ -1095,7 +1278,7 @@ plotStates(eq_fit1)
 ## Computing state probabilities... DONE
 ```
 
-<img src="08-earthquake-example_files/figure-html/unnamed-chunk-38-1.png" width="672" />
+<img src="08-earthquake-example_files/figure-html/unnamed-chunk-45-1.png" width="672" />
 
 
 <div class="figure">
@@ -1105,10 +1288,8 @@ plotStates(eq_fit1)
 
 There appears to be some differences between the results obtained from our function and from `momentuHMM`. 
 
-**Note:** In both cases, the MC does not assume stationarity and the initial distribution is $\boldsymbol{\delta} = (1/3, 1/3, 1/3)$. 
 
-
-#### State Predictions
+### State Predictions {-}
 
 The state prediction for $h$ steps ahead can be computed by 
 
@@ -1130,11 +1311,11 @@ pois.HMM.state_prediction <- function(h=1,x,mod)
 }
 ```
 
-For example, the state predictions for $h=1, \dots, 5$ is
+For example, the state predictions for $h=1, \dots, 5$ for the three-state Poisson-HMM (non-stationary)
 
 
 ```r
-pois.HMM.state_prediction(h=5, x, eq_init)
+pois.HMM.state_prediction(h=5, eq_dat$Count, eq_init_ns)
 ```
 
 ```
@@ -1149,7 +1330,7 @@ The stationary distribution is
 
 ```r
 # Compute stationary distribution
-solve(t(diag(eq_init$m)-eq_init$gamma+1),rep(1,eq_init$m))
+solve(t(diag(m)-gamma+1),rep(1,m))
 ```
 
 ```
@@ -1159,21 +1340,121 @@ solve(t(diag(eq_init$m)-eq_init$gamma+1),rep(1,eq_init$m))
 Notice that as $h \rightarrow \infty$, the state distribution approaches the stationary distribution. 
 
 
-## Bayesian Inference in STAN
+## Fitting a Poisson-HMM using STAN {-}
 
-We can fit the three-state Poisson-HMM to the earthquake data using R-STAN. 
+**Note**: See [Bayesian Inference for HMMs](#bayesian), @leosbarajas2018introduction, and @Damiano_Peterson_Weylandt_2017.
+
+We can perform Bayesian inference for the three-state Poisson-HMM using STAN @stan. 
+
+In STAN, the main building blocks are the:
+
+`data block`: used to define the input data for the model to fit in STAN. Declare the data types, their dimensions, any restrictions, and their names of the data to model.
+
+Here, we specify the length of the sequence of the earthquake series, the number of states, and the vector of observed earthquake counts. 
 
 
 ```r
-library(rstan)
-library(bayesplot)
-stan_data <- list(T=dim(eq_dat)[1], m=3, x=eq_dat$V2)
+'data{
+int<lower=0> m;                       // number of states
+int<lower=1> T;                       // length of sequence
+int<lower=0> x[T];                    // observations
+}
+'
 ```
 
+`parameters block`: used to define the parameters of the model that will be estimated. Declare the data types, their dimensions, any restrictions, and their names of the parameters to model.
+
+Here, we specify the state-dependent means, transition probability matrix, and the initial distribution (assuming non-stationarity).
 
 
+```r
+'parameters{
+simplex[m] Gamma[m];                  // transition probability matrix
+positive_ordered[m] lambda;           // state-dependent means (ordered to prevent label switching)
+}
+```
+
+`transformed parameters block`: used to define any derived parameters that are not directly estimated but are derived from the parameters defined in the previous block. Declare the data types, their dimensions, any restrictions, their names, and the operation of the parameters to transform. 
+
+If we assume that the Markov Chain is stationary, then we can compute the stationary distribution from the tpm. 
+ 
+
+```r
+'transformed parameters{
+  matrix[m, m] ta;                    // tpm used to compute stationary distribution                 
+  simplex[m] statdist;                // stationary distribution
+
+  for(j in 1:m){
+    for(i in 1:m){
+      ta[i, j] = Gamma[i, j];
+    }
+  }
+
+//compute stationary distribution 
+statdist =  to_vector((to_row_vector(rep_vector(1.0, m))/
+      (diag_matrix(rep_vector(1.0, m)) - ta + rep_matrix(1, m, m))));
+}
+'
+```
+
+**Note:** The tpm is transposed so that each row corresponds to the probabilities of transitioning into a state, rather than out of a state.
+
+`model block`: used to define the prior distribution, likelihood, and any other necessary variables. 
+
+Here, we use the following prior specifications:
+
+$$\boldsymbol{\lambda} \sim Gamma(\alpha=1, \beta=0.01)$$
+
+$$\boldsymbol{\Gamma} \sim Unif(-\infty, \infty)$$
 
 
+$$\boldsymbol{\delta} \sim Unif(-\infty, \infty)$$
+The [forward algorithm](#reparam) can be used to obtain the posterior distribution of the hidden states at a given time $t$ based on all the information available up to that time $\Pr(C_t|\boldsymbol{X}^{(t)})$. 
+
+
+\begin{align}
+\log (\alpha_t, j) 
+&= \log \left(\sum_{i=1}^m \gamma_{ij} \alpha_{t-1, i} \right)\\
+&= \log \left(\sum_{i=1}^m \exp (\log (\gamma_{ij}) + \log (\alpha_{t-1, i}))\right)
+\end{align}
+
+
+```r
+'model{
+  vector[m] log_Gamma_tr[m];
+  vector[m] lp;
+  vector[m] lp_p1;
+
+  // priors
+  lambda ~ gamma(1, 0.01);
+
+  // transpose tpm and take log of entries
+  for(i in 1:m)
+    for(j in 1:m)
+      log_Gamma_tr[j, i] = log(Gamma[i, j]);
+    
+  // forward algorithm
+    // for t = 1
+    for(i in 1:m)
+      lp[i] = log(statdist[i]) + poisson_lpmf(x[1]|lambda[i]);
+  
+    // for t > 1
+    for(t in 2:T){
+      for (i in 1:m)
+        lp_p1[i] = log_sum_exp(log_Gamma_tr[i] + lp) + poisson_lpmf(x[t]|lambda[i]);
+      
+        lp = lp_p1;
+   }
+   target += log_sum_exp(lp);
+  }
+'
+```
+
+```
+## [1] "model{\n  vector[m] log_Gamma_tr[m];\n  vector[m] lp;\n  vector[m] lp_p1;\n\n  // priors\n  lambda ~ gamma(1, 0.01);\n\n  // transpose tpm and take log of entries\n  for(i in 1:m)\n    for(j in 1:m)\n      log_Gamma_tr[j, i] = log(Gamma[i, j]);\n    \n  // forward algorithm\n    // for t = 1\n    for(i in 1:m)\n      lp[i] = log(statdist[i]) + poisson_lpmf(x[1]|lambda[i]);\n  \n    // for t > 1\n    for(t in 2:T){\n      for (i in 1:m)\n        lp_p1[i] = log_sum_exp(log_Gamma_tr[i] + lp) + poisson_lpmf(x[t]|lambda[i]);\n      \n        lp = lp_p1;\n   }\n   target += log_sum_exp(lp);\n  }\n"
+```
+
+All together,
 
 
 ```r
@@ -1211,7 +1492,7 @@ model{
   vector[m] lp_p1;
 
   // priors
-  lambda ~ gamma(0.1, 0.01);
+  lambda ~ gamma(1, 0.01);
 
   // transpose tpm and take log of entries
   for(i in 1:m)
@@ -1236,7 +1517,16 @@ model{
 '
 ```
 
-We first run 2000 iterations for each for each of the 4 chains, with the first 1000 draws drawn during the warm-up phase
+
+Then for the three state-Poisson HMM, 
+
+
+```r
+# Format data into list for STAN
+stan_data <- list(T=dim(eq_dat)[1], m=3, x=eq_dat$Count)
+```
+
+Running 2000 iterations for each of the 4 chains, with the first 1000 draws drawn during the warm-up phase, 
 
 
 ```r
@@ -1244,11 +1534,36 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ```
 
 ```
+## Trying to compile a simple C file
+```
+
+```
+## Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
+## clang -arch arm64 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
+## In file included from <built-in>:1:
+## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
+## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
+## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Core:88:
+## /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name 'namespace'
+## namespace Eigen {
+## ^
+## /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';' after top level declarator
+## namespace Eigen {
+##                ^
+##                ;
+## In file included from <built-in>:1:
+## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
+## In file included from /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
+## /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
+## #include <complex>
+##          ^~~~~~~~~
+## 3 errors generated.
+## make: *** [foo.o] Error 1
 ## 
-## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 1).
+## SAMPLING FOR MODEL '9875485ac4343cdf02f82dbe9761d256' NOW (CHAIN 1).
 ## Chain 1: 
-## Chain 1: Gradient evaluation took 0.000115 seconds
-## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.15 seconds.
+## Chain 1: Gradient evaluation took 0.000123 seconds
+## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.23 seconds.
 ## Chain 1: Adjust your expectations accordingly!
 ## Chain 1: 
 ## Chain 1: 
@@ -1256,15 +1571,15 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 1: 
-## Chain 1:  Elapsed Time: 0.852952 seconds (Warm-up)
-## Chain 1:                0.534297 seconds (Sampling)
-## Chain 1:                1.38725 seconds (Total)
+## Chain 1:  Elapsed Time: 0.820039 seconds (Warm-up)
+## Chain 1:                0.450072 seconds (Sampling)
+## Chain 1:                1.27011 seconds (Total)
 ## Chain 1: 
 ## 
-## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 2).
+## SAMPLING FOR MODEL '9875485ac4343cdf02f82dbe9761d256' NOW (CHAIN 2).
 ## Chain 2: 
-## Chain 2: Gradient evaluation took 4.7e-05 seconds
-## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.47 seconds.
+## Chain 2: Gradient evaluation took 5e-05 seconds
+## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.
 ## Chain 2: Adjust your expectations accordingly!
 ## Chain 2: 
 ## Chain 2: 
@@ -1272,15 +1587,15 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 2: 
-## Chain 2:  Elapsed Time: 0.746469 seconds (Warm-up)
-## Chain 2:                0.491936 seconds (Sampling)
-## Chain 2:                1.2384 seconds (Total)
+## Chain 2:  Elapsed Time: 0.823041 seconds (Warm-up)
+## Chain 2:                0.527402 seconds (Sampling)
+## Chain 2:                1.35044 seconds (Total)
 ## Chain 2: 
 ## 
-## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 3).
+## SAMPLING FOR MODEL '9875485ac4343cdf02f82dbe9761d256' NOW (CHAIN 3).
 ## Chain 3: 
-## Chain 3: Gradient evaluation took 5e-05 seconds
-## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.
+## Chain 3: Gradient evaluation took 4.9e-05 seconds
+## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.49 seconds.
 ## Chain 3: Adjust your expectations accordingly!
 ## Chain 3: 
 ## Chain 3: 
@@ -1288,15 +1603,15 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 3: 
-## Chain 3:  Elapsed Time: 0.807225 seconds (Warm-up)
-## Chain 3:                0.403592 seconds (Sampling)
-## Chain 3:                1.21082 seconds (Total)
+## Chain 3:  Elapsed Time: 0.812108 seconds (Warm-up)
+## Chain 3:                0.457366 seconds (Sampling)
+## Chain 3:                1.26947 seconds (Total)
 ## Chain 3: 
 ## 
-## SAMPLING FOR MODEL 'b37fb1f59e6ff956bdf58582435d9468' NOW (CHAIN 4).
+## SAMPLING FOR MODEL '9875485ac4343cdf02f82dbe9761d256' NOW (CHAIN 4).
 ## Chain 4: 
-## Chain 4: Gradient evaluation took 5.4e-05 seconds
-## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.54 seconds.
+## Chain 4: Gradient evaluation took 4.9e-05 seconds
+## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.49 seconds.
 ## Chain 4: Adjust your expectations accordingly!
 ## Chain 4: 
 ## Chain 4: 
@@ -1304,17 +1619,13 @@ pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2
 ## Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 4: 
-## Chain 4:  Elapsed Time: 0.959548 seconds (Warm-up)
-## Chain 4:                0.472744 seconds (Sampling)
-## Chain 4:                1.43229 seconds (Total)
+## Chain 4:  Elapsed Time: 0.76585 seconds (Warm-up)
+## Chain 4:                0.455552 seconds (Sampling)
+## Chain 4:                1.2214 seconds (Total)
 ## Chain 4:
 ```
 
-
-
-
-
-The posterior estimates are 
+we obtain the following posterior estimates
 
 
 ```r
@@ -1322,64 +1633,64 @@ print(pois.HMM.stanfit,digits_summary = 3)
 ```
 
 ```
-## Inference for Stan model: b37fb1f59e6ff956bdf58582435d9468.
+## Inference for Stan model: 9875485ac4343cdf02f82dbe9761d256.
 ## 4 chains, each with iter=2000; warmup=1000; thin=1; 
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##                 mean se_mean    sd     2.5%      25%      50%      75%    97.5%
-## Gamma[1,1]     0.855   0.002 0.083    0.640    0.818    0.872    0.914    0.966
-## Gamma[1,2]     0.095   0.001 0.075    0.006    0.042    0.078    0.128    0.289
-## Gamma[1,3]     0.049   0.001 0.041    0.002    0.019    0.039    0.069    0.155
-## Gamma[2,1]     0.091   0.001 0.059    0.016    0.052    0.081    0.119    0.225
-## Gamma[2,2]     0.816   0.002 0.086    0.631    0.777    0.828    0.872    0.934
-## Gamma[2,3]     0.093   0.002 0.064    0.014    0.050    0.081    0.121    0.237
-## Gamma[3,1]     0.075   0.001 0.068    0.002    0.024    0.055    0.106    0.249
-## Gamma[3,2]     0.229   0.002 0.118    0.052    0.138    0.214    0.299    0.498
-## Gamma[3,3]     0.696   0.002 0.128    0.405    0.617    0.710    0.791    0.899
-## lambda[1]     13.113   0.022 0.899   11.252   12.613   13.144   13.684   14.774
-## lambda[2]     19.780   0.023 1.104   17.564   19.100   19.781   20.447   21.886
-## lambda[3]     29.741   0.034 1.956   26.216   28.371   29.660   30.988   33.771
-## ta[1,1]        0.855   0.002 0.083    0.640    0.818    0.872    0.914    0.966
-## ta[1,2]        0.095   0.001 0.075    0.006    0.042    0.078    0.128    0.289
-## ta[1,3]        0.049   0.001 0.041    0.002    0.019    0.039    0.069    0.155
-## ta[2,1]        0.091   0.001 0.059    0.016    0.052    0.081    0.119    0.225
-## ta[2,2]        0.816   0.002 0.086    0.631    0.777    0.828    0.872    0.934
-## ta[2,3]        0.093   0.002 0.064    0.014    0.050    0.081    0.121    0.237
-## ta[3,1]        0.075   0.001 0.068    0.002    0.024    0.055    0.106    0.249
-## ta[3,2]        0.229   0.002 0.118    0.052    0.138    0.214    0.299    0.498
-## ta[3,3]        0.696   0.002 0.128    0.405    0.617    0.710    0.791    0.899
-## statdist[1]    0.383   0.002 0.140    0.133    0.283    0.373    0.474    0.680
-## statdist[2]    0.421   0.002 0.128    0.177    0.331    0.421    0.508    0.678
-## statdist[3]    0.196   0.001 0.092    0.059    0.128    0.181    0.249    0.408
-## lp__        -353.963   0.072 2.535 -360.148 -355.307 -353.565 -352.148 -350.239
+## Gamma[1,1]     0.862   0.002 0.085    0.669    0.825    0.879    0.919    0.966
+## Gamma[1,2]     0.091   0.002 0.076    0.006    0.039    0.073    0.122    0.274
+## Gamma[1,3]     0.047   0.001 0.042    0.002    0.017    0.036    0.066    0.152
+## Gamma[2,1]     0.090   0.002 0.065    0.014    0.048    0.077    0.115    0.237
+## Gamma[2,2]     0.817   0.002 0.085    0.626    0.778    0.831    0.874    0.935
+## Gamma[2,3]     0.093   0.001 0.058    0.015    0.051    0.083    0.120    0.237
+## Gamma[3,1]     0.077   0.001 0.069    0.002    0.025    0.059    0.110    0.249
+## Gamma[3,2]     0.231   0.002 0.115    0.055    0.148    0.214    0.300    0.493
+## Gamma[3,3]     0.691   0.002 0.124    0.423    0.609    0.706    0.783    0.891
+## lambda[1]     13.198   0.019 0.857   11.423   12.686   13.221   13.729   14.875
+## lambda[2]     19.828   0.026 1.069   17.689   19.181   19.836   20.478   21.929
+## lambda[3]     29.905   0.036 1.905   26.419   28.600   29.855   31.105   33.882
+## ta[1,1]        0.862   0.002 0.085    0.669    0.825    0.879    0.919    0.966
+## ta[1,2]        0.091   0.002 0.076    0.006    0.039    0.073    0.122    0.274
+## ta[1,3]        0.047   0.001 0.042    0.002    0.017    0.036    0.066    0.152
+## ta[2,1]        0.090   0.002 0.065    0.014    0.048    0.077    0.115    0.237
+## ta[2,2]        0.817   0.002 0.085    0.626    0.778    0.831    0.874    0.935
+## ta[2,3]        0.093   0.001 0.058    0.015    0.051    0.083    0.120    0.237
+## ta[3,1]        0.077   0.001 0.069    0.002    0.025    0.059    0.110    0.249
+## ta[3,2]        0.231   0.002 0.115    0.055    0.148    0.214    0.300    0.493
+## ta[3,3]        0.691   0.002 0.124    0.423    0.609    0.706    0.783    0.891
+## statdist[1]    0.391   0.002 0.142    0.143    0.286    0.380    0.485    0.688
+## statdist[2]    0.418   0.002 0.130    0.172    0.326    0.416    0.509    0.679
+## statdist[3]    0.191   0.001 0.092    0.056    0.124    0.177    0.240    0.414
+## lp__        -345.917   0.079 2.515 -351.814 -347.287 -345.502 -344.077 -342.235
 ##             n_eff  Rhat
-## Gamma[1,1]   2724 1.001
-## Gamma[1,2]   2658 1.000
-## Gamma[1,3]   3948 1.001
-## Gamma[2,1]   2243 1.000
-## Gamma[2,2]   1466 1.001
-## Gamma[2,3]   1824 1.001
-## Gamma[3,1]   4488 1.000
-## Gamma[3,2]   3928 1.000
-## Gamma[3,3]   3061 0.999
-## lambda[1]    1659 1.002
-## lambda[2]    2259 1.000
-## lambda[3]    3292 1.000
-## ta[1,1]      2724 1.001
-## ta[1,2]      2658 1.000
-## ta[1,3]      3948 1.001
-## ta[2,1]      2243 1.000
-## ta[2,2]      1466 1.001
-## ta[2,3]      1824 1.001
-## ta[3,1]      4488 1.000
-## ta[3,2]      3928 1.000
-## ta[3,3]      3061 0.999
-## statdist[1]  4025 1.000
-## statdist[2]  3821 1.000
-## statdist[3]  4769 0.999
-## lp__         1238 1.002
+## Gamma[1,1]   2066 1.000
+## Gamma[1,2]   1987 1.000
+## Gamma[1,3]   4086 1.001
+## Gamma[2,1]   1333 1.002
+## Gamma[2,2]   1526 1.002
+## Gamma[2,3]   3405 1.000
+## Gamma[3,1]   3718 1.001
+## Gamma[3,2]   4353 1.000
+## Gamma[3,3]   3762 1.001
+## lambda[1]    1953 1.002
+## lambda[2]    1658 1.000
+## lambda[3]    2877 1.001
+## ta[1,1]      2066 1.000
+## ta[1,2]      1987 1.000
+## ta[1,3]      4086 1.001
+## ta[2,1]      1333 1.002
+## ta[2,2]      1526 1.002
+## ta[2,3]      3405 1.000
+## ta[3,1]      3718 1.001
+## ta[3,2]      4353 1.000
+## ta[3,3]      3762 1.001
+## statdist[1]  5011 1.000
+## statdist[2]  3710 1.001
+## statdist[3]  4474 1.001
+## lp__         1025 1.004
 ## 
-## Samples were drawn using NUTS(diag_e) at Mon Jun 12 01:27:02 2023.
+## Samples were drawn using NUTS(diag_e) at Fri Jun 16 13:19:35 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1395,6 +1706,36 @@ print(pois.HMM.stanfit,digits_summary = 3)
 <img src="08-earthquake-example_files/figure-html/postl-3.png" alt="Posterior distribution for the state-dependent means of the three-state Poisson-HMM." width="672" />
 <p class="caption">(\#fig:postl-3)Posterior distribution for the state-dependent means of the three-state Poisson-HMM.</p>
 </div>
+
+<div class="figure">
+<img src="08-earthquake-example_files/figure-html/postg-1.png" alt="Posterior distribution for the transition probabilities of the three-state Poisson-HMM." width="672" />
+<p class="caption">(\#fig:postg-1)Posterior distribution for the transition probabilities of the three-state Poisson-HMM.</p>
+</div><div class="figure">
+<img src="08-earthquake-example_files/figure-html/postg-2.png" alt="Posterior distribution for the transition probabilities of the three-state Poisson-HMM." width="672" />
+<p class="caption">(\#fig:postg-2)Posterior distribution for the transition probabilities of the three-state Poisson-HMM.</p>
+</div><div class="figure">
+<img src="08-earthquake-example_files/figure-html/postg-3.png" alt="Posterior distribution for the transition probabilities of the three-state Poisson-HMM." width="672" />
+<p class="caption">(\#fig:postg-3)Posterior distribution for the transition probabilities of the three-state Poisson-HMM.</p>
+</div><div class="figure">
+<img src="08-earthquake-example_files/figure-html/postg-4.png" alt="Posterior distribution for the transition probabilities of the three-state Poisson-HMM." width="672" />
+<p class="caption">(\#fig:postg-4)Posterior distribution for the transition probabilities of the three-state Poisson-HMM.</p>
+</div><div class="figure">
+<img src="08-earthquake-example_files/figure-html/postg-5.png" alt="Posterior distribution for the transition probabilities of the three-state Poisson-HMM." width="672" />
+<p class="caption">(\#fig:postg-5)Posterior distribution for the transition probabilities of the three-state Poisson-HMM.</p>
+</div><div class="figure">
+<img src="08-earthquake-example_files/figure-html/postg-6.png" alt="Posterior distribution for the transition probabilities of the three-state Poisson-HMM." width="672" />
+<p class="caption">(\#fig:postg-6)Posterior distribution for the transition probabilities of the three-state Poisson-HMM.</p>
+</div><div class="figure">
+<img src="08-earthquake-example_files/figure-html/postg-7.png" alt="Posterior distribution for the transition probabilities of the three-state Poisson-HMM." width="672" />
+<p class="caption">(\#fig:postg-7)Posterior distribution for the transition probabilities of the three-state Poisson-HMM.</p>
+</div><div class="figure">
+<img src="08-earthquake-example_files/figure-html/postg-8.png" alt="Posterior distribution for the transition probabilities of the three-state Poisson-HMM." width="672" />
+<p class="caption">(\#fig:postg-8)Posterior distribution for the transition probabilities of the three-state Poisson-HMM.</p>
+</div><div class="figure">
+<img src="08-earthquake-example_files/figure-html/postg-9.png" alt="Posterior distribution for the transition probabilities of the three-state Poisson-HMM." width="672" />
+<p class="caption">(\#fig:postg-9)Posterior distribution for the transition probabilities of the three-state Poisson-HMM.</p>
+</div>
+
 
 
 <div class="figure">

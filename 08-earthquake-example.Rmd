@@ -1,6 +1,6 @@
 # Major Earthquake Analysis {#eq}
 
-We apply the concepts in the earlier chapters to the series of annual counts of major earthquakes (i.e. magnitude 7 and above) dataset from the textbook. 
+We apply the concepts in the previous chapters to the series of annual counts of major earthquakes (i.e. magnitude 7 and above) from the textbook. 
 
 The data can be read into **R** 
 
@@ -9,21 +9,29 @@ eq_dat <- read.table("http://www.hmms-for-time-series.de/second/data/earthquakes
 ```
 
 
-```{r echo=F, message=F, warning=F}
+We use the following packages for the analysis
+
+```{r message=F, warning=F}
 # Load packages
 library(kableExtra)
 library(tidyverse)
 library(gridExtra)
+library(momentuHMM)
+library(rstan)
+```
+
+```{r echo=F, message=F, warning=F}
+colnames(eq_dat) <- c("Year", "Count")
 ```
 
 
 ```{r e1, fig.cap="Number of major earthquakes worldwide from 1900-2006.", echo=F}
-plot(eq_dat, type = "b", pch=19, cex=0.5, xlab="", ylab="Count", main="")
+plot(eq_dat, type = "b", pch=19, cex=0.5, xlab="Year", ylab="Count", main="")
 ```
 
 ```{r e2, fig.cap="Histogram of major earthquakes overlaid with a Poisson density of mean equal to the observed counts.", echo=F}
-{hist(eq_dat$V2, freq=FALSE, breaks=100, xlab = "Count", main="")
-points(0:max(eq_dat$V2), dpois(0:max(eq_dat$V2), mean(eq_dat$V2)),
+{hist(eq_dat$Count, freq=FALSE, breaks=100, main="", xlab="Count")
+points(0:max(eq_dat$Count), dpois(0:max(eq_dat$Count), mean(eq_dat$Count)),
       col="hotpink", pch=16)
 }
 
@@ -31,15 +39,15 @@ points(0:max(eq_dat$V2), dpois(0:max(eq_dat$V2), mean(eq_dat$V2)),
 
 ```{r e4, echo=F}
 eq_dat %>%
-  summarise(mean = round(mean(V2), 2),
-            variance = round((sd(V2))^2, 2)) %>%
+  summarise(mean = round(mean(Count), 2),
+            variance = round((sd(Count))^2, 2)) %>%
   kbl(caption="Summary of the major earthquakes.") %>%
   kable_minimal(full_width=T)
 
 ```
 
 
-### Fitting a Poisson Mixture Distribution
+## Fitting a Poisson Mixture Distribution {-}
 
 **Note:** See [Preliminaries](#prelim)
 
@@ -53,7 +61,7 @@ The likelihood is given by
 
 $$L(\lambda_1, \lambda_2, \lambda_3, \delta_1, \delta_2|x_1, \dots, x_n) = \prod_{i=1}^n \left( \delta_1 \frac{\lambda_1^{x_i} e^{-\lambda_1}}{x_i!} + \delta_2 \frac{\lambda_2^{x_i} e^{-\lambda_2}}{x_i!} + (1 - \delta_1 - \delta_2) \frac{\lambda_3^{x_i} e^{-\lambda_3}}{x_i!} \right)$$
 
-The log-likelihood can be maximized using an unconstrained optimizer `nlm` (in **R**) on reparameterized parameters by the following:
+The log-likelihood can be maximized using the unconstrained optimizer `nlm` on reparameterized parameters by the following:
 
 **Step 1**:  Reparameterize the "natural parameters" $\boldsymbol{\delta}$ and $\boldsymbol{\lambda}$ into "working parameters" $\eta_i = \log \lambda_i \qquad{(i = 1, \dots, m)}$ and $\tau_i = \log \left(\frac{\delta_i}{1 - \sum_{j=2}^m \delta_j}\right) (i = 2, \dots, m)$ 
 
@@ -82,19 +90,17 @@ w2n <- function(wpar){
 Hence, for a Poisson mixture distribution with means $\lambda_1, = 10, \lambda_2 = 20, \lambda_3 = 25$ and probabilities $\delta_1 = \delta_2 = \delta_3 = \frac{1}{3}$, 
 
 ```{r, warning=F, message=F}
-x <- eq_dat$V2
 wpar <- n2w(c(10, 20, 25), c(1,1,1)/3)
-
 ```
 
 ```{r eval=F}
-w2n(nlm(mllk, wpar, x)$estimate)
+w2n(nlm(mllk, wpar, eq_dat$Count)$estimate)
 ```
 
 we obtain the following parameter estimates
 
 ```{r echo=F, warning=F, message=F}
-data.frame(w2n(nlm(mllk, wpar, x)$estimate)) %>%
+data.frame(w2n(nlm(mllk, wpar, eq_dat$Count)$estimate)) %>%
     kbl(caption="Parameter estimates for the fitted three component Poisson independent mixture model.") %>%
   kable_minimal(full_width=T)
 ```
@@ -102,7 +108,7 @@ data.frame(w2n(nlm(mllk, wpar, x)$estimate)) %>%
 and the negative log likelihood 
 
 ```{r, warning=F, message=F}
-nlm(mllk, wpar, x)$minimum
+nlm(mllk, wpar, eq_dat$Count)$minimum
 ```
 
 
@@ -111,13 +117,13 @@ nlm(mllk, wpar, x)$minimum
 **Note:** See Table 1.2 and Figure 1.4 of the textbook for a comparison of fitted mixture models with varying number of components. 
 
 
-### Fitting a Poisson-HMM by Numerical Maximization
+## Fitting a Poisson-HMM by Numerical Maximization {-}
 
 **Note:** See [Introduction to Hidden Markov Models](#introhmm) and Appendix A of the textbook. 
 
 
 ```{r acf, fig.cap="Autocorrelation plot for major earthquakes.", echo=F}
-v <- acf(eq_dat$V2, plot=FALSE)
+v <- acf(eq_dat$Count, plot=FALSE)
 plot(v, main="")
 ```
 
@@ -177,7 +183,7 @@ l &\leftarrow l + \log u\\
 \end{align}
 
 
-See [Scaling the Likelihood Computation](#likscale) and Note (4).
+See [Scaling the Likelihood Computation](#likscale) and Note (4). 
 
 ```{r}
 pois.HMM.lforward <- function(x,mod){
@@ -264,7 +270,7 @@ pois.HMM.pw2pn <- function(m,parvect,stationary=TRUE){
 **Note:** `pois.HMM.pw2pn` takes in arguments `m` number of states, `parvect` working parameters (vector), and `stationary` (`TRUE/FALSE`). By default, the MC is assumed to be stationary with the initial distribution equal to the stationary distribution. The function returns a list containing the natural parameters. 
 
 
-Then putting everything together 
+We can combine the parts above into the `pois.HMM.mle` function.
 
 ```{r}
 pois.HMM.mle <- function(x,m,lambda0,gamma0,delta0=NULL,stationary=TRUE,...){
@@ -280,53 +286,72 @@ pois.HMM.mle <- function(x,m,lambda0,gamma0,delta0=NULL,stationary=TRUE,...){
 }
 ```
 
-Hence, for a three-state Poisson-HMM with parameters $\boldsymbol{\lambda} = (10, 20, 25)$, $\boldsymbol{\Gamma} = \begin{pmatrix} 0.8 & 0.1 & 0.1\\ 0.1 & 0.8 & 0.1\\ 0.1 & 0.1 & 0.8 \end{pmatrix}$,
+Hence, for a three-state Poisson-HMM with the following parameters 
+
+$$\boldsymbol{\lambda} = (10, 20, 25)$$
+
+$$\boldsymbol{\Gamma} = \begin{pmatrix} 0.8 & 0.1 & 0.1\\ 0.1 & 0.8 & 0.1\\ 0.1 & 0.1 & 0.8 \end{pmatrix}$$
+
+
+```{r}
+m = 3
+lambda = c(10, 20, 25)
+gamma = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow=TRUE)
+```
 
 if we assume that the MC is stationary 
 
 ```{r warning=F, message=F}
-eq_init <- list(m=3, 
-            lambda=c(10, 20, 25), 
-            gamma = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow=TRUE),
-            delta=c(1, 1, 1)/3
-            )
+eq_init_s <- list(m=m,
+            lambda=lambda,
+            gamma = gamma)
 
-(mod3s<-pois.HMM.mle(x,eq_init$m,eq_init$lambda,eq_init$gamma,stationary=TRUE))
+(mod3s<-pois.HMM.mle(eq_dat$Count, eq_init_s$m,eq_init_s$lambda,eq_init_s$gamma,stationary=TRUE))
 ```
 
-if we do not assume stationary and that $\boldsymbol{\delta} = (\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$ 
+and if we do not assume stationary and that $\boldsymbol{\delta} = (\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$ and that the initial distribution is $\boldsymbol{\delta} = (\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$
 
 ```{r, warning=F, message=F}
-(mod3h <- pois.HMM.mle(x,eq_init$m,eq_init$lambda,eq_init$gamma,delta=c(1,1,1)/3,stationary=FALSE))
+eq_init_ns <- list(m=m,
+            lambda=lambda,
+            gamma = gamma,
+            delta = rep(1, m)/m)
 ```
 
-We can also perform parameteric bootstrapping to obtain confidence intervals. 
+
+```{r, warning=F, message=F}
+(mod3h <- pois.HMM.mle(eq_dat$Count,eq_init_ns$m,eq_init_ns$lambda,eq_init_ns$gamma,delta=eq_init_ns$delta,stationary=FALSE))
+```
+
+### Parametric Bootstrapping for Confidence Intervals {-}
+
+We can also perform parameteric bootstrapping to obtain confidence intervals of the above estimates.
 
 **Note:** See [Obtaining Standard Errors and Confidence Intervals](#boot). 
 
 **Step 1**: Fit the model
 
 ```{r warning=F, message=F}
-eq_mle <- pois.HMM.mle(x,eq_init$m,eq_init$lambda,eq_init$gamma,delta=c(1,1,1)/3,stationary=FALSE)
+eq_mle <- pois.HMM.mle(eq_dat$Count,eq_init_ns$m,eq_init_ns$lambda,eq_init_ns$gamma,delta=eq_init_ns$delta,stationary=FALSE)
 ```
 
 **Step 2**: Generate a bootstrap sample from the fitted model.
 
-The following function generates a sample from a Poisson-HMM of length `ns` from starting values `m` number of states, `lambda` means for the Poisson state-dependent distribution, and `delta` initial probabilities which are stored as `mod` (list).  
+The following function generates a sample from a Poisson-HMM of length `ny` from starting values `m` number of states, `lambda` means for the Poisson state-dependent distribution, and `delta` initial probabilities which are stored as `mod` (list).  
 
 ```{r}
-pois.HMM.generate_sample  <- function(ns,mod){
+pois.HMM.generate_sample  <- function(ny,mod){
  mvect                    <- 1:mod$m
- state                    <- numeric(ns)
+ state                    <- numeric(ny)
  state[1]                 <- sample(mvect,1,prob=mod$delta)
- for (i in 2:ns) state[i] <- sample(mvect,1,prob=mod$gamma[state[i-1],])
- x                        <- rpois(ns,lambda=mod$lambda[state])
+ for (i in 2:ny) state[i] <- sample(mvect,1,prob=mod$gamma[state[i-1],])
+ x                        <- rpois(ny,lambda=mod$lambda[state])
  return(x)
 }
 ```
 
 ```{r}
-boot_sample <- pois.HMM.generate_sample(length(x), eq_mle)
+boot_sample <- pois.HMM.generate_sample(length(eq_dat$Count), eq_mle)
 ```
 
 
@@ -339,7 +364,7 @@ boot_mle <- pois.HMM.mle(boot_sample, eq_mle$m, eq_mle$lambda, eq_mle$gamma)
 
 **Step 4**: Repeat (for a large) B times. 
 
-Then putting everything together
+We can combine the parts above into the `pois.HMM.boot` function.
 
 ```{r}
 pois.HMM.boot <- function(B, x, m, lambda0, gamma0, delta0=NULL, stationary=TRUE){
@@ -373,10 +398,16 @@ pois.HMM.boot <- function(B, x, m, lambda0, gamma0, delta0=NULL, stationary=TRUE
 
 **Note:** Some errors would occasionally arise from solving the stationary distribution of bootstrap samples that may not have had a unique stationary distribution. To overcome this, the `tryCatch` function was used to throw out these problematic samples and regenerate a new sample. As there were at most two samples that resulted in the error, the generated bootstrap samples should still be representative of the dataset. 
 
-Hence, 
+Hence, for the three-state Poisson-HMM with parameters 
+
+$$\boldsymbol{\lambda} = (10, 20, 25)$$
+
+$$\boldsymbol{\Gamma} = \begin{pmatrix} 0.8 & 0.1 & 0.1\\ 0.1 & 0.8 & 0.1\\ 0.1 & 0.1 & 0.8 \end{pmatrix}$$
+
+$$\boldsymbol{\delta} = (\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$$
 
 ```{r warning=F, message=F}
-eq_boot <- pois.HMM.boot(500, x, eq_init$m, eq_init$lambda, eq_init$gamma)
+eq_boot <- pois.HMM.boot(500, eq_dat$Count, eq_init_ns$m, eq_init_ns$lambda, eq_init_ns$gamma, delta=eq_init_ns$delta)
 ```
 
 and the $90\%$ confidence interval using the "percentile method"
@@ -536,69 +567,80 @@ g9 <- ggplot(eq_gamma_boot, aes(x=V9)) +
 grid.arrange(g1, g2, g3, g4, g5, g6, g7, g8, g9,ncol=3)
 ```
 
-We can also fit the three-state Poisson-HMM from the above using the `momentuHMM` package.
+### Using `momentuHMM` {-}
+
+We can also fit the three-state Poisson-HMM from the above using `momentuHMM`, which is a popular package for the maximum likelihood analysis of animal movement behaviour using multivariate Hidden Markov Models.  @momentuhmm
+
+First, convert the data into the `prepData` object and set the names of the states. Since 
 
 ```{r warning=F, message=F}
-library(momentuHMM)
-colnames(eq_dat) <- c("year", "count")
-```
-
-The data must be converted into the `prepData` object to use `fitHMM`. 
-
-```{r warning=F, message=F}
-# Convert dataframe into prepData object
+# prepData
 eq_prepped <- prepData(eq_dat,
                        coordNames = NULL,
-                       covNames =  c("count"))
+                       covNames =  c("Count"))
 
 # Name the states
 stateNames <- c("state1", "state2", "state3")
+```
 
+Next, specify the state-dependent model. In our case, we fit the intercept only model.
+
+```{r warning=F, message=F}
 # Fit intercept only model
 formula = ~ 1
+```
 
-eq_fit1 <- fitHMM(eq_prepped, 
+Now, fit the model using `fitHMM`
+
+```{r warning=F, message=F}
+mod3h_momentuHMM <- fitHMM(eq_prepped, 
                nbStates=3, 
-               dist=list(count="pois"),
-               Par0 = list(count = eq_init$lambda, delta=rep(1, 3)/3),
+               dist=list(Count="pois"),
+               Par0 = list(Count = eq_init_ns$lambda, delta=eq_init_ns$delta),
                formula = formula,
                stateNames = stateNames,
                stationary = FALSE)
-eq_fit1
 ```
 
 The resulting MLEs are very similar to that obtained from running the functions from above. 
 
-A plot of the decoded states is shown below.
-
-```{r warning=F, message=F}
-plot(eq_fit1)
+```{r}
+mod3h_momentuHMM 
 ```
 
-### Fitting a Poisson-HMM by the EM Algorithm 
+
+
+
+The corresponding $95 \%$ confidence intervals are
+
+```{r warning=F, message=F}
+CIreal(mod3h_momentuHMM)
+```
+
+
+## Fitting a Poisson-HMM by the EM Algorithm {-}
 
 **Note:** See [EM Algorithm (Baum-Welch)](#em)
 
 Alternatively, we may obtain MLEs of the three-state Poisson HMM by the EM algorithm. 
 
-**E-Step** Replace all quantities $v_jk (t)$, $u_j (t)$ by their conditional expectations given the observations $\boldsymbol{x}^(T)$ and current parameter estimates:
+**E-Step** Replace all quantities $v_jk (t)$, $u_j (t)$ by their conditional expectations given the observations $\boldsymbol{x}^{(T)}$ and current parameter estimates:
 
 $$\hat{u}_j = \Pr (C_t = j|\boldsymbol{x}^{(T)}) = \frac{\alpha_t (j) \beta_t (j)}{L_T}$$
 
 $${\hat{v}}_{jk} (t) = \Pr (C_{t-1} = j, C_t = k| \boldsymbol{x}^{(T)}) \frac{\alpha_{t-1} (j) \gamma_{jk} p_k (x_t) \beta_t (k)}{L_T}$$
 
+This can be broken down into 
 
 **Step 1**: Compute the forward and backward probabilities.
 
-We use the same forward algorithm from the above and apply the backward algorithm `pois.HMM.lbackward`. 
+We can use the same forward algorithm from the above and apply the backward algorithm `pois.HMM.lbackward`. 
 
 The general algorithm is:
 
-$\boldsymbol{\phi}_T \leftarrow \frac{\boldsymbol{1}}{w_T}$; $l \leftarrow \log w_T$
-
-for $t = T-1, \dots, 1$
-
 \begin{align}
+\boldsymbol{\phi}_T \leftarrow \frac{\boldsymbol{1}}{w_T}$; $l \leftarrow \log w_T\\
+\text{for } t = T-1, \dots, 1\\
 \boldsymbol{v} &\leftarrow \boldsymbol{\Gamma P} (x_{t+1}) \boldsymbol{\phi_{t+1}}\\
 l &\leftarrow l + \log \boldsymbol{v}\\
 u &\leftarrow \boldsymbol{v 1'}\\
@@ -735,8 +777,7 @@ E_pois_lambda <- function(x,mod,uhat){
 }
 ```
 
-
-The `BaumWelch` function performs the EM algorithm by taking initial model parameters as inputs, then repeatedly fitting until convergence or the maximum number of iterations is reached (by default `maxit=50`). 
+We can combine the parts above into the `BaumWelch` function. `BaumWelch` performs the EM algorithm by taking initial model parameters as inputs, then repeatedly fitting until convergence or the maximum number of iterations is reached (by default `maxit=50`). 
 
 ```{r}
 BaumWelch <- function(x, m, lambda0, gamma0, delta0, maxit = 50){
@@ -761,18 +802,24 @@ BaumWelch <- function(x, m, lambda0, gamma0, delta0, maxit = 50){
 }
 ```
 
-Hence, for the three-state Poisson-HMM 
+Hence, for the three-state Poisson-HMM with parameters 
+
+$$\boldsymbol{\lambda} = (10, 20, 25)$$
+
+$$\boldsymbol{\Gamma} = \begin{pmatrix} 0.8 & 0.1 & 0.1\\ 0.1 & 0.8 & 0.1\\ 0.1 & 0.1 & 0.8 \end{pmatrix}$$
+
+$$\boldsymbol{\delta} = (\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$$
 
 ```{r}
 # Fitting a three-state HMM
-BaumWelch(x, eq_init$m, eq_init$lambda, eq_init$gamma, delta = rep(1, eq_init$m)/eq_init$m)
+BaumWelch(eq_dat$Count, eq_init_ns$m, eq_init_ns$lambda, eq_init_ns$gamma, delta = eq_init_ns$delta)
 ```
 
-### Forecasting, Decoding, and State Prediction
+## Forecasting, Decoding, and State Prediction {-}
 
-**Note:** See [Forecasting, Decoding, and State Prediction](#fdp).
+**Note:** See [Forecasting, Decoding, and State Prediction](#fdp) and Appendix A of the textbook.
 
-#### Forecasting
+### Forecasting {-}
 
 The forecast probabilities $\Pr(X_{T+h} = x|\boldsymbol{X}^{(T)} = \boldsymbol{x}^{(T)})$ can be computed by 
 
@@ -804,27 +851,72 @@ pois.HMM.forecast <- function(xf,h=1,x,mod)
 
 **Note:** `pois.HMM.forecast` takes in arguments `xf` the range of $x$-values for the forecast probabilities, `h` the forecast horizon, `x` data, and  `mod` list consisting of `m` states, `lambda` means for the Poisson state-dependent distribution, and `delta` initial probabilities. 
 
-For example, the forecast distributions for 1 to 4 years ahead with possible values up to 45 earthquakes is
+For example, the forecast distributions for 1 to 4 years ahead with possible values up to 45 earthquakes for the three-state Poisson-HMM (non-stationary) is
 
-```{r forecastfour, fig.cap="Forecast probabilities for the fitted three-state Poisson-HMM for 1 to 4 years ahead.", echo=F}
+```{r forecastfour, fig.cap="Forecast probabilities for the fitted three-state Poisson-HMM (non-stationary) for 1 to 4 years ahead.", echo=F}
 h<-4
 xf<-0:45
-forecasts<-pois.HMM.forecast(xf,h,x,mod3s)
+forecasts<-pois.HMM.forecast(xf,h,eq_dat$Count,mod3h)
 
 par(mfrow=c(2,2),las=1)
 for (i in 1:h)
   {
 fc<-forecasts[i,]
 plot(xf,fc,type="h",main=paste("Forecast distribution for", 2006+i),
-xlim=c(0,max(xf)),ylim=c(0,0.12),xlab="count",ylab="probability",lwd=3)
+xlim=c(0,max(xf)),ylim=c(0,0.12),xlab="Count",ylab="probability",lwd=3)
 }
+```
+
+The function from above can be modified to compute the bivariate forecast distribution. 
+
+```{r}
+pois.HMM.forecast_bivariate <- function(xf1, xf2, x, mod){
+  n <- length(x)
+  nxf1 <- length(xf1)
+  nxf2 <- length(xf2)
+  dxf <- matrix(0, nrow=nxf1, ncol=nxf2)
+  foo <- mod$delta*dpois(x[1], mod$lambda)
+  sumfoo <- sum(foo)
+  lscale <- log(sumfoo)
+  foo <- foo/sumfoo
+
+  for(t in 2:n){
+    foo <- foo%*%mod$gamma*dpois(x[t], mod$lambda)
+    sumfoo <- sum(foo)
+    lscale <- lscale + log(sumfoo)
+    foo <- foo/sumfoo
+  }
+
+  for (i in 1:nxf1){
+    for(j in 1:nxf2){
+      for(s in 1:mod$m){
+        dxf[i, j] <- dxf[i, j] + foo[s]*dpois(xf1[i], mod$lambda[s]) + foo[s]*dpois(xf2[j], mod$lambda[s])
+      }
+    }
+  }
+
+ return(foo)
+}
+```
+
+For example, $\Pr(X_{T+1} \leq 10, X_{T+2} \leq 10|\boldsymbol{X}^{(T)})$ is 
+
+```{r}
+eq_forecast <- data.frame(pois.HMM.forecast_bivariate(1:10, 1:10,eq_dat$Count, eq_init_ns))
+
+eq_forecast %>%
+  kbl(caption="Bivariate Forecast Distribution of $X_{T+1}$ (rows) and $X_{T+2}$ (columns).") %>%
+  kable_minimal(full_width=T) %>%
+  kable_styling()
 ```
 
 
 
 
 
-#### Decoding
+
+
+### Decoding {-}
 
 Local decoding can be computed using the forward and backward algorithms from above. Similar to computing $\hat{u}$ in the **E step** of the EM algorithm, the `pois.HMM.state_probs` computes the state probabilities then `pois.HMM.local_decoding` determines the most likely state at each time. 
 
@@ -851,14 +943,14 @@ pois.HMM.local_decoding <- function(x,mod)
 }
 ```
 
-For example, local decoding for the three state Poisson-HMM is
+For example, local decoding for the three state Poisson-HMM (non-stationary) is
 
 ```{r}
 # Local decoding
-(earthquake_local <- pois.HMM.local_decoding(x, eq_init))
+(earthquake_local <- pois.HMM.local_decoding(eq_dat$Count, eq_init_ns))
 ```
 
-```{r local, fig.cap="Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time.", echo=F}
+```{r local, fig.cap="Local decoding for the three-state Poisson-HMM (non-stationary). The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time.", echo=F}
 eq_ldf <- cbind(eq_dat, m=earthquake_local)
 
 eq_ldf <- eq_ldf %>%
@@ -872,7 +964,7 @@ eq_ldf <- eq_ldf %>%
 abline(h=10, col="blue")
 abline(h=15, col="blue")
 abline(h=30, col="blue")
-points(x=eq_ldf$year, eq_ldf$s, col=eq_ldf$s, pch=16)
+points(x=eq_ldf$Year, eq_ldf$s, col=eq_ldf$s, pch=16)
 }
 ```
 
@@ -881,17 +973,17 @@ We can also perform local decoding using `momentuHMM`
 ```{r}
 # Local decoding
 ## Compute state probabilities for each time step
-state_probs <- stateProbs(eq_fit1)
+state_probs <- stateProbs(mod3h_momentuHMM)
 
 ## Select state that maximizes probability
-local_vec        <- rep(NA,length(x))
-for(i in 1:length(x)) local_vec[i] <- which.max(state_probs[i,])
+local_vec        <- rep(NA,length(eq_dat$Count))
+for(i in 1:length(eq_dat$Count)) local_vec[i] <- which.max(state_probs[i,])
 local_vec
 
 
 ```
 
-```{r comparelocal, fig.cap="Local decoding for the three-state Poisson-HMM. The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time using  pois.HMM.local_decoding (purple) and momentuHMM (orange).", echo=F}
+```{r comparelocal, fig.cap="Local decoding for the three-state Poisson-HMM (non-stationary). The horizontal lines indicate the state-dependent means and the points indicate the decoded state at the given time using  pois.HMM.local_decoding (purple) and momentuHMM (orange).", echo=F}
 
 eq_ldf2 <- cbind(eq_dat, m2=local_vec)
 
@@ -908,8 +1000,8 @@ eq_ldfs <- merge(eq_ldf, eq_ldf2)
 abline(h=10, col="blue")
 abline(h=15, col="blue")
 abline(h=30, col="blue")
-points(x=eq_ldf$year, eq_ldfs$s, col="purple", pch=16)
-points(x=eq_ldf$year, eq_ldfs$s2, col="orange", pch=16)
+points(x=eq_ldf$Year, eq_ldfs$s, col="purple", pch=16)
+points(x=eq_ldf$Year, eq_ldfs$s2, col="orange", pch=16)
 }
 ```
 
@@ -935,13 +1027,13 @@ pois.HMM.viterbi<-function(x,mod)
 }
 ```
 
-For example, global decoding for the three state Poisson-HMM is 
+For example, global decoding for the three state Poisson-HMM (non-stationary) is 
 
 ```{r}
-(earthquake_global <- pois.HMM.viterbi(x, eq_init))
+(earthquake_global <- pois.HMM.viterbi(eq_dat$Count, eq_init_ns))
 ```
 
-```{r global, fig.cap="Global decoding for the three-state Poisson-HMM.", echo=F}
+```{r global, fig.cap="Global decoding for the three-state Poisson-HMM (non-stationary).", echo=F}
 eq_gdf <- cbind(eq_dat, m=earthquake_global)
 
 eq_gdf <- eq_gdf %>%
@@ -955,17 +1047,17 @@ eq_gdf <- eq_gdf %>%
 abline(h=10, col="blue")
 abline(h=15, col="blue")
 abline(h=30, col="blue")
-points(x=eq_gdf$year, eq_gdf$s, col=eq_gdf$s, pch=16)
+points(x=eq_gdf$Year, eq_gdf$s, col=eq_gdf$s, pch=16)
 }
 ```
 
-```{r comparelg, fig.cap="Global (green) and local (brown) decoding for the three-state Poisson-HMM.", echo=F}
+```{r comparelg, fig.cap="Global (green) and local (brown) decoding for the three-state Poisson-HMM (non-stationary).", echo=F}
 {plot(eq_dat, type = "l", xlab="", ylab="Count", main="")
 abline(h=10, col="blue")
 abline(h=15, col="blue")
 abline(h=30, col="blue")
-points(x=eq_gdf$year, eq_ldf$s, col="brown", pch=16)
-points(x=eq_gdf$year, eq_gdf$s, col="#4BB446" , pch=16)
+points(x=eq_gdf$Year, eq_ldf$s, col="brown", pch=16)
+points(x=eq_gdf$Year, eq_gdf$s, col="#4BB446" , pch=16)
 }
 ```
 
@@ -974,8 +1066,8 @@ The result of local and global decoding are very similar but not identical.
 Similarly, we can perform global decoding using `momentuHMM`
 
 ```{r, warning=F, message=F}
-(global_vec <- viterbi(eq_fit1))
-plotStates(eq_fit1)
+(global_vec <- viterbi(mod3h_momentuHMM))
+plotStates(mod3h_momentuHMM)
 ```
 
 
@@ -996,17 +1088,15 @@ eq_gdfs <- merge(eq_gdf, eq_gdf2)
 abline(h=10, col="blue")
 abline(h=15, col="blue")
 abline(h=30, col="blue")
-points(x=eq_ldf$year, eq_gdfs$s, col="purple", pch=16)
-points(x=eq_ldf$year, eq_gdfs$s2, col="orange", pch=16)
+points(x=eq_ldf$Year, eq_gdfs$s, col="purple", pch=16)
+points(x=eq_ldf$Year, eq_gdfs$s2, col="orange", pch=16)
 }
 ```
 
 There appears to be some differences between the results obtained from our function and from `momentuHMM`. 
 
-**Note:** In both cases, the MC does not assume stationarity and the initial distribution is $\boldsymbol{\delta} = (1/3, 1/3, 1/3)$. 
 
-
-#### State Predictions
+### State Predictions {-}
 
 The state prediction for $h$ steps ahead can be computed by 
 
@@ -1027,36 +1117,129 @@ pois.HMM.state_prediction <- function(h=1,x,mod)
 }
 ```
 
-For example, the state predictions for $h=1, \dots, 5$ is
+For example, the state predictions for $h=1, \dots, 5$ for the three-state Poisson-HMM (non-stationary)
 
 ```{r}
-pois.HMM.state_prediction(h=5, x, eq_init)
+pois.HMM.state_prediction(h=5, eq_dat$Count, eq_init_ns)
 ```
 
 The stationary distribution is 
 
 ```{r}
 # Compute stationary distribution
-solve(t(diag(eq_init$m)-eq_init$gamma+1),rep(1,eq_init$m))
+solve(t(diag(m)-gamma+1),rep(1,m))
 ```
 
 Notice that as $h \rightarrow \infty$, the state distribution approaches the stationary distribution. 
 
 
-## Bayesian Inference in STAN
+## Fitting a Poisson-HMM using STAN {-}
 
-We can fit the three-state Poisson-HMM to the earthquake data using R-STAN. 
+**Note**: See [Bayesian Inference for HMMs](#bayesian), @leosbarajas2018introduction, and @Damiano_Peterson_Weylandt_2017.
 
-```{r message=F, warning=F}
-library(rstan)
-library(bayesplot)
-stan_data <- list(T=dim(eq_dat)[1], m=3, x=eq_dat$V2)
+We can perform Bayesian inference for the three-state Poisson-HMM using STAN @stan. 
+
+In STAN, the main building blocks are the:
+
+`data block`: used to define the input data for the model to fit in STAN. Declare the data types, their dimensions, any restrictions, and their names of the data to model.
+
+Here, we specify the length of the sequence of the earthquake series, the number of states, and the vector of observed earthquake counts. 
+
+```{r eval=F}
+'data{
+int<lower=0> m;                       // number of states
+int<lower=1> T;                       // length of sequence
+int<lower=0> x[T];                    // observations
+}
+'
 ```
 
+`parameters block`: used to define the parameters of the model that will be estimated. Declare the data types, their dimensions, any restrictions, and their names of the parameters to model.
+
+Here, we specify the state-dependent means, transition probability matrix, and the initial distribution (assuming non-stationarity).
+
+```{r eval=F}
+'parameters{
+simplex[m] Gamma[m];                  // transition probability matrix
+positive_ordered[m] lambda;           // state-dependent means (ordered to prevent label switching)
+}
+```
+
+`transformed parameters block`: used to define any derived parameters that are not directly estimated but are derived from the parameters defined in the previous block. Declare the data types, their dimensions, any restrictions, their names, and the operation of the parameters to transform. 
+
+If we assume that the Markov Chain is stationary, then we can compute the stationary distribution from the tpm. 
+ 
+```{r eval=F}
+'transformed parameters{
+  matrix[m, m] ta;                    // tpm used to compute stationary distribution                 
+  simplex[m] statdist;                // stationary distribution
+
+  for(j in 1:m){
+    for(i in 1:m){
+      ta[i, j] = Gamma[i, j];
+    }
+  }
+
+//compute stationary distribution 
+statdist =  to_vector((to_row_vector(rep_vector(1.0, m))/
+      (diag_matrix(rep_vector(1.0, m)) - ta + rep_matrix(1, m, m))));
+}
+'
+```
+
+**Note:** The tpm is transposed so that each row corresponds to the probabilities of transitioning into a state, rather than out of a state.
+
+`model block`: used to define the prior distribution, likelihood, and any other necessary variables. 
+
+Here, we use the following prior specifications:
+
+$$\boldsymbol{\lambda} \sim Gamma(\alpha=1, \beta=0.01)$$
+
+$$\boldsymbol{\Gamma} \sim Unif(-\infty, \infty)$$
 
 
+$$\boldsymbol{\delta} \sim Unif(-\infty, \infty)$$
+The [forward algorithm](#reparam) can be used to obtain the posterior distribution of the hidden states at a given time $t$ based on all the information available up to that time $\Pr(C_t|\boldsymbol{X}^{(t)})$. 
 
 
+\begin{align}
+\log (\alpha_t, j) 
+&= \log \left(\sum_{i=1}^m \gamma_{ij} \alpha_{t-1, i} \right)\\
+&= \log \left(\sum_{i=1}^m \exp (\log (\gamma_{ij}) + \log (\alpha_{t-1, i}))\right)
+\end{align}
+
+```{r}
+'model{
+  vector[m] log_Gamma_tr[m];
+  vector[m] lp;
+  vector[m] lp_p1;
+
+  // priors
+  lambda ~ gamma(1, 0.01);
+
+  // transpose tpm and take log of entries
+  for(i in 1:m)
+    for(j in 1:m)
+      log_Gamma_tr[j, i] = log(Gamma[i, j]);
+    
+  // forward algorithm
+    // for t = 1
+    for(i in 1:m)
+      lp[i] = log(statdist[i]) + poisson_lpmf(x[1]|lambda[i]);
+  
+    // for t > 1
+    for(t in 2:T){
+      for (i in 1:m)
+        lp_p1[i] = log_sum_exp(log_Gamma_tr[i] + lp) + poisson_lpmf(x[t]|lambda[i]);
+      
+        lp = lp_p1;
+   }
+   target += log_sum_exp(lp);
+  }
+'
+```
+
+All together,
 
 ```{r message=F, warning=F}
 pois.HMM.stan <- 
@@ -1093,7 +1276,7 @@ model{
   vector[m] lp_p1;
 
   // priors
-  lambda ~ gamma(0.1, 0.01);
+  lambda ~ gamma(1, 0.01);
 
   // transpose tpm and take log of entries
   for(i in 1:m)
@@ -1119,17 +1302,21 @@ model{
 
 ```
 
-We first run 2000 iterations for each for each of the 4 chains, with the first 1000 draws drawn during the warm-up phase
+
+Then for the three state-Poisson HMM, 
+
+```{r message=F, warning=F}
+# Format data into list for STAN
+stan_data <- list(T=dim(eq_dat)[1], m=3, x=eq_dat$Count)
+```
+
+Running 2000 iterations for each of the 4 chains, with the first 1000 draws drawn during the warm-up phase, 
 
 ```{r}
 pois.HMM.stanfit <- stan(model_code = pois.HMM.stan, data = stan_data, refresh=2000)
 ```
 
-
-
-
-
-The posterior estimates are 
+we obtain the following posterior estimates
 
 ```{r}
 print(pois.HMM.stanfit,digits_summary = 3)
@@ -1143,6 +1330,18 @@ hist(post_lambda[[1]][,2],main="",xlab=expression(lambda[2]))
 hist(post_lambda[[1]][,3],main="",xlab=expression(lambda[3]))
 }
 ```
+
+```{r postg, fig.cap="Posterior distribution for the transition probabilities of the three-state Poisson-HMM.", echo=F}
+post_Gamma <- rstan::extract(pois.HMM.stanfit, pars=c("Gamma"))
+
+for(i in 1:3){
+  for(j in 1:3){
+    hist(post_Gamma[[1]][1:1000, i, j], main="", xlab=substitute(gamma[i][j], list(i = i, j = j)))
+  }
+}
+
+```
+
 
 
 ```{r postd, fig.cap="Posterior distribution for the initial distribution of the three-state Poisson-HMM.", echo=F}
